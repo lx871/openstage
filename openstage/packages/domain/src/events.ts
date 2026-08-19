@@ -2,7 +2,7 @@ import type { ConversationSnapshot, DomainEvent, MessageRecord, ScopedState } fr
 import { uuid } from '@openstage/contracts'
 import { ContentPart } from './content.js'
 import { cloneState, emptyScopedState, toFullSnapshot } from './state.js'
-import { createMessageTree, setBranchInTree, type MessageTreeState } from './tree.js'
+import { createMessageTree, appendMessagesToTree, setBranchInTree, type MessageTreeState } from './tree.js'
 
 export interface ProjectionState {
   conversationId: string
@@ -25,34 +25,71 @@ export function createProjection(conversationId: string): ProjectionState {
   }
 }
 
+function scopedOf(tree: MessageTreeState): ScopedState {
+  return cloneState(tree.state)
+}
+
 export function applyEvent(p: ProjectionState, e: DomainEvent): ProjectionState {
   const d = e.data as Record<string, unknown>
   switch (e.kind) {
     case 'message.created': {
       const result = appendNodeForEvent(p, e)
-      if (result && result.stateSnapshotId) p.snapshots.set(result.stateSnapshotId, cloneState(result.state))
+      if (result && result.stateSnapshotId) p.snapshots.set(result.stateSnapshotId, scopedOf(result.tree ?? p.tree))
+      if (result?.stateSnapshotId) p.currentSnapshotId = result.stateSnapshotId
       break
     }
     case 'branch.path.changed': {
       const path = Array.isArray(d['path']) ? (d['path'] as string[]) : []
       const result = setBranchInTree(p.tree, path)
       if (result.newActivePath) p.tree.activePath = result.newActivePath
-      if (result.stateSnapshotId && p.snapshots.has(result.stateSnapshotId)) {
-        p.snapshots.set(e.id, cloneState(p.snapshots.get(result.stateSnapshotId)!))
+      p.tree.state = result.state ? cloneState(result.state) : p.tree.state
+      if (result.stateSnapshotId) {
+        p.snapshots.set(e.id, cloneState(result.state ?? p.tree.state))
         p.currentSnapshotId = e.id
       }
+      p.snapshots.set(e.id, cloneState(p.snapshots.get(result.stateSnapshotId!) ?? p.tree.state))
       break
     }
     case 'state.snapshot.created': {
-      const scopes = d['scopes']
-      if (scopes && typeof scopes === 'object') {
-        const s = scopes as ScopedState
-        p.tree.state = cloneState(s)
-        p.snapshots.set(e.id, cloneState(s))
+      const deltas = d['deltas']
+      const cursor = d['cursor'] as string | null | undefined
+      if (Array.isArray(deltas) && deltas.length) {
+        for (const item of deltas as Array<{ scope?: string; key?: string; op?: string; value?: unknown; opId?: string }>) {
+          const scope = item.scope as ScopedState extends infer _ ? 'global' | 'character' | 'conversation' : never
+          const key = item.key ?? ''
+          const op = (item.op ?? 'set') as 'set' | 'unset' | 'increment' | 'append'
+          const target = p.tree.state[scope as keyof ScopedState] as Record<string, unknown>
+          if (op === 'set') target[key] = item.value
+          else if (op === 'unset') delete target[key]
+          else if (op === 'increment') {
+            const cur = typeof target[key] === 'number' ? (target[key] as number) : 0
+            target[key] = cur + (typeof item.value === 'number' ? item.value : 1)
+          } else if (op === 'append') {
+            const arr = Array.isArray(target[key]) ? (target[key] as unknown[]) : []
+            target[key] = [...arr, item.value]
+          }
+        }
+        if (cursor && p.tree.messages.get(cursor)) {
+          const fresh = toFullSnapshot(p.tree.state, cursor)
+          p.tree.stateSnapshots.set(fresh.id, fresh)
+          p.tree.messages.get(cursor)!.stateSnapshotId = fresh.id
+          p.snapshots.set(fresh.id, cloneState(p.tree.state))
+          p.currentSnapshotId = fresh.id
+        } else {
+          p.snapshots.set(e.id, cloneState(p.tree.state))
+          p.currentSnapshotId = e.id
+        }
       } else {
-        p.snapshots.set(e.id, cloneState(p.tree.state))
+        const scopes = d['scopes']
+        if (scopes && typeof scopes === 'object') {
+          const s = scopes as ScopedState
+          p.tree.state = cloneState(s)
+          p.snapshots.set(e.id, cloneState(s))
+        } else {
+          p.snapshots.set(e.id, cloneState(p.tree.state))
+        }
+        p.currentSnapshotId = e.id
       }
-      p.currentSnapshotId = e.id
       break
     }
     case 'conversation.created': {
@@ -64,38 +101,24 @@ export function applyEvent(p: ProjectionState, e: DomainEvent): ProjectionState 
   return p
 }
 
-function appendNodeForEvent(p: ProjectionState, e: DomainEvent): ReturnType<typeof appendMessageToTree> {
+function appendNodeForEvent(p: ProjectionState, e: DomainEvent): (ReturnType<typeof appendMessagesToTree> & { tree: MessageTreeState }) | null {
   const d = e.data as Record<string, unknown>
-  return appendMessageToTree(
-    p,
-    d['conversationId'] as string,
-    {
-      id: d['messageId'] as string,
-      parentId: d['parentId'] as string | null,
-      role: d['role'] as 'user' | 'assistant' | 'system' | 'narrator',
-      speakerId: d['speakerId'] as string | undefined,
-      displayName: d['displayName'] as string | undefined,
-      blocks: d['blocks'] as import('@openstage/contracts').Block[],
-      metaTrigger: d['metaTrigger'] as 'normal' | 'continue' | 'swipe' | 'regenerate' | 'import' | undefined,
-      at: d['at'] as string | undefined,
-    },
-  )
-}
-
-import { appendMessagesToTree } from './tree.js'
-
-type AppendMessageInput = Parameters<typeof appendMessagesToTree>[1]['messages'][number] & { id?: string }
-
-function appendMessageToTree(
-  p: ProjectionState,
-  conversationId: string,
-  o: AppendMessageInput & { parentId: string | null },
-): ReturnType<typeof appendMessagesToTree> {
-  return appendMessagesToTree(p.tree, {
-    conversationId,
-    parentId: o.parentId,
-    messages: [{ ...o }],
+  const result = appendMessagesToTree(p.tree, {
+    conversationId: p.conversationId,
+    parentId: (d['parentId'] ?? null) as string | null,
+    messages: [
+      {
+        id: d['messageId'] as string | undefined,
+        role: d['role'] as 'user' | 'assistant' | 'system' | 'narrator',
+        speakerId: d['speakerId'] as string | undefined,
+        displayName: d['displayName'] as string | undefined,
+        blocks: d['blocks'] as import('@openstage/contracts').Block[],
+        metaTrigger: d['metaTrigger'] as 'normal' | 'continue' | 'swipe' | 'regenerate' | 'import' | undefined,
+        at: d['at'] as string | undefined,
+      },
+    ],
   })
+  return result as unknown as ReturnType<typeof appendMessagesToTree> & { tree: MessageTreeState }
 }
 
 export function projectStream(id: string, events: DomainEvent[]): ProjectionState {
@@ -106,9 +129,9 @@ export function projectStream(id: string, events: DomainEvent[]): ProjectionStat
 
 export function projectionToSnapshotLike(p: ProjectionState): ConversationSnapshot {
   const messages: MessageRecord[] = []
-  for (const [id, node] of p.tree.messages) {
+  for (const [, node] of p.tree.messages) {
     messages.push({
-      id,
+      id: node.id,
       conversationId: node.conversationId,
       parentId: node.parentId,
       role: node.role,

@@ -103,13 +103,21 @@ export function appendMessagesToTree(tree: MessageTreeState, params: AppendMessa
   let cursor: Id | null = null
 
   if (params.parentId === null) {
-    // First message is the root of this conversation
     const first = params.messages[0]
     if (!first) return { ok: true, messagesCreated: [], stateSnapshotId: '', state: cloneState(tree.state), changed: false }
     const root = appendCreatedNode(tree, params.conversationId, null, first)
     created.push(root)
     tree.roots = [root.id]
     cursor = root.id
+    if (params.messages.length > 1) {
+      for (let i = 1; i < params.messages.length; i++) {
+        const m = params.messages[i]!
+        const node = appendCreatedNode(tree, params.conversationId, cursor, m)
+        attachChild(tree, cursor, node.id)
+        created.push(node)
+        cursor = node.id
+      }
+    }
   } else {
     const parent = tree.messages.get(params.parentId)
     if (parent) cursor = params.parentId
@@ -128,8 +136,8 @@ export function appendMessagesToTree(tree: MessageTreeState, params: AppendMessa
   const tipId = created.length ? created[created.length - 1]!.id : (cursor ?? '')
   const snap = toFullSnapshot(tree.state, tipId)
   tree.stateSnapshots.set(snap.id, snap)
+  for (const n of created) n.stateSnapshotId = snap.id
 
-  // Extend active path to the new tip
   const basePath = pathOf(tree, tipId)
   tree.activePath = basePath.length ? basePath : [tipId]
 
@@ -149,10 +157,18 @@ export function setBranchInTree(tree: MessageTreeState, path: Id[]): TreeCommand
   const tip = tree.messages.get(tipId) ?? null
   const snapshotId = tip?.stateSnapshotId ?? null
   const snapshot = (snapshotId ? tree.stateSnapshots.get(snapshotId) : undefined) ?? null
-  const fresh = toFullSnapshot(snapshot?.full ?? tree.state, tipId)
+  let derived: ScopedState
+  if (snapshot?.full) derived = cloneState(snapshot.full)
+  else if (snapshot) {
+    derived = cloneState(tree.state)
+    for (const d of snapshot.deltas) applyDelta(derived, d)
+  } else {
+    derived = cloneState(tree.state)
+  }
+  const fresh = toFullSnapshot(derived, tipId)
   tree.stateSnapshots.set(fresh.id, fresh)
   tree.activePath = path
-  tree.state = snapshot?.full ? cloneState(snapshot.full) : cloneState(tree.state)
+  tree.state = derived
   return { ok: true, messagesCreated: [], stateSnapshotId: fresh.id, state: cloneState(tree.state), newActivePath: path, changed: true }
 }
 
@@ -172,11 +188,14 @@ export function applyStateDeltasToTree(
   )
   for (const d of scan) applyDelta(tree.state, d)
   tree.stateSnapshots.set(result.snapshot.id, result.snapshot)
+  if (cursor) {
+    const node = tree.messages.get(cursor)
+    if (node) node.stateSnapshotId = result.snapshot.id
+  }
   return { ok: true, messagesCreated: [], stateSnapshotId: result.snapshot.id, state: cloneState(tree.state), changed: true }
 }
 
 function firstExistingChainTip(tree: MessageTreeState, nodeId: Id): Id | null {
-  // walk up from a possibly-stale id to the deepest ancestor we actually have
   let cur: Id | undefined = nodeId
   let guard = 0
   while (guard < 100000) {

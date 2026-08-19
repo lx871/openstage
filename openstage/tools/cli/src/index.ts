@@ -4,14 +4,16 @@ import readline from 'node:readline'
 import type { Character } from '@openstage/contracts'
 import { ConversationService } from '@openstage/context-engine'
 import { addKnowledgeBase, createKnowledgeRepo, EventStore, importCharacterBlob, importCharacterJson, importWorldInfoJson, importWorldInfoJsonl, linkCharacterKb, SqliteEventStore } from '@openstage/storage'
+import { planToReport, whyNotInjected, estimatePlanCost } from '@openstage/inspector'
 
-const HELP = `openstage CLI（P0 兼容内核开发台）
+const HELP = `openstage — 兼容迁移平台
 
 用法:
-  openstage import <角色文件.json|.png> [--world <世界书.json|jsonl>]
-  openstage trace  <角色文件> [--turn N]
-  openstage chat   <角色文件> [--seed 开场白] [--offline|--key <AK>] [--model <M>]
-  openstage events
+  openstage import <角色文件.json|.png> [--world <世界书.json|jsonl>] [-d <数据目录>]
+  openstage trace  <角色文件> [--turn N] [-d <数据目录>]   详细 trace（含 Inspector 报表）
+  openstage chat   <角色文件> [--seed 开场白] [--offline|--key <KEY>] [--model <M>] [-d <数据目录>]
+  openstage events [-d <数据目录>]                            列出最近事件
+  openstage branch <角色文件> [--turn N] [-d <数据目录>]       演示分支+状态回滚
 `
 
 interface CliCtx {
@@ -63,13 +65,14 @@ async function main(): Promise<void> {
   fs.mkdirSync(dataDir, { recursive: true })
 
   if (cmd === 'hello' || cmd === '--help' || cmd === '-h' || cmd === 'help') {
-    console.log(cmd === 'hello' ? 'openstage P0 scaffold ready: 契约 + 事件存储 + 兼容上下文引擎 + OpenAI-compatible 网关' : HELP)
+    console.log(cmd === 'hello' ? 'openstage P0 scaffold ready: 契约 + 事件存储 + 兼容上下文引擎 + OpenAI-compatible 网关 + Inspector/分支校验' : HELP)
     return
   }
 
   if (cmd === 'events') {
-    const ctx = loadStore(dataDir, false)
-    for (const e of (ctx.store as EventStore).events) console.log(`#${e.seq} ${e.kind} conv=${e.conversationId ?? '-'}`)
+    const ctx = loadStore(dataDir, has('--sqlite'))
+    const evs = ctx.store instanceof EventStore ? ctx.store.events : ctx.store.stream()
+    for (const e of evs.slice(-20)) console.log(`#${e.seq} ${e.kind} conv=${e.conversationId ?? '-'}`)
     return
   }
 
@@ -101,6 +104,11 @@ async function main(): Promise<void> {
     return
   }
 
+  if (cmd === 'branch') {
+    await branchDemo(service, character, Number(getOpt('--turn') ?? 2))
+    return
+  }
+
   console.log(HELP)
 }
 
@@ -114,21 +122,53 @@ async function trace(ctx: CliCtx, service: ConversationService, character: Chara
     await service.append(cid, 'assistant', `第 ${i + 1} 条回复`, character.identity.name)
   }
   const res = await service.send({ conversationId: cid, content: 'trace 触发' })
+  const plan = res.trace
+  if (!plan) { console.log(JSON.stringify(res, null, 2)); return }
+  const report = planToReport(plan)
+  const cost = estimatePlanCost(plan)
   const summary = {
     conversationId: cid,
-    mode: res.trace?.mode,
-    stages: res.trace?.stages,
-    budget: res.trace?.budget,
-    cacheBreakpoints: res.trace?.cacheBreakpoints,
-    wiActivated: res.trace?.queries,
-    warnings: res.trace?.warnings,
+    mode: report.mode,
+    stages: report.stages,
+    budget: report.budget,
+    tokenAttribution: report.tokenAttribution,
+    cacheBreakpoints: report.cacheBreakpoints,
+    stablePrefixTokens: report.stablePrefixTokens,
+    volatileTokens: report.volatileTokens,
+    cost,
+    wiActivated: report.queries,
+    warnings: report.warnings,
   }
   console.log(JSON.stringify(summary, null, 2))
-  for (const b of res.trace?.blocks ?? []) {
-    console.log(`\n[${b.stage}/${b.slot}][${b.included ? 'IN' : 'OUT'}] token=${b.tokenCount} ${b.sourceRef.kind}:${b.sourceRef.name ?? ''}`)
+  for (const b of plan.blocks) {
+    console.log(`\n[${b.stage}/${b.slot}][${b.included ? 'IN' : 'OUT'}] token=${b.tokenCount} ${b.sourceRef.kind}:${b.sourceRef.name ?? b.sourceRef.id ?? ''}`)
     if (b.included) console.log(b.content.slice(0, 240))
     if (!b.included && b.exclusionReason) console.log(`  → 排除: ${b.exclusionReason}`)
   }
+  for (const q of report.queries.slice(0, 3)) {
+    const detail = whyNotInjected(plan, q.entryId)
+    if (detail) console.log(`\n[explain] ${q.title ?? q.entryId}: ${detail.reason ?? 'no reason'}`)
+  }
+}
+
+async function branchDemo(service: ConversationService, character: Character, _turn: number): Promise<void> {
+  const cid = `branch-${character.id.slice(0, 8)}`
+  await service.create({ characterId: character.id, conversationId: cid, person: 'user' })
+  await service.append(cid, 'assistant', await service.greeting(cid), character.identity.name)
+  await service.append(cid, 'user', '我们去图书馆吗？', '用户')
+  await service.append(cid, 'assistant', '好呀，去三楼吧。', character.identity.name)
+  const before = await service.buildDialogue(cid)
+  console.log('对话长度（分支前）:', before.length)
+  const store: unknown = service.getStore()
+  const replay = await (store as { replay(id: string): Promise<{ conversation: { activePath: string[] }; messages: Array<{ id: string }> }> }).replay(cid)
+  const path = replay.conversation.activePath
+  const forkPoint = path[1]!
+  const altId = `alt-${Date.now()}`
+  // new branch from fork point
+  await (store as { execute(c: { type: string; conversationId: string; path: string[] }): Promise<void> }).execute({ type: 'setBranch', conversationId: cid, path: [path[0]!, forkPoint] })
+  await service.append(cid, 'assistant', '其实今晚下雨，在馆里喝茶更好。', character.identity.name)
+  console.log('分支切换完成，新 activePath 长度:', (await (store as { replay(id: string): Promise<{ conversation: { activePath: string[] } }> }).replay(cid)).conversation.activePath.length)
+  void altId
 }
 
 async function chat(service: ConversationService, character: Character, opts: { seed?: string; offline?: boolean; apiKey?: string; model?: string }): Promise<void> {

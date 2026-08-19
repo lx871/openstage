@@ -15,6 +15,11 @@ export default defineConfig({
       '@openstage/storage': pkg('storage'),
       '@openstage/context-engine': pkg('context-engine'),
       '@openstage/gateway': pkg('gateway'),
+      '@openstage/inspector': pkg('inspector'),
+      '@openstage/memory': pkg('memory'),
+      '@openstage/agent': pkg('agent'),
+      '@openstage/extensions': pkg('extensions'),
+      '@openstage/recipe': pkg('recipe'),
     },
   },
 })

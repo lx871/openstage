@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type { Command, CommandResult, ConversationSnapshot, DomainEvent } from '@openstage/contracts'
 import { uuid } from '@openstage/contracts'
 import { applyEvent, createProjection, projectionToSnapshotLike as projectionToSnapshot } from '@openstage/domain'
@@ -35,30 +37,26 @@ CREATE TABLE IF NOT EXISTS snapshots (
 );
 `
 
-let sqlite: import('better-sqlite3').Database | null = null
-
-function loadSqlite(): import('better-sqlite3').Database {
-  if (sqlite === null) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const Database = require('better-sqlite3') as typeof import('better-sqlite3')
-    sqlite = new Database(':memory:')
-  }
-  return sqlite
-}
-
-/**
- * SQLite-backed event store built on the same command materializer as the
- * in-memory EventStore; the only difference is events land in a table.
- */
 export class SqliteEventStore {
   private db: import('better-sqlite3').Database
   private readonly mem: EventStore
+  readonly filePath: string
 
   constructor(opts: SqliteEventStoreOptions) {
-    this.db = loadSqlite()
+    const filePath = opts.file
+    if (!opts.inMemory) {
+      fs.mkdirSync(path.dirname(path.resolve(filePath)), { recursive: true })
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const Database = require('better-sqlite3') as typeof import('better-sqlite3')
+      this.db = new Database(path.resolve(filePath))
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const Database = require('better-sqlite3') as typeof import('better-sqlite3')
+      this.db = new Database(':memory:')
+    }
     this.db.exec(SCHEMA)
     this.mem = new EventStore()
-    void opts
+    this.filePath = path.resolve(filePath)
   }
 
   latestSeq(): number {
@@ -101,10 +99,10 @@ export class SqliteEventStore {
   }
 
   stream(conversationId?: string, fromSeq?: number): DomainEvent[] {
-    let sql = 'SELECT * FROM events'
+    let sql = 'SELECT seq, id, kind, at, conversation_id, actor, data_json FROM events'
     const where: string[] = []
     const params: Record<string, unknown> = {}
-    if (conversationId) {
+    if (conversationId !== undefined) {
       where.push('conversation_id = @c')
       params.c = conversationId
     }
@@ -114,8 +112,17 @@ export class SqliteEventStore {
     }
     if (where.length) sql += ` WHERE ${where.join(' AND ')}`
     sql += ' ORDER BY seq ASC'
-    const rows = this.db.prepare(sql).all(params) as Array<{ id: string; kind: DomainEvent['kind']; at: string; conversation_id: string | null; actor: string | null; data_json: string }>
+    const rows = this.db.prepare(sql).all(params) as Array<{
+      seq: number
+      id: string
+      kind: DomainEvent['kind']
+      at: string
+      conversation_id: string | null
+      actor: string | null
+      data_json: string
+    }>
     return rows.map((r) => ({
+      seq: r.seq,
       id: r.id,
       kind: r.kind,
       at: r.at,
@@ -123,6 +130,12 @@ export class SqliteEventStore {
       actor: r.actor ?? undefined,
       data: JSON.parse(r.data_json),
     }))
+  }
+
+  close(): void {
+    try {
+      this.db.close()
+    } catch {}
   }
 }
 
