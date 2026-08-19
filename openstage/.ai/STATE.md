@@ -1,26 +1,17 @@
 # 检查点（最后更新：2026-08-19，by opencode）
 ## 已完成
-- monorepo 脚手架（pnpm workspace + tsconfig paths + vitest + CLI）
-- 契约层：MessageNode/StateSnapshot/Character 四分离/KnowledgeEntry/事件/Prompt IR 类型
-- domain：ContentPart、状态快照(delta/full)、消息树折叠、事件投影、V2 适配
-- storage：内存 EventStore + SQLite 事件表、V2 卡/世界书 JSONL/聊天 JSONL/TXT 导入、知识仓库
-- context-engine：预设映射、宏、世界书激活(selectiveLogic 0-3/概率/组权重/深度)、预算裁剪、缓存断点、ConversationService
-- gateway：能力协商 + OpenAI-compatible 适配器（离线镜像 + fetch 模式）
-- CLI：import / trace / chat / events
-- 测试 14/14 通过、tsc exit=0；示例卡 fixtures/linwan.json
+- P0 垂直切片：契约/领域/存储(内存+SQLite 文件)/兼容上下文引擎/网关/CLI + 14/14 测试
+- P1 收敛：SQLite 文件持久化、网关流式/SSE+AbortSignal 取消+指数退避重试、事件投影分支回滚与状态快照修复
+- P2 骨架：@openstage/recipe(compat/native 配方)、@openstage/memory(三层+聚合)、@openstage/agent(state.patch/memory.remember/dice)、@openstage/extensions(能力清单沙箱)、@openstage/inspector(报表/归因/成本/diff)、tools/compat-check 等价校验器
+- 工程收敛：pnpm typecheck 0、vitest 21/21、scripts/smoke.ps1 一键绿灯(f4eab0a)
+- 文档：README/QUICKSTART/docs stub 齐备，新 clone 5 步可复现
 
 ## 进行中
-- 无（P0 垂直切片已闭环）
+- 无（整个项目已达“可交付骨架”里程碑）
 
 ## 受阻
 - 无
 
-## 已完成（P1/P2 增量 2026-08-19）
-- SQLite 文件持久化、网关流式/SSE+重试+取消、事件投影状态快照与分支回滚修复
-- 新增 @openstage/inspector / @openstage/memory / @openstage/agent / @openstage/extensions / @openstage/recipe
-- tools/compat-check 等价校验器，CLI 接 Inspector 报表与 branch 演示
-- 测试 21/21、tsc clean，已提交 2ac7baf
-
-## 下一步
-1. 接真实 Provider 跑线上流式并落 trace 归档
-2. React/Tauri 头部界面
+## 下一步（可选演进）
+1. 接真实 Provider（OPENAI_API_KEY）跑线上流式并落 trace 归档
+2. React/Tauri 头部界面与 Prompt Inspector 视图
