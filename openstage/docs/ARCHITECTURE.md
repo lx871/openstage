@@ -33,6 +33,17 @@ primary/secondary keys · probability · group weight · depth/order → ranked 
 Regex keys are length-limited and nested-quantifier rejected to avoid ReDoS.
 Whole-word matching uses escaped regex; case handling respects `case_sensitive`.
 
+## Card Converter
+
+- `V1`/`V2`/`V3` → openstage via `normalizeRaw` + `characterFromV2` + `listKnowledgeFromV2Book`; `V2` vs `V3` differences (`nickname`/`character_version`/`creator_notes_multilingual`) are preserved in `unknownFields`.
+- `character_book` ↔ `KnowledgeBase` entries; `keys`→`primary`, `secondary_keys`→`secondary`; `insertion_order`→`order`.
+- PNG: `tEXt` chunk keyword `chara` (V2) / `ccv3` (V3); file ≤12 MB, chunk ≤5 MB, CRC-32, magic + unsigned length checked.
+
+## Browser Isolation
+
+- Node-only storage (`better-sqlite3`, `fs`/`path`) is replaced in the Web build via `packages/storage/src/index.browser.ts` + `sqlite-store.browser.ts` (in-memory stub) and Vite alias `@openstage/storage → index.browser.ts`.
+- `apps/web` runs entirely on localStorage + in-memory event store; no server required.
+
 ## Recipe
 
 - `compat-st-default` vs `native-modern` in `@openstage/recipe`.

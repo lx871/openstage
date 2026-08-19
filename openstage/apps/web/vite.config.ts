@@ -1,18 +1,16 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'node:url'
 
-const pkg = (name: string) => fileURLToPath(new URL(`./packages/${name}/src/index.ts`, import.meta.url))
+const pkg = (name: string) => fileURLToPath(new URL(`../../packages/${name}/src/index.ts`, import.meta.url))
 
 export default defineConfig({
-  test: {
-    include: ['packages/*/test/**/*.test.ts', 'tests/**/*.test.ts'],
-    environment: 'node',
-  },
+  plugins: [react()],
   resolve: {
     alias: {
       '@openstage/contracts': pkg('contracts'),
       '@openstage/domain': pkg('domain'),
-      '@openstage/storage': pkg('storage'),
+      '@openstage/storage': fileURLToPath(new URL('../../packages/storage/src/index.browser.ts', import.meta.url)),
       '@openstage/context-engine': pkg('context-engine'),
       '@openstage/gateway': pkg('gateway'),
       '@openstage/inspector': pkg('inspector'),
@@ -23,4 +21,5 @@ export default defineConfig({
       '@openstage/card-converter': pkg('card-converter'),
     },
   },
+  server: { port: 5173, host: true },
 })

@@ -5,16 +5,19 @@ import type { Character } from '@openstage/contracts'
 import { ConversationService } from '@openstage/context-engine'
 import { addKnowledgeBase, createKnowledgeRepo, EventStore, importCharacterBlob, importCharacterJson, importWorldInfoJson, importWorldInfoJsonl, linkCharacterKb, SqliteEventStore } from '@openstage/storage'
 import { planToReport, whyNotInjected, estimatePlanCost } from '@openstage/inspector'
+import { runConvert } from './convert.js'
 
 const HELP = `openstage — 兼容迁移平台
 
 用法:
-  openstage import <角色文件.json|.png> [--world <世界书.json|jsonl>] [-d <数据目录>]
-  openstage trace  <角色文件> [--turn N] [-d <数据目录>]   详细 trace（含 Inspector 报表）
-  openstage chat   <角色文件> [--seed 开场白] [--offline] [--key <KEY>] [--model <M>] [-d <数据目录>]
+  openstage import  <角色文件.json|.png> [--world <世界书.json|jsonl>] [-d <数据目录>]
+  openstage convert <卡片.json|.png> [--to v2|v3] [--out <输出>] [--png <底图.png>]  ST ↔ openstage 双向转换
+  openstage trace   <角色文件> [--turn N] [-d <数据目录>]   详细 trace（含 Inspector 报表）
+  openstage chat    <角色文件> [--seed 开场白] [--offline] [--key <KEY>] [--model <M>] [-d <数据目录>]
     --key 仅用于临时测试，密钥建议用环境变量 OPENAI_API_KEY / OPENSTAGE_API_KEY
-  openstage events [-d <数据目录>]                            列出最近事件
-  openstage branch <角色文件> [--turn N] [-d <数据目录>]       演示分支+状态回滚
+  openstage events  [-d <数据目录>]                            列出最近事件
+  openstage branch  <角色文件> [--turn N] [-d <数据目录>]       演示分支+状态回滚
+  openstage web     [--port 5173]                              启动 Web 前端
 `
 
 interface CliCtx {
@@ -80,6 +83,15 @@ async function main(): Promise<void> {
     const ctx = loadStore(dataDir, has('--sqlite'))
     const evs = ctx.store instanceof EventStore ? ctx.store.events : ctx.store.stream()
     for (const e of evs.slice(-20)) console.log(`#${e.seq} ${e.kind} conv=${e.conversationId ?? '-'}`)
+    return
+  }
+
+  if (cmd === 'convert') { await runConvert(args); return }
+  if (cmd === 'web') {
+    const port = Number(getOpt('--port') ?? 5173)
+    const { spawn: spawn2 } = await import('node:child_process')
+    const child2 = spawn2('pnpm', ['--filter', '@openstage/web', 'exec', 'vite', '--port', String(port)], { stdio: 'inherit', cwd: path.resolve('apps/web/..') })
+    await new Promise<void>((resolve) => child2.on('close', () => resolve()))
     return
   }
 

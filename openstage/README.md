@@ -25,19 +25,26 @@ SillyTavern 数据与交互生态的兼容迁移平台 + 面向现代模型的 A
 | Inspector（planToReport/whyNotInjected/estimatePlanCost + diffPlans） | ✅ |
 | 等价校验器（compat-check：未知字段透传与双模式 diff） | ✅ |
 | Recipe 声明式编译、分层记忆、工具/Agent、沙箱扩展 | ✅（可运行骨架） |
+| 卡片转换器 V1/V2/V3 ↔ openstage 双向（含 PNG 嵌入） | ✅ |
+| Web 前端（Vite+React，聊天/角色/世界书/Inspector/设置/转换） | ✅ |
 
 ## 快速开始
 
 ```bash
 pnpm install
 pnpm typecheck                          # tsc --noEmit
-pnpm test                               # vitest（21+）
+pnpm test                               # vitest（24）
+pnpm web:build                          # 构建 Web 前端
 
 pnpm cli import tests/fixtures/linwan.json
+pnpm cli convert tests/fixtures/linwan.json --to v3 --out /tmp/card.v3.json  # V2→V3 转写
 pnpm cli trace  tests/fixtures/linwan.json --turn 2   # 含 Inspector 报表
 pnpm cli branch tests/fixtures/linwan.json            # 分支+状态演示
 pnpm exec tsx tools/compat-check/src/index.ts tests/fixtures/linwan.json
 pnpm cli chat   tests/fixtures/linwan.json --offline  # 离线镜像对话
+
+# Web 前端
+pnpm --filter @openstage/web exec vite --port 5173  # 或 pnpm cli web
 ```
 
 Privacy: no telemetry; keys are transient via env vars only (see `PRIVACY.md`).
@@ -56,8 +63,10 @@ packages/
   agent/            工具注册与调度（state.patch/memory.remember/dice.roll）
   extensions/       能力授权清单 + Worker 沙箱主机位
   recipe/           声明式 Recipe 封装（compat/native 两个预设配方）
+  card-converter/   ST V1/V2/V3 ↔ openstage 双向（含 PNG tEXt 嵌入）
+apps/web/           Web 前端（Vite+React，browser 隔离存储）
 tools/
-  cli/              import/trace/branch/chat/events（含 Inspector 输出）
+  cli/              import/convert/trace/branch/chat/web/events（含 Inspector 输出）
   compat-check/     等价校验器
 tests/fixtures/     示例角色卡（林晚）
 ```
