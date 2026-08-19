@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { createRequire } from 'node:module'
 import type { Command, CommandResult, ConversationSnapshot, DomainEvent } from '@openstage/contracts'
 import { uuid } from '@openstage/contracts'
 import { applyEvent, createProjection, projectionToSnapshotLike as projectionToSnapshot } from '@openstage/domain'
@@ -37,6 +38,8 @@ CREATE TABLE IF NOT EXISTS snapshots (
 );
 `
 
+const require = createRequire(import.meta.url)
+
 export class SqliteEventStore {
   private db: import('better-sqlite3').Database
   private readonly mem: EventStore
@@ -46,11 +49,9 @@ export class SqliteEventStore {
     const filePath = opts.file
     if (!opts.inMemory) {
       fs.mkdirSync(path.dirname(path.resolve(filePath)), { recursive: true })
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const Database = require('better-sqlite3') as typeof import('better-sqlite3')
       this.db = new Database(path.resolve(filePath))
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const Database = require('better-sqlite3') as typeof import('better-sqlite3')
       this.db = new Database(':memory:')
     }
@@ -66,24 +67,32 @@ export class SqliteEventStore {
 
   async execute(cmd: Command): Promise<CommandResult> {
     const result = await this.mem.execute(cmd)
-    if (result.ok) await this.appendBatch(result.events)
-    return result
-  }
-
-  private async appendBatch(batch: DomainEvent[]): Promise<void> {
-    const stmt = this.db.prepare(
-      'INSERT OR IGNORE INTO events (id, kind, at, conversation_id, actor, data_json) VALUES (@id, @kind, @at, @conversation_id, @actor, @data_json)',
-    )
-    for (const e of batch) {
-      stmt.run({
-        id: e.id,
-        kind: e.kind,
-        at: e.at,
-        conversation_id: e.conversationId ?? null,
-        actor: e.actor ?? null,
-        data_json: JSON.stringify(e.data),
-      })
+    if (!result.ok) return result
+    const tx = this.db.transaction((batch: DomainEvent[]) => {
+      const stmt = this.db.prepare(
+        'INSERT INTO events (id, kind, at, conversation_id, actor, data_json) VALUES (@id, @kind, @at, @conversation_id, @actor, @data_json)',
+      )
+      for (const e of batch) {
+        stmt.run({
+          id: e.id,
+          kind: e.kind,
+          at: e.at,
+          conversation_id: e.conversationId ?? null,
+          actor: e.actor ?? null,
+          data_json: JSON.stringify(e.data),
+        })
+      }
+    })
+    try {
+      tx(result.events)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      if (msg.includes('UNIQUE constraint failed')) {
+        return { ok: false, seq: this.latestSeq(), events: [], error: `duplicate event id: ${msg}` }
+      }
+      throw err
     }
+    return result
   }
 
   async load(conversationId: string): Promise<ConversationSnapshot | null> {

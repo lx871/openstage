@@ -40,6 +40,8 @@ pnpm exec tsx tools/compat-check/src/index.ts tests/fixtures/linwan.json
 pnpm cli chat   tests/fixtures/linwan.json --offline  # 离线镜像对话
 ```
 
+Privacy: no telemetry; keys are transient via env vars only (see `PRIVACY.md`).
+
 ## 目录
 
 ```

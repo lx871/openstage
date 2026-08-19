@@ -1,4 +1,5 @@
 import type { TokenUsage, UnknownRecord } from '@openstage/contracts'
+import { validateEndpoint } from './allowlist.js'
 
 export interface Capability {
   supportsTools: boolean
@@ -61,6 +62,8 @@ export function createOpenAICompatibleAdapter(opts?: AdapterOptions): ProviderAd
   const apiKey = opts?.apiKey ?? process.env.OPENSTAGE_API_KEY ?? process.env.OPENAI_API_KEY ?? ''
   const offline = opts?.offline ?? !apiKey
 
+  validateEndpoint(endpoint)
+
   if (offline) return createOfflineAdapter(model)
 
   const doComplete = async (request: UnknownRecord, signal?: AbortSignal): Promise<{ text: string; usage: TokenUsage | null }> => {
@@ -71,9 +74,8 @@ export function createOpenAICompatibleAdapter(opts?: AdapterOptions): ProviderAd
       signal,
     })
     if (!res.ok) {
-      const body = await res.text().catch(() => '')
       const retryable = res.status === 429 || res.status >= 500
-      const err = new Error(`provider ${res.status}: ${body.slice(0, 600)}`) as Error & { status?: number; retryable?: boolean }
+      const err = new Error(`provider ${res.status}`) as Error & { status?: number; retryable?: boolean }
       err.status = res.status
       err.retryable = retryable
       throw err
@@ -127,8 +129,7 @@ export function createOpenAICompatibleAdapter(opts?: AdapterOptions): ProviderAd
         throw err
       }
       if (!res.ok || !res.body) {
-        const body = await res.text().catch(() => '')
-        throw new Error(`provider ${res.status}: ${body.slice(0, 600)}`)
+        throw new Error(`provider ${res.status}`)
       }
       const reader = res.body.getReader()
       const decoder = new TextDecoder()

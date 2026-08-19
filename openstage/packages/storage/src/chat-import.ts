@@ -1,5 +1,6 @@
 import type { Block, MessageRole, UnknownRecord } from '@openstage/contracts'
 import { uuid } from '@openstage/contracts'
+import { assertEntryCount } from './validate-path.js'
 import { objOf } from './codecs.js'
 
 export interface ParsedChatMessage {
@@ -30,8 +31,10 @@ const ROLE_MAP: Record<string, MessageRole> = {
 }
 
 export function importChatJsonl(raw: string): ParsedChat {
+  if (raw.length > 5 * 1024 * 1024) throw Object.assign(new Error('chat too large'), { code: 'file_too_large' })
   const messages: ParsedChatMessage[] = []
   const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter((l) => l.length > 0)
+  assertEntryCount(lines.length)
   for (const line of lines) {
     let obj: unknown
     try {
@@ -63,6 +66,7 @@ export function importChatJsonl(raw: string): ParsedChat {
 const TXT_SPLIT = /(?:^|\n)(?={{\/?(?:char|user)(?:\||}})[\s\S]*?)(?={{\/?(?:char|user)|\z)/gm
 
 export function importChatTxt(raw: string): ParsedChat {
+  if (raw.length > 5 * 1024 * 1024) throw Object.assign(new Error('chat too large'), { code: 'file_too_large' })
   const messages: ParsedChatMessage[] = []
   for (const m of Array.from(raw.matchAll(TXT_SPLIT))) {
     const piece = m[0]

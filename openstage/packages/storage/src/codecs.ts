@@ -1,16 +1,23 @@
 import type { UnknownRecord } from '@openstage/contracts'
 
+const PNG_MAX_CHUNK_BYTES = 5 * 1024 * 1024
+
 /** Extract embedded JSON chunk from a PNG file (card data in tEXt chunks named chara / ccv3). */
 export function extractPngTextChunk(buffer: Uint8Array): string[] {
+  if (buffer.length > 12 * 1024 * 1024) {
+    throw Object.assign(new Error(`PNG too large: ${buffer.length} bytes`), { code: 'file_too_large' })
+  }
+  if (buffer.length < 8) return []
   const chunks: string[] = []
   let p = 8
-  while (p < buffer.length) {
-    if (p + 8 > buffer.length) break
+  while (p + 8 <= buffer.length) {
     const length = readIntBE(buffer, p)
+    if (length < 0 || length > PNG_MAX_CHUNK_BYTES) break
     const type = String.fromCharCode(...buffer.slice(p + 4, p + 8))
     const dataStart = p + 8
     const dataEnd = dataStart + length
-    if (type === 'tEXt' && dataEnd + 1 <= buffer.length) {
+    if (dataEnd + 4 > buffer.length) break
+    if (type === 'tEXt' && dataEnd <= buffer.length) {
       const text = buffer.slice(dataStart, dataEnd)
       const nullIdx = text.indexOf(0)
       if (nullIdx > 0) {

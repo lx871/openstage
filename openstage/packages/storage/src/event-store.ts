@@ -88,41 +88,24 @@ export class EventStore {
         ]
       }
       case 'appendMessages': {
-        const eid = uuid()
-        const out: DomainEvent[] = [
-          {
-            id: eid, kind: 'message.created', at, conversationId: cmd.conversationId, actor: 'cli',
+        const out: DomainEvent[] = []
+        let cursor: string | null = cmd.parentId ?? null
+        for (const m of cmd.messages) {
+          const mid = (m.id as string | undefined) ?? uuid()
+          out.push({
+            id: uuid(), kind: 'message.created', at, conversationId: cmd.conversationId, actor: 'cli',
             data: {
-              messageId: uuid(),
-              parentId: cmd.parentId ?? null,
-              role: cmd.messages[0]?.role ?? 'user',
-              speakerId: cmd.messages[0]?.speakerId,
-              displayName: cmd.messages[0]?.displayName,
-              blocks: cmd.messages[0]?.blocks ?? [],
-              metaTrigger: cmd.messages[0]?.metaTrigger,
-              at: cmd.messages[0]?.at ?? at,
+              messageId: mid,
+              parentId: cursor,
+              role: m.role,
+              speakerId: m.speakerId,
+              displayName: m.displayName,
+              blocks: m.blocks ?? [],
+              metaTrigger: m.metaTrigger,
+              at: m.at ?? at,
             },
-          },
-        ]
-        if (cmd.messages.length > 1) {
-          let cursor: string | null = cmd.parentId ?? null
-          for (let i = 1; i < cmd.messages.length; i++) {
-            const m = cmd.messages[i]!
-            out.push({
-              id: uuid(), kind: 'message.created', at, conversationId: cmd.conversationId, actor: 'cli',
-              data: {
-                messageId: uuid(),
-                parentId: cursor,
-                role: m.role,
-                speakerId: m.speakerId,
-                displayName: m.displayName,
-                blocks: m.blocks,
-                metaTrigger: m.metaTrigger,
-                at: m.at ?? at,
-              },
-            })
-            cursor = out[out.length - 1]!.data.messageId as string
-          }
+          })
+          cursor = mid
         }
         return out
       }

@@ -138,10 +138,18 @@ function scanDepthScore(turn: number): number {
   return 10000 - Math.min(turn, 10000)
 }
 
+const RE_MAX_LEN = 200
+const RE_NESTED_QUANT_RE = /(\+|\*|\{[^}]+\})\s*(\+|\*|\{[^}]+\})/
+
 export function matchKey(text: string, key: string, kw: KnowledgeEntry['activation']['keyword']): boolean {
   if (kw.useRegex) {
+    if (key.length > RE_MAX_LEN) return false
+    if (RE_NESTED_QUANT_RE.test(key)) return false
     try {
-      return new RegExp(key, kw.caseSensitive === false ? 'i' : '').test(text)
+      const flags = kw.caseSensitive === false ? 'i' : ''
+      const re = new RegExp(key, flags)
+      const ok = re.test(text.slice(0, 8000))
+      return ok
     } catch {
       return false
     }

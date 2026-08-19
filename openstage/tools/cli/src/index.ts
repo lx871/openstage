@@ -11,7 +11,8 @@ const HELP = `openstage — 兼容迁移平台
 用法:
   openstage import <角色文件.json|.png> [--world <世界书.json|jsonl>] [-d <数据目录>]
   openstage trace  <角色文件> [--turn N] [-d <数据目录>]   详细 trace（含 Inspector 报表）
-  openstage chat   <角色文件> [--seed 开场白] [--offline|--key <KEY>] [--model <M>] [-d <数据目录>]
+  openstage chat   <角色文件> [--seed 开场白] [--offline] [--key <KEY>] [--model <M>] [-d <数据目录>]
+    --key 仅用于临时测试，密钥建议用环境变量 OPENAI_API_KEY / OPENSTAGE_API_KEY
   openstage events [-d <数据目录>]                            列出最近事件
   openstage branch <角色文件> [--turn N] [-d <数据目录>]       演示分支+状态回滚
 `
@@ -30,6 +31,11 @@ function loadStore(dataDir: string, useSqlite: boolean): CliCtx {
     ? new SqliteEventStore({ file: path.join(dataDir, 'openstage.db') })
     : new EventStore()
   return { dataDir, store, characters, knowledge }
+}
+
+function assertUnderDataRoot(resolved: string, root: string): void {
+  const rel = path.relative(path.resolve(root), path.resolve(resolved))
+  if (rel.startsWith('..') || path.isAbsolute(rel)) throw Object.assign(new Error(`path escapes allowed root: ${resolved} not under ${root}`), { code: 'path_escape' })
 }
 
 function importCharacterInto(ctx: CliCtx, file: string): Character {
@@ -51,6 +57,7 @@ function importWorld(ctx: CliCtx, file: string): void {
   const raw = fs.readFileSync(resolved, 'utf8')
   const kb = /\.jsonl$/i.test(resolved) ? importWorldInfoJsonl(raw) : importWorldInfoJson(raw)
   addKnowledgeBase(ctx.knowledge, kb as never)
+  assertUnderDataRoot(resolved, process.cwd())
 }
 
 async function main(): Promise<void> {
@@ -100,7 +107,8 @@ async function main(): Promise<void> {
   }
 
   if (cmd === 'chat') {
-    await chat(service, character, { seed: getOpt('--seed'), offline: has('--offline'), apiKey: getOpt('--key'), model: getOpt('--model') })
+    if (has('--key')) console.warn('[warn] --key exposes secret in shell history; prefer env OPENAI_API_KEY/OPENSTAGE_API_KEY or stdin')
+    await chat(service, character, { seed: getOpt('--seed'), offline: has('--offline') || !getOpt('--key'), apiKey: getOpt('--key'), model: getOpt('--model') })
     return
   }
 
