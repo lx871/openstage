@@ -25,16 +25,18 @@ export default function ConverterPage(): React.ReactElement {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `openstage-${target}.json`; a.click()
   }
 
+  const [pngBase, setPngBase] = useState<Uint8Array | null>(null)
+
+  const onPngBase = async (f: File): Promise<void> => { setPngBase(new Uint8Array(await f.arrayBuffer())) }
+
   const downloadPng = async (): Promise<void> => {
     if (!jsonOut) return
-    const res = JSON.parse(jsonOut)
-    const ch = res.data ?? res
     const charId = useStore.get().activeCharacterId
     const char = charId ? useStore.get().characters.find((c) => c.id === charId) : null
     const kb = charId ? useStore.get().knowledgeByChar[charId] ?? null : null
-    void ch
     if (!char) return
-    const png = exportToPng(new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,2,0,0,0,144,119,83,222,0,0,0,12,73,68,65,84,8,215,99,248,255,255,63,0,5,254,2,254,220,67,181,142,0,0,0,0,73,69,78,68,174,66,96,130]), char, kb, { targetVersion: target })
+    const base = pngBase ?? new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,2,0,0,0,144,119,83,222,0,0,0,12,73,68,65,84,8,215,99,248,255,255,63,0,5,254,2,254,220,67,181,142,0,0,0,0,73,69,78,68,174,66,96,130])
+    const png = exportToPng(base, char, kb, { targetVersion: target })
     const blob = new Blob([new Uint8Array(png)], { type: 'image/png' })
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `card-${target}.png`; a.click()
   }
@@ -54,6 +56,11 @@ export default function ConverterPage(): React.ReactElement {
       <label style={{ border: '1px dashed #d1d5db', borderRadius: 10, padding: 14, background: '#fff', cursor: 'pointer', fontSize: 13 }}>
         上传 ST 卡片（.json / .png）
         <input type="file" accept=".json,.png" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void onFile(f) }} />
+      </label>
+      <label style={{ border: '1px dashed #d1d5db', borderRadius: 10, padding: 10, background: '#fafafa', cursor: 'pointer', fontSize: 11 }}>
+        底图 PNG（可选，用于导出 PNG 时保留原图；不选则用 1×1 占位）
+        <input type="file" accept=".png" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void onPngBase(f) }} />
+        {pngBase ? `已选择底图（${pngBase.length} bytes）` : '未选择底图'}
       </label>
       {log && <div style={{ fontSize: 12, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, padding: 8 }}>{log}</div>}
       {jsonOut && (

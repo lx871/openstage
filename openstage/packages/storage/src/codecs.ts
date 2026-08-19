@@ -17,20 +17,69 @@ export function extractPngTextChunk(buffer: Uint8Array): string[] {
     const dataStart = p + 8
     const dataEnd = dataStart + length
     if (dataEnd + 4 > buffer.length) break
-    if (type === 'tEXt' && dataEnd <= buffer.length) {
-      const text = buffer.slice(dataStart, dataEnd)
-      const nullIdx = text.indexOf(0)
+    const chunkData = buffer.slice(dataStart, dataEnd)
+    if (type === 'tEXt') {
+      const nullIdx = chunkData.indexOf(0)
       if (nullIdx > 0) {
-        const keyword = String.fromCharCode(...text.slice(0, nullIdx))
+        const keyword = new TextDecoder().decode(chunkData.slice(0, nullIdx))
         if (keyword === 'chara' || keyword === 'ccv3') {
-          const value = String.fromCharCode(...text.slice(nullIdx + 1))
-          chunks.push(value)
+          chunks.push(new TextDecoder().decode(chunkData.slice(nullIdx + 1)))
         }
       }
+    } else if (type === 'zTXt' || type === 'iTXt') {
+      const extracted = tryDecompressChunk(type, chunkData)
+      if (extracted) chunks.push(extracted)
     }
     p = dataEnd + 4
   }
   return chunks
+}
+
+function tryDecompressChunk(type: string, data: Uint8Array): string | null {
+  const nullIdx = data.indexOf(0)
+  if (nullIdx <= 0) return null
+  const keyword = new TextDecoder().decode(data.slice(0, nullIdx))
+  if (keyword !== 'chara' && keyword !== 'ccv3') return null
+  try {
+    if (type === 'zTXt') {
+      const compressed = data.slice(nullIdx + 2)
+      const decompressed = tryInflate(compressed)
+      if (decompressed) return new TextDecoder().decode(decompressed)
+    } else if (type === 'iTXt') {
+      let p = nullIdx + 1
+      const compFlag = data[p]; p += 1
+      const compMethod = data[p]; p += 1
+      const langEnd = data.indexOf(0, p); if (langEnd < 0) return null; p = langEnd + 1
+      const keyEnd = data.indexOf(0, p); if (keyEnd < 0) return null; p = keyEnd + 1
+      const payload = data.slice(p)
+      if (compFlag === 1 && compMethod === 0) {
+        const decompressed = tryInflate(payload)
+        if (decompressed) return new TextDecoder().decode(decompressed)
+      } else if (compFlag === 0) {
+        return new TextDecoder().decode(payload)
+      }
+    }
+  } catch {}
+  return null
+}
+
+function tryInflate(data: Uint8Array): Uint8Array | null {
+  try {
+    // pako is ESM-friendly via dynamic import fallback
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = eval("require") as (id: string) => { inflate: (d: Uint8Array) => Uint8Array }
+    const pako = mod('pako')
+    return pako.inflate(data)
+  } catch {
+    try {
+      // browser / ESM path
+      // @ts-ignore
+      const g: unknown = globalThis
+      const p = (g as { pako?: { inflate: (d: Uint8Array) => Uint8Array } })?.pako
+      if (p) return p.inflate(data)
+    } catch {}
+    return null
+  }
 }
 
 export function readIntBE(buf: Uint8Array, offset: number): number {

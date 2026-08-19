@@ -10,9 +10,11 @@ export function listConversations(): string[] {
   try { return JSON.parse(localStorage.getItem(idxKey()) ?? '[]') as string[] } catch { return [] }
 }
 export function saveConversation(c: Conversation): void {
+  if (JSON.stringify(c).length > 1_000_000) throw Object.assign(new Error('conversation too large'), { code: 'too_large' })
   localStorage.setItem(key(c.id), JSON.stringify(c))
   const idx = new Set(listConversations()); idx.add(c.id)
-  localStorage.setItem(idxKey(), JSON.stringify([...idx]))
+  if (idx.size > 200) { const arr = [...idx]; for (const old of arr.slice(0, idx.size - 200)) localStorage.removeItem(key(old)) }
+  localStorage.setItem(idxKey(), JSON.stringify([...idx].slice(-200)))
 }
 export function loadConversation(id: string): Conversation | null {
   try { const raw = localStorage.getItem(key(id)); return raw ? JSON.parse(raw) as Conversation : null } catch { return null }
