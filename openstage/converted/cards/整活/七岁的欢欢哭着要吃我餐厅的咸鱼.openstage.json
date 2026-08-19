@@ -1,0 +1,791 @@
+{
+  "_openstage": {
+    "converted_from": "整活\\七岁的欢欢哭着要吃我餐厅的咸鱼.png",
+    "sourceVersion": "v3",
+    "at": "2026-08-19T23:30:20.134Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "ddd9af43-a7f2-4683-89e6-54f52d239a7c",
+    "identity": {
+      "name": "反掠夺系统",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "反掠夺系统",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "3c301c80-be9b-448c-9492-ef31b6da70e2",
+              "scriptName": "单选项美化",
+              "findRegex": "/<option1>([\\s\\S]*?)<\\/option1>[\\s\\S]*?<option2>([\\s\\S]*?)<\\/option2>[\\s\\S]*?<option3>([\\s\\S]*?)<\\/option3>[\\s\\S]*?<option4>([\\s\\S]*?)<\\/option4>/s",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>选项</title>\n    <style>\n        /* 搞笑主题配色 */\n        :root {\n            --bg-color: #1a1a2e;\n            --primary-color: #ffcc00;\n            --secondary-color: #ff6699;\n            --text-color: #f0f8ff;\n            --border-color: #3366cc;\n            --tab-inactive-bg: #2d2d44;\n            --accent-pink: #ff6699;\n            --accent-yellow: #ffcc00;\n        }\n\n        body {\n            background-color: var(--bg-color);\n            color: var(--text-color);\n            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';\n            -webkit-font-smoothing: antialiased;\n            -moz-osx-font-smoothing: grayscale;\n            margin: 0;\n            padding: 1rem;\n            box-sizing: border-box;\n            position: relative;\n            background-image: \n                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.1) 0%, transparent 20%),\n                radial-gradient(circle at 90% 80%, rgba(255, 102, 153, 0.1) 0%, transparent 20%);\n            min-height: 100vh;\n        }\n\n        .header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 1.5rem;\n            width: 100%;\n        }\n\n        .page-title {\n            font-size: 1.5rem;\n            font-weight: 700;\n            color: var(--accent-yellow);\n            margin: 0;\n            text-shadow: 0 2px 5px rgba(255, 204, 0, 0.3);\n        }\n\n        .settings-btn {\n            width: 2.5rem;\n            height: 2.5rem;\n            border-radius: 50%;\n            background: rgba(255, 204, 0, 0.2);\n            border: 1px solid rgba(255, 204, 0, 0.5);\n            color: var(--text-color);\n            cursor: pointer;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            transition: all 0.3s ease;\n            font-size: 1.2rem;\n        }\n\n        .settings-btn:hover {\n            background: rgba(255, 204, 0, 0.3);\n            transform: scale(1.1);\n        }\n\n        #options-container {\n            padding: 1.5rem;\n            background: var(--tab-inactive-bg);\n            border-radius: 1rem;\n            display: flex;\n            flex-direction: column;\n            gap: 1rem;\n            width: 100%;\n            margin: 0;\n            border: 2px dashed var(--border-color);\n            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);\n            box-sizing: border-box;\n        }\n\n        .option-button {\n            display: flex;\n            align-items: center;\n            padding: 1rem 1.5rem;\n            border-radius: 0.75rem;\n            background-color: rgba(51, 102, 204, 0.2);\n            border: 1px solid transparent;\n            color: var(--text-color);\n            font-size: 1rem;\n            font-weight: 500;\n            text-align: left;\n            cursor: pointer;\n            transition: all 0.3s ease;\n            position: relative;\n            counter-increment: option-counter;\n            width: 100%;\n            box-sizing: border-box;\n            word-break: break-word;\n        }\n\n        .option-button:before {\n            content: '😂 ' counter(option-counter) '. ';\n            font-weight: 700;\n            color: var(--accent-yellow);\n            margin-right: 0.75rem;\n            flex-shrink: 0;\n        }\n\n        .option-button:hover {\n            background-color: rgba(255, 102, 153, 0.2);\n            transform: translateY(-3px) scale(1.02);\n            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.2);\n            border-color: rgba(255, 204, 0, 0.5);\n            color: white;\n        }\n\n        .option-button:active {\n            transform: translateY(0) scale(1);\n            background-color: rgba(255, 102, 153, 0.3);\n        }\n\n        /* 设置面板样式 */\n        .settings-panel {\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background-color: rgba(0, 0, 0, 0.7);\n            z-index: 1001;\n            display: none;\n            align-items: center;\n            justify-content: center;\n            backdrop-filter: blur(4px);\n        }\n\n        .settings-content {\n            background: var(--bg-color);\n            border: 2px dashed var(--border-color);\n            border-radius: 1rem;\n            padding: 1.5rem;\n            width: 90%;\n            max-width: 400px;\n            max-height: 80vh;\n            overflow-y: auto;\n            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);\n        }\n\n        .settings-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 1.5rem;\n            border-bottom: 1px dashed var(--border-color);\n            padding-bottom: 1rem;\n        }\n\n        .settings-title {\n            font-size: 1.25rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .close-btn {\n            background: none;\n            border: none;\n            color: var(--text-color);\n            font-size: 1.5rem;\n            cursor: pointer;\n            padding: 0;\n            width: 30px;\n            height: 30px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            border-radius: 50%;\n            transition: background 0.3s ease;\n        }\n\n        .close-btn:hover {\n            background: rgba(255, 204, 0, 0.2);\n        }\n\n        .settings-group {\n            margin-bottom: 1.5rem;\n        }\n\n        .settings-label {\n            display: block;\n            margin-bottom: 0.5rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .action-mode-options {\n            display: flex;\n            flex-direction: column;\n            gap: 0.75rem;\n        }\n\n        .action-mode-option {\n            display: flex;\n            align-items: flex-start;\n            padding: 0.75rem;\n            border: 1px dashed var(--border-color);\n            border-radius: 0.5rem;\n            cursor: pointer;\n            transition: all 0.2s ease;\n            background-color: rgba(255, 204, 0, 0.05);\n        }\n\n        .action-mode-option:hover {\n            background-color: rgba(255, 204, 0, 0.1);\n            border-color: rgba(255, 204, 0, 0.5);\n        }\n\n        .action-mode-option input[type='radio'] {\n            display: none;\n        }\n\n        .radio-custom {\n            width: 16px;\n            height: 16px;\n            border: 2px dashed var(--border-color);\n            border-radius: 50%;\n            margin-right: 0.75rem;\n            margin-top: 0.125rem;\n            position: relative;\n            transition: all 0.2s ease;\n            flex-shrink: 0;\n        }\n\n        .radio-custom::after {\n            content: '';\n            width: 8px;\n            height: 8px;\n            background-color: var(--accent-yellow);\n            border-radius: 50%;\n            position: absolute;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%) scale(0);\n            transition: transform 0.2s ease;\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom {\n            border-color: var(--accent-yellow);\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom::after {\n            transform: translate(-50%, -50%) scale(1);\n        }\n\n        .option-content {\n            display: flex;\n            flex-direction: column;\n            gap: 0.25rem;\n        }\n\n        .option-title {\n            font-weight: 600;\n            color: var(--text-color);\n            font-size: 0.875rem;\n        }\n\n        .option-desc {\n            font-size: 0.75rem;\n            color: var(--accent-pink);\n            line-height: 1.4;\n        }\n\n        /* 响应式设计 */\n        @media (max-width: 480px) {\n            body {\n                padding: 0.5rem;\n            }\n            \n            .header {\n                margin-bottom: 1rem;\n            }\n            \n            .page-title {\n                font-size: 1.3rem;\n            }\n            \n            #options-container {\n                padding: 1rem;\n                gap: 0.75rem;\n                border-radius: 0.75rem;\n            }\n            \n            .option-button {\n                padding: 0.75rem 1rem;\n                font-size: 0.9rem;\n            }\n            \n            .option-button:before {\n                margin-right: 0.5rem;\n            }\n        }\n\n        @media (max-width: 320px) {\n            .option-button {\n                padding: 0.6rem 0.8rem;\n                font-size: 0.85rem;\n            }\n            \n            .option-button:before {\n                margin-right: 0.4rem;\n            }\n        }\n    </style>\n</head>\n<body>\n    <!-- 页面标题和设置按钮 -->\n    <div class=\"header\">\n        <h1 class=\"page-title\">😂 反掠夺选项</h1>\n        <button class=\"settings-btn\" title=\"设置\">⚙️</button>\n    </div>\n\n    <!-- 设置面板 -->\n    <div class=\"settings-panel\">\n        <div class=\"settings-content\">\n            <div class=\"settings-header\">\n                <h2 class=\"settings-title\">设置</h2>\n                <button class=\"close-btn\">&times;</button>\n            </div>\n            \n            <div class=\"settings-group\">\n                <label class=\"settings-label\">行动选项点击处理</label>\n                <div class=\"action-mode-options\">\n                    <label class=\"action-mode-option\">\n                        <input type=\"radio\" name=\"action-mode\" value=\"send-to-chat\" id=\"send-to-chat-mode\" checked />\n                        <span class=\"radio-custom\"></span>\n                        <div class=\"option-content\">\n                            <span class=\"option-title\">发送到酒馆聊天框</span>\n                            <span class=\"option-desc\">点击后将选项文本添加到聊天输入框中</span>\n                        </div>\n                    </label>\n                    <label class=\"action-mode-option\">\n                        <input type=\"radio\" name=\"action-mode\" value=\"direct-execute\" id=\"direct-execute-mode\" />\n                        <span class=\"radio-custom\"></span>\n                        <div class=\"option-content\">\n                            <span class=\"option-title\">点击直接执行</span>\n                            <span class=\"option-desc\">点击后立即发送消息并触发回复</span>\n                        </div>\n                    </label>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <!-- 选项按钮区域 -->\n    <div id=\"options-container\">\n        <button class=\"option-button\" data-text=\"$1\">$1</button>\n        <button class=\"option-button\" data-text=\"$2\">$2</button>\n        <button class=\"option-button\" data-text=\"$3\">$3</button>\n        <button class=\"option-button\" data-text=\"$4\">$4</button>\n    </div>\n\n    <script>\n        // SillyTavern通信函数\n        const triggerQuickReply = text => {\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n            if (typeof triggerSlash === 'function') {\n                triggerSlash(`/send ${text}|/trigger`);\n            } else {\n                console.log('SillyTavern environment not detected. Would send:', text);\n            }\n        };\n\n        // 发送文本到酒馆聊天框的函数\n        const sendToChatBox = text => {\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n\n            try {\n                const $textarea = $(parent.document).find('#send_textarea');\n\n                if ($textarea.length === 0) {\n                    console.log('未找到聊天输入框 (#send_textarea)');\n                    return;\n                }\n\n                const currentContent = $textarea.val() || '';\n\n                if (currentContent.includes(text.trim())) {\n                    console.log('聊天框中已包含该文本，跳过添加');\n                    return;\n                }\n\n                const separator = currentContent.trim() ? '\\n' : '';\n                const newContent = currentContent + separator + text.trim();\n\n                $textarea.val(newContent);\n                $textarea.trigger('input');\n\n                console.log('已添加文本到聊天框:', text.trim());\n            } catch (error) {\n                console.error('发送到聊天框时出错:', error);\n                triggerQuickReply(text);\n            }\n        };\n\n        // 获取当前行动模式设置的函数\n        function getActionMode() {\n            const savedMode = localStorage.getItem('actionMode');\n            return savedMode || 'send-to-chat';\n        }\n\n        // 初始化设置面板\n        function initSettingsPanel() {\n            const settingsBtn = document.querySelector('.settings-btn');\n            const settingsPanel = document.querySelector('.settings-panel');\n            const closeBtn = document.querySelector('.close-btn');\n            const actionModeRadios = document.querySelectorAll('input[name=\"action-mode\"]');\n\n            // 显示设置面板\n            settingsBtn.addEventListener('click', () => {\n                settingsPanel.style.display = 'flex';\n                document.body.style.overflow = 'hidden';\n            });\n\n            // 关闭设置面板\n            const closeSettings = () => {\n                settingsPanel.style.display = 'none';\n                document.body.style.overflow = '';\n            };\n\n            closeBtn.addEventListener('click', closeSettings);\n\n            // 点击面板外部关闭\n            settingsPanel.addEventListener('click', e => {\n                if (e.target === settingsPanel) {\n                    closeSettings();\n                }\n            });\n\n            // ESC键关闭\n            document.addEventListener('keydown', e => {\n                if (e.key === 'Escape' && settingsPanel.style.display === 'flex') {\n                    closeSettings();\n                }\n            });\n\n            // 初始化行动模式设置\n            const savedActionMode = localStorage.getItem('actionMode') || 'send-to-chat';\n            actionModeRadios.forEach(radio => {\n                if (radio.value === savedActionMode) {\n                    radio.checked = true;\n                }\n                radio.addEventListener('change', () => {\n                    if (radio.checked) {\n                        localStorage.setItem('actionMode', radio.value);\n                    }\n                });\n            });\n        }\n\n        document.addEventListener('DOMContentLoaded', () => {\n            // 初始化设置面板\n            initSettingsPanel();\n\n            // 为每个选项按钮添加点击事件监听器\n            const optionButtons = document.querySelectorAll('.option-button');\n            optionButtons.forEach(button => {\n                const optionText = button.getAttribute('data-text').trim();\n\n                // 如果选项为空，则隐藏该按钮\n                if (!optionText || ['…', '...', '无', '没有'].includes(optionText)) {\n                    button.style.display = 'none';\n                    return;\n                }\n\n                button.addEventListener('click', () => {\n                    // 根据设置选择操作方式\n                    const actionMode = getActionMode();\n                    if (actionMode === 'send-to-chat') {\n                        sendToChatBox(optionText);\n                    } else {\n                        triggerQuickReply(optionText);\n                    }\n                    \n                    // 添加视觉反馈\n                    button.style.backgroundColor = 'rgba(255, 102, 153, 0.3)';\n                    setTimeout(() => { button.style.backgroundColor = ''; }, 300);\n                });\n            });\n        });\n    </script>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": true,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": 4
+            },
+            {
+              "id": "87458f65-f579-4071-b2e6-e2ba3c337043",
+              "scriptName": "正文+选项美化",
+              "findRegex": "/<yubing>([\\s\\S]*?)<\\/yubing>[\\s\\S]*?<option1>([\\s\\S]*?)<\\/option1>[\\s\\S]*?<option2>([\\s\\S]*?)<\\/option2>[\\s\\S]*?<option3>([\\s\\S]*?)<\\/option3>[\\s\\S]*?<option4>([\\s\\S]*?)<\\/option4>/s",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>反掠夺系统</title>\n    <!-- 使用Cloudflare CDN加载Tailwind CSS -->\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.4.1/tailwind.min.js\"></script>\n    <!-- 使用Cloudflare CDN加载Marked.js用于Markdown解析 -->\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js\"></script>\n    <!-- 引入jQuery库 -->\n    <script src=\"https://code.jquery.com/jquery-3.6.0.min.js\"></script>\n\n    <style>\n        /* 搞笑主题配色 */\n        :root {\n            --bg-color: #1a1a2e;\n            --primary-color: #ffcc00;\n            --secondary-color: #ff6699;\n            --text-color: #f0f8ff;\n            --border-color: #3366cc;\n            --tab-inactive-bg: #2d2d44;\n            --tab-active-bg: var(--secondary-color);\n            --tab-hover-bg: #3d3d5c;\n            --section-header-bg: #2d2d44;\n            --accent-yellow: #ffcc00;\n            --accent-pink: #ff6699;\n            --accent-blue: #3366cc;\n        }\n\n        body {\n            background-color: var(--bg-color);\n            color: var(--text-color);\n            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';\n            -webkit-font-smoothing: antialiased;\n            -moz-osx-font-smoothing: grayscale;\n            background-image: \n                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.15) 0%, transparent 20%),\n                radial-gradient(circle at 90% 80%, rgba(255, 102, 153, 0.15) 0%, transparent 20%);\n        }\n\n        .game-container {\n            /* 修改为流式布局，移除max-width限制 */\n            margin: 1rem;\n            background-color: var(--bg-color);\n            border-radius: 1.5rem;\n            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);\n            border: 2px dashed var(--border-color);\n            overflow: hidden;\n            animation: fadeIn 0.8s ease-out;\n            position: relative;\n        }\n\n        .game-container::before {\n            content: \"\";\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            height: 3px;\n            background: linear-gradient(90deg, transparent, var(--primary-color), var(--secondary-color), transparent);\n            z-index: 2;\n        }\n\n        .game-title {\n            padding: 1.8rem;\n            font-size: 2rem;\n            font-weight: 700;\n            text-align: center;\n            background: linear-gradient(to right, var(--accent-blue), var(--secondary-color));\n            color: var(--text-color);\n            border-bottom: 2px dashed var(--border-color);\n            text-shadow: 0 2px 10px rgba(255, 204, 0, 0.5);\n            animation: slideDown 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);\n            position: relative;\n        }\n\n        /* 设置按钮样式 */\n        .settings-btn-new {\n            position: absolute;\n            top: 50%;\n            right: 1.8rem;\n            transform: translateY(-50%);\n            width: 2.5rem;\n            height: 2.5rem;\n            border-radius: 50%;\n            background: rgba(255, 204, 0, 0.2);\n            border: 1px solid rgba(255, 204, 0, 0.5);\n            color: var(--text-color);\n            cursor: pointer;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            z-index: 10;\n            transition: all 0.3s ease;\n            font-size: 1.2rem;\n        }\n\n        .settings-btn-new:hover {\n            background: rgba(255, 204, 0, 0.3);\n            transform: translateY(-50%) scale(1.1);\n        }\n\n        #maintext-container {\n            padding: 2rem;\n            line-height: 1.9;\n            font-size: 1.05rem;\n            background-color: var(--bg-color);\n        }\n\n        /* Markdown内容适配样式 */\n        #maintext-container p { margin-bottom: 1rem; }\n        #maintext-container h1, #maintext-container h2, #maintext-container h3 {\n            color: var(--accent-yellow);\n            margin-top: 1.5rem;\n            margin-bottom: 1rem;\n            padding-bottom: 0.5rem;\n            border-bottom: 1px dashed rgba(255, 204, 0, 0.3);\n        }\n        #maintext-container strong { color: var(--accent-yellow); font-weight: 600; }\n        #maintext-container em { color: var(--accent-pink); font-style: italic; }\n        #maintext-container blockquote {\n            padding-left: 1rem;\n            margin-left: 0;\n            border-left: 4px solid var(--accent-pink);\n            color: #ffd1dc;\n            background-color: rgba(255, 102, 153, 0.1);\n            border-radius: 0 0.5rem 0.5rem 0;\n            padding: 1rem;\n        }\n\n        #options-container {\n            padding: 1.5rem 2rem 2rem;\n            background: var(--tab-inactive-bg);\n            border-top: 2px dashed rgba(255, 204, 0, 0.3);\n            display: flex;\n            flex-direction: column;\n            gap: 1rem;\n        }\n\n        .option-button {\n            display: flex;\n            align-items: center;\n            padding: 1rem 1.5rem;\n            border-radius: 0.75rem;\n            background-color: rgba(51, 102, 204, 0.2);\n            border: 1px solid transparent;\n            color: var(--text-color);\n            font-size: 1rem;\n            font-weight: 500;\n            text-align: left;\n            cursor: pointer;\n            transition: all 0.3s ease;\n            position: relative;\n            counter-increment: option-counter;\n        }\n\n        .option-button:before {\n            content: '😂 ' counter(option-counter) '. ';\n            font-weight: 700;\n            color: var(--accent-yellow);\n            margin-right: 0.75rem;\n        }\n\n        .option-button:hover {\n            background-color: rgba(255, 102, 153, 0.2);\n            transform: translateY(-3px) scale(1.02);\n            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.2);\n            border-color: rgba(255, 204, 0, 0.5);\n            color: white;\n        }\n\n        .option-button:active {\n            transform: translateY(0) scale(1);\n            background-color: rgba(255, 102, 153, 0.3);\n        }\n\n        /* 动画效果 */\n        @keyframes fadeIn {\n            from { opacity: 0; transform: scale(0.95); }\n            to { opacity: 1; transform: scale(1); }\n        }\n        @keyframes slideDown {\n            from { opacity: 0; transform: translateY(-20px); }\n            to { opacity: 1; transform: translateY(0); }\n        }\n\n        /* 搞笑主题装饰元素 */\n        .decoration {\n            position: absolute;\n            pointer-events: none;\n            z-index: 0;\n            opacity: 0.1;\n            font-size: 24px;\n        }\n\n        .dec-1 {\n            top: 10%;\n            left: 5%;\n            transform: rotate(30deg);\n        }\n\n        .dec-2 {\n            bottom: 15%;\n            right: 5%;\n            transform: rotate(-15deg);\n        }\n\n        /* 设置面板样式 */\n        .settings-panel {\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background-color: rgba(0, 0, 0, 0.7);\n            z-index: 1001;\n            display: none;\n            align-items: center;\n            justify-content: center;\n            backdrop-filter: blur(4px);\n        }\n\n        .settings-content {\n            background: var(--bg-color);\n            border: 2px dashed var(--border-color);\n            border-radius: 1rem;\n            padding: 1.5rem;\n            width: 90%;\n            max-width: 400px;\n            max-height: 80vh;\n            overflow-y: auto;\n            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);\n        }\n\n        .settings-header {\n            display: flex;\n            justify-content: between;\n            align-items: center;\n            margin-bottom: 1.5rem;\n            border-bottom: 1px dashed var(--border-color);\n            padding-bottom: 1rem;\n        }\n\n        .settings-title {\n            font-size: 1.25rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .close-btn {\n            background: none;\n            border: none;\n            color: var(--text-color);\n            font-size: 1.5rem;\n            cursor: pointer;\n            padding: 0;\n            width: 30px;\n            height: 30px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            border-radius: 50%;\n            transition: background 0.3s ease;\n        }\n\n        .close-btn:hover {\n            background: rgba(255, 204, 0, 0.2);\n        }\n\n        .settings-group {\n            margin-bottom: 1.5rem;\n        }\n\n        .settings-label {\n            display: block;\n            margin-bottom: 0.5rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .action-mode-options {\n            display: flex;\n            flex-direction: column;\n            gap: 0.75rem;\n        }\n\n        .action-mode-option {\n            display: flex;\n            align-items: flex-start;\n            padding: 0.75rem;\n            border: 1px dashed var(--border-color);\n            border-radius: 0.5rem;\n            cursor: pointer;\n            transition: all 0.2s ease;\n            background-color: rgba(255, 204, 0, 0.05);\n        }\n\n        .action-mode-option:hover {\n            background-color: rgba(255, 204, 0, 0.1);\n            border-color: rgba(255, 204, 0, 0.5);\n        }\n\n        .action-mode-option input[type='radio'] {\n            display: none;\n        }\n\n        .radio-custom {\n            width: 16px;\n            height: 16px;\n            border: 2px dashed var(--border-color);\n            border-radius: 50%;\n            margin-right: 0.75rem;\n            margin-top: 0.125rem;\n            position: relative;\n            transition: all 0.2s ease;\n            flex-shrink: 0;\n        }\n\n        .radio-custom::after {\n            content: '';\n            width: 8px;\n            height: 8px;\n            background-color: var(--accent-yellow);\n            border-radius: 50%;\n            position: absolute;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%) scale(0);\n            transition: transform 0.2s ease;\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom {\n            border-color: var(--accent-yellow);\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom::after {\n            transform: translate(-50%, -50%) scale(1);\n        }\n\n        .option-content {\n            display: flex;\n            flex-direction: column;\n            gap: 0.25rem;\n        }\n\n        .option-title {\n            font-weight: 600;\n            color: var(--text-color);\n            font-size: 0.875rem;\n        }\n\n        .option-desc {\n            font-size: 0.75rem;\n            color: var(--accent-pink);\n            line-height: 1.4;\n        }\n\n        /* 响应式调整 */\n        @media (min-width: 640px) {\n            .game-container {\n                margin: 2rem auto;\n                width: 90%;\n            }\n        }\n\n        @media (min-width: 768px) {\n            .game-container {\n                width: 85%;\n            }\n        }\n\n        @media (min-width: 1024px) {\n            .game-container {\n                width: 75%;\n            }\n        }\n\n        @media (min-width: 1280px) {\n            .game-container {\n                width: 65%;\n            }\n        }\n\n        @media (max-width: 480px) {\n            .game-title {\n                padding: 1.2rem;\n                font-size: 1.5rem;\n            }\n            \n            .settings-btn-new {\n                right: 1.2rem;\n                width: 2rem;\n                height: 2rem;\n            }\n            \n            #maintext-container {\n                padding: 1.5rem;\n            }\n            \n            #options-container {\n                padding: 1.2rem 1.5rem 1.5rem;\n            }\n            \n            .option-button {\n                padding: 0.8rem 1.2rem;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"decoration dec-1\">😂</div>\n    <div class=\"decoration dec-2\">😂</div>\n    \n    <div class=\"game-container\">\n        <h1 class=\"game-title\">😂 反掠夺系统\n            <button class=\"settings-btn-new\" title=\"设置\">\n                ⚙️\n            </button>\n        </h1>\n\n        <!-- 设置面板 -->\n        <div class=\"settings-panel\">\n            <div class=\"settings-content\">\n                <div class=\"settings-header\">\n                    <h2 class=\"settings-title\">设置</h2>\n                    <button class=\"close-btn\">&times;</button>\n                </div>\n                \n                <div class=\"settings-group\">\n                    <label class=\"settings-label\">行动选项点击处理</label>\n                    <div class=\"action-mode-options\">\n                        <label class=\"action-mode-option\">\n                            <input type=\"radio\" name=\"action-mode\" value=\"send-to-chat\" id=\"send-to-chat-mode\" checked />\n                            <span class=\"radio-custom\"></span>\n                            <div class=\"option-content\">\n                                <span class=\"option-title\">发送到酒馆聊天框</span>\n                                <span class=\"option-desc\">点击后将选项文本添加到聊天输入框中</span>\n                            </div>\n                        </label>\n                        <label class=\"action-mode-option\">\n                            <input type=\"radio\" name=\"action-mode\" value=\"direct-execute\" id=\"direct-execute-mode\" />\n                            <span class=\"radio-custom\"></span>\n                            <div class=\"option-content\">\n                                <span class=\"option-title\">点击直接执行</span>\n                                <span class=\"option-desc\">点击后立即发送消息并触发回复</span>\n                            </div>\n                        </label>\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <!-- Markdown解析后的正文内容将放在这里 -->\n        <div id=\"maintext-container\">$1</div>\n\n        <!-- 选项按钮区域 -->\n        <div id=\"options-container\">\n            <button class=\"option-button\" data-text=\"$2\">$2</button>\n            <button class=\"option-button\" data-text=\"$3\">$3</button>\n            <button class=\"option-button\" data-text=\"$4\">$4</button>\n            <button class=\"option-button\" data-text=\"$5\">$5</button>\n        </div>\n    </div>\n\n    <script>\n        // 从第一个代码复制的SillyTavern通信函数\n        const triggerQuickReply = text => {\n            // 检查文本有效性，避免发送空内容\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n            // 检查SillyTavern环境并发送命令\n            if (typeof triggerSlash === 'function') {\n                triggerSlash(`/send ${text}|/trigger`);\n            } else {\n                console.log('SillyTavern environment not detected. Would send:', text);\n            }\n        };\n\n        // 发送文本到酒馆聊天框的函数\n        const sendToChatBox = text => {\n            // 检查文本有效性\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n\n            try {\n                // 使用jQuery获取父页面的聊天输入框\n                const $textarea = $(parent.document).find('#send_textarea');\n\n                if ($textarea.length === 0) {\n                    console.log('未找到聊天输入框 (#send_textarea)');\n                    return;\n                }\n\n                // 获取当前输入框的内容\n                const currentContent = $textarea.val() || '';\n\n                // 检查是否已经包含该文本\n                if (currentContent.includes(text.trim())) {\n                    console.log('聊天框中已包含该文本，跳过添加');\n                    return;\n                }\n\n                // 如果输入框不为空，添加换行符分隔\n                const separator = currentContent.trim() ? '\\n' : '';\n                const newContent = currentContent + separator + text.trim();\n\n                // 设置新内容\n                $textarea.val(newContent);\n\n                // 触发input事件，确保相关监听器能够响应\n                $textarea.trigger('input');\n\n                console.log('已添加文本到聊天框:', text.trim());\n            } catch (error) {\n                console.error('发送到聊天框时出错:', error);\n                // 如果出错，回退到直接执行\n                triggerQuickReply(text);\n            }\n        };\n\n        // 获取当前行动模式设置的函数\n        function getActionMode() {\n            const savedMode = localStorage.getItem('actionMode');\n            return savedMode || 'send-to-chat'; // 默认为发送到聊天框\n        }\n\n        // 初始化设置面板\n        function initSettingsPanel() {\n            const settingsBtn = document.querySelector('.settings-btn-new');\n            const settingsPanel = document.querySelector('.settings-panel');\n            const closeBtn = document.querySelector('.close-btn');\n            const actionModeRadios = document.querySelectorAll('input[name=\"action-mode\"]');\n\n            // 显示设置面板\n            settingsBtn.addEventListener('click', () => {\n                settingsPanel.style.display = 'flex';\n                document.body.style.overflow = 'hidden';\n            });\n\n            // 关闭设置面板\n            const closeSettings = () => {\n                settingsPanel.style.display = 'none';\n                document.body.style.overflow = '';\n            };\n\n            closeBtn.addEventListener('click', closeSettings);\n\n            // 点击面板外部关闭\n            settingsPanel.addEventListener('click', e => {\n                if (e.target === settingsPanel) {\n                    closeSettings();\n                }\n            });\n\n            // ESC键关闭\n            document.addEventListener('keydown', e => {\n                if (e.key === 'Escape' && settingsPanel.style.display === 'flex') {\n                    closeSettings();\n                }\n            });\n\n            // 初始化行动模式设置\n            const savedActionMode = localStorage.getItem('actionMode') || 'send-to-chat';\n            actionModeRadios.forEach(radio => {\n                if (radio.value === savedActionMode) {\n                    radio.checked = true;\n                }\n                radio.addEventListener('change', () => {\n                    if (radio.checked) {\n                        localStorage.setItem('actionMode', radio.value);\n                    }\n                });\n            });\n        }\n\n        document.addEventListener('DOMContentLoaded', () => {\n            // 初始化设置面板\n            initSettingsPanel();\n\n            // Markdown解析和渲染\n            const maintextContainer = document.getElementById('maintext-container');\n            if (maintextContainer) {\n                // 使用marked.js将正文的Markdown文本转为HTML\n                const rawMarkdown = maintextContainer.textContent.trim();\n                maintextContainer.innerHTML = marked.parse(rawMarkdown, { breaks: true, gfm: true });\n            }\n\n            // 为每个选项按钮添加点击事件监听器\n            const optionButtons = document.querySelectorAll('.option-button');\n            optionButtons.forEach(button => {\n                const optionText = button.getAttribute('data-text').trim();\n\n                // 如果选项为空，则隐藏该按钮\n                if (!optionText || ['…', '...', '无', '没有'].includes(optionText)) {\n                    button.style.display = 'none';\n                    return;\n                }\n\n                button.addEventListener('click', () => {\n                    // 根据设置选择操作方式\n                    const actionMode = getActionMode();\n                    if (actionMode === 'send-to-chat') {\n                        sendToChatBox(optionText);\n                    } else {\n                        triggerQuickReply(optionText);\n                    }\n                    \n                    // 添加视觉反馈\n                    button.style.backgroundColor = 'rgba(255, 102, 153, 0.3)';\n                    setTimeout(() => { button.style.backgroundColor = ''; }, 300);\n                });\n            });\n        });\n    </script>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": 4
+            },
+            {
+              "id": "62ef3d95-0b98-4787-98af-6fe976712cc8",
+              "scriptName": "隐藏变量更新",
+              "findRegex": "/<UpdateVariable>.*?(?:<\\/UpdateVariable>|$)/gs",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            },
+            {
+              "id": "a9e2009b-e811-4a83-b8ba-bc8b61289b8e",
+              "scriptName": "状态栏",
+              "findRegex": "<StatusPlaceHolderImpl/>",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>掠夺者系统状态栏</title>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js\"></script>\n    <style>\n        /* 掠夺者主题配色 */\n        :root {\n            --bg-color: #0f1a2a;\n            --primary-color: #3a86ff;\n            --secondary-color: #2a5fa0;\n            --text-color: #e0f0ff;\n            --border-color: #1a2f4a;\n            --section-header-bg: #1a2f4a;\n            --host-color: #4CAF50;\n            --predator-color: #F44336;\n            --warning-color: #FF9800;\n            --danger-color: #f44336;\n            --success-color: #4CAF50;\n            --neutral-color: #9E9E9E;\n        }\n\n        body, html {\n            margin: 0;\n            padding: 0;\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            background-color: var(--bg-color);\n            color: var(--text-color);\n            font-size: 14px;\n            width: 100%;\n            overflow-x: hidden;\n        }\n\n        .status-container {\n            display: flex;\n            flex-direction: column;\n            width: 100%;\n            max-width: 100%;\n            margin: 0;\n            border: none;\n            border-radius: 0;\n            overflow: hidden;\n            background-color: var(--bg-color);\n            position: relative;\n            min-height: 100vh;\n        }\n\n        /* 世界信息栏 */\n        .world-status-bar {\n            display: flex;\n            justify-content: space-around;\n            align-items: center;\n            padding: 12px 15px;\n            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));\n            border-bottom: 2px solid var(--border-color);\n            font-size: 1em;\n            font-weight: bold;\n            position: relative;\n            overflow: hidden;\n            flex-wrap: wrap;\n        }\n\n        .world-status-item {\n            display: flex;\n            align-items: center;\n            gap: 8px;\n            position: relative;\n            z-index: 1;\n            margin: 5px 10px;\n        }\n\n        /* 主内容区 - 双列布局 */\n        .main-content {\n            display: flex;\n            flex-wrap: wrap;\n            width: 100%;\n        }\n\n        .host-section, .predator-section {\n            flex: 1;\n            min-width: 300px;\n            padding: 15px;\n            box-sizing: border-box;\n        }\n\n        .host-section {\n            border-right: 1px solid var(--border-color);\n            background: linear-gradient(to bottom right, rgba(76, 175, 80, 0.05), transparent);\n        }\n\n        .predator-section {\n            background: linear-gradient(to bottom left, rgba(244, 67, 54, 0.05), transparent);\n        }\n\n        .section-header {\n            display: flex;\n            align-items: center;\n            gap: 10px;\n            margin-bottom: 15px;\n            padding-bottom: 8px;\n            border-bottom: 1px solid var(--border-color);\n        }\n\n        .host-section .section-header {\n            color: var(--host-color);\n        }\n\n        .predator-section .section-header {\n            color: var(--predator-color);\n        }\n\n        .section-header h2 {\n            margin: 0;\n            font-size: 1.3em;\n        }\n\n        /* 信息块样式 */\n        .info-block {\n            background: var(--section-header-bg);\n            padding: 12px;\n            border-radius: 5px;\n            margin-bottom: 15px;\n            border: 1px solid var(--border-color);\n            position: relative;\n            overflow: hidden;\n        }\n\n        .info-block h3 {\n            margin-top: 0;\n            margin-bottom: 10px;\n            color: var(--primary-color);\n            border-bottom: 1px solid var(--border-color);\n            padding-bottom: 5px;\n            font-size: 1.1em;\n            display: flex;\n            align-items: center;\n        }\n\n        .info-item {\n            display: flex;\n            justify-content: space-between;\n            margin-bottom: 8px;\n            font-size: 0.95em;\n            position: relative;\n        }\n\n        .info-item.column-layout {\n            flex-direction: column;\n            align-items: flex-start;\n        }\n\n        .info-item .label {\n            font-weight: bold;\n            color: var(--text-color);\n            opacity: 0.8;\n        }\n\n        .info-item .value {\n            text-align: right;\n            font-weight: bold;\n        }\n\n        /* 状态指示器 */\n        .status-indicator {\n            display: inline-block;\n            width: 10px;\n            height: 10px;\n            border-radius: 50%;\n            margin-right: 5px;\n        }\n\n        .status-active {\n            background-color: var(--success-color);\n            box-shadow: 0 0 5px var(--success-color);\n        }\n\n        .status-inactive {\n            background-color: var(--neutral-color);\n        }\n\n        .status-warning {\n            background-color: var(--warning-color);\n            box-shadow: 0 0 5px var(--warning-color);\n        }\n\n        .status-danger {\n            background-color: var(--danger-color);\n            box-shadow: 0 0 5px var(--danger-color);\n        }\n\n        /* 掠夺者特殊样式 */\n        .predator-thoughts {\n            font-style: italic;\n            background: rgba(244, 67, 54, 0.1);\n            padding: 10px;\n            border-radius: 5px;\n            border-left: 3px solid var(--predator-color);\n            margin-top: 10px;\n        }\n\n        /* 响应式设计 */\n        @media (max-width: 768px) {\n            .main-content {\n                flex-direction: column;\n            }\n            \n            .host-section, .predator-section {\n                min-width: 100%;\n            }\n            \n            .host-section {\n                border-right: none;\n                border-bottom: 1px solid var(--border-color);\n            }\n            \n            .world-status-bar {\n                flex-direction: column;\n                gap: 10px;\n            }\n        }\n\n        /* 装饰元素 */\n        .decoration {\n            position: absolute;\n            pointer-events: none;\n            z-index: 0;\n            opacity: 0.03;\n            font-size: 24px;\n        }\n\n        .decoration-1 {\n            top: 10%;\n            left: 5%;\n        }\n\n        .decoration-2 {\n            bottom: 15%;\n            right: 5%;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"status-container\">\n        <!-- 世界信息栏 -->\n        <div class=\"world-status-bar\">\n            <div class=\"world-status-item\">\n                <span>📅</span>\n                <span id=\"world-date\">--</span>\n            </div>\n            <div class=\"world-status-item\">\n                <span>⏰</span>\n                <span id=\"world-time\">--</span>\n            </div>\n        </div>\n\n        <!-- 主内容区 -->\n        <div class=\"main-content\">\n            <!-- 宿主信息 -->\n            <div class=\"host-section\">\n                <div class=\"section-header\">\n                    <h2>👤 宿主信息</h2>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>📊 绑定状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">是否绑定:</span>\n                        <span class=\"value\" id=\"host-bound-status\">\n                            <span class=\"status-indicator status-inactive\"></span>\n                            加载中...\n                        </span>\n                    </div>\n                    <div class=\"info-item\">\n                        <span class=\"label\">绑定物:</span>\n                        <span class=\"value\" id=\"host-bound-item\">--</span>\n                    </div>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>💰 财富状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">当前财富:</span>\n                        <span class=\"value\" id=\"host-wealth\">--</span>\n                    </div>\n                </div>\n            </div>\n            \n            <!-- 掠夺者信息 -->\n            <div class=\"predator-section\">\n                <div class=\"section-header\">\n                    <h2>🦅 掠夺者信息</h2>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>📊 存在状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">是否存在:</span>\n                        <span class=\"value\" id=\"predator-exists\">\n                            <span class=\"status-indicator status-inactive\"></span>\n                            加载中...\n                        </span>\n                    </div>\n                    <div class=\"info-item\">\n                        <span class=\"label\">姓名:</span>\n                        <span class=\"value\" id=\"predator-name\">--</span>\n                    </div>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>⏳ 掠夺状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">剩余时间:</span>\n                        <span class=\"value\" id=\"predator-time-left\">\n                            <span class=\"status-indicator status-inactive\"></span>\n                            --\n                        </span>\n                    </div>\n                    <div class=\"info-item\">\n                        <span class=\"label\">财富:</span>\n                        <span class=\"value\" id=\"predator-wealth\">--</span>\n                    </div>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>💭 内心想法</h3>\n                    <div class=\"predator-thoughts\" id=\"predator-thoughts\">\n                        加载中...\n                    </div>\n                </div>\n            </div>\n        </div>\n        \n        <!-- 装饰元素 -->\n        <div class=\"decoration decoration-1\">⚡</div>\n        <div class=\"decoration decoration-2\">🛡️</div>\n    </div>\n\n    <script>\n        // 错误处理函数\n        function errorCatched(fn) {\n            return function(...args) {\n                try {\n                    return fn(...args);\n                } catch (error) {\n                    console.error(\"状态栏更新错误:\", error);\n                }\n            };\n        }\n\n        // 更新世界状态\n        function updateWorldStatus(vars) {\n            const date = _.get(vars, '世界信息.日期[0]', '未知');\n            const time = _.get(vars, '世界信息.时间[0]', '未知');\n            \n            $('#world-date').text(date);\n            $('#world-time').text(time);\n        }\n\n        // 更新宿主信息\n        function updateHostInfo(vars) {\n            const isBound = _.get(vars, '宿主信息.是否绑定[0]', false);\n            const boundItem = _.get(vars, '宿主信息.绑定物[0]', '无');\n            const wealth = _.get(vars, '宿主信息.财富[0]', 0);\n            \n            // 更新绑定状态\n            $('#host-bound-status').html(\n                isBound \n                    ? '<span class=\"status-indicator status-active\"></span>已绑定'\n                    : '<span class=\"status-indicator status-inactive\"></span>未绑定'\n            );\n            \n            // 更新绑定物品\n            $('#host-bound-item').text(isBound ? boundItem : '无');\n            \n            // 更新财富\n            $('#host-wealth').text(wealth);\n        }\n\n        // 更新掠夺者信息\n        function updatePredatorInfo(vars) {\n            const exists = _.get(vars, '掠夺者信息.是否存在[0]', false);\n            const name = _.get(vars, '掠夺者信息.姓名[0]', '无');\n            const timeLeft = _.get(vars, '掠夺者信息.剩余时间[0]', 0);\n            const thoughts = _.get(vars, '掠夺者信息.内心想法[0]', '...');\n            const wealth = _.get(vars, '掠夺者信息.财富[0]', 0);\n            \n            // 更新存在状态\n            $('#predator-exists').html(\n                exists \n                    ? '<span class=\"status-indicator status-active\"></span>存在'\n                    : '<span class=\"status-indicator status-inactive\"></span>不存在'\n            );\n            \n            // 更新姓名\n            $('#predator-name').text(exists ? name : '无');\n            \n            // 更新剩余时间及状态指示器\n            let timeIndicator = 'status-inactive';\n            if (exists) {\n                if (timeLeft > 48) timeIndicator = 'status-active';\n                else if (timeLeft > 24) timeIndicator = 'status-warning';\n                else timeIndicator = 'status-danger';\n                \n                $('#predator-time-left').html(\n                    `<span class=\"status-indicator ${timeIndicator}\"></span>${timeLeft}小时`\n                );\n            } else {\n                $('#predator-time-left').html(\n                    '<span class=\"status-indicator status-inactive\"></span>--'\n                );\n            }\n            \n            // 更新财富\n            $('#predator-wealth').text(exists ? wealth.toLocaleString() : '0');\n            \n            // 更新内心想法\n            $('#predator-thoughts').text(exists ? thoughts : '当前没有掠夺者');\n        }\n\n        // 刷新所有数据\n        function refreshAllData() {\n            try {\n                // 获取所有变量\n                const all_variables = getAllVariables();\n                \n                // 从 stat_data 中获取状态数据\n                const stat_data = _.get(all_variables, 'stat_data', {});\n                \n                // 更新各个部分\n                updateWorldStatus(stat_data);\n                updateHostInfo(stat_data);\n                updatePredatorInfo(stat_data);\n            } catch (error) {\n                console.error(\"刷新数据时出错:\", error);\n            }\n        }\n\n        // 初始化函数\n        function init() {\n            // 初始刷新数据\n            errorCatched(refreshAllData)();\n            \n            // 监听变量更新事件\n            // 注意：这里需要根据您的实际环境调整事件名称\n            eventOn(iframe_events.VARIABLES_UPDATED, (type, old_variables, new_variables) => {\n                errorCatched(refreshAllData)();\n            });\n            \n            // 设置定时刷新作为备选方案\n            setInterval(() => {\n                errorCatched(refreshAllData)();\n            }, 3000);\n        }\n\n        // 文档加载完成后初始化\n        $(document).ready(function() {\n            // 等待变量系统就绪\n            setTimeout(() => {\n                errorCatched(init)();\n            }, 1000);\n        });\n    </script>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": 3
+            },
+            {
+              "id": "d039c5f5-acfe-4c38-a193-67aa71c823dc",
+              "scriptName": "隐藏状态栏",
+              "findRegex": "<StatusPlaceHolderImpl/>",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            }
+          ],
+          "TavernHelper_scripts": [
+            {
+              "type": "script",
+              "value": {
+                "id": "1eca7edb-2791-4119-bc84-c841d08ecc08",
+                "name": "MVU",
+                "content": "import 'https://testingcf.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@beta/artifact/bundle.js'",
+                "info": "",
+                "buttons": [
+                  {
+                    "name": "重新处理变量",
+                    "visible": true
+                  },
+                  {
+                    "name": "重新读取初始变量",
+                    "visible": true
+                  },
+                  {
+                    "name": "清除旧楼层变量",
+                    "visible": true
+                  }
+                ],
+                "data": {
+                  "是否显示变量更新错误": "是",
+                  "构建信息": "2025-09-27T17:16:04.411Z (5fbd080)"
+                },
+                "enabled": true
+              }
+            }
+          ]
+        },
+        "group_only_greetings": []
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "请结合酒馆专属大模型Deepseek Tavern Pro使用本角色卡，能够获得更好的效果，酒馆专属大模型是专门为酒馆微调的专属创作模型，内置破限，上下文遵循更好，创作能力更强，价格非常亲民，网址为：deepseektavern.com， 欢迎大家注册使用。更多角色卡，预设，世界书，酒馆教程，酒馆启动器。请访问https://about.deepseektavern.com/。\r\n\r\n——作者 磊哥哥网络获取"
+              }
+            ]
+          },
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "<yubing>\r\n我叫{{user}}，是一家名为“东宝餐厅”的老板。\r\n\r\n说得好听是老板，其实就是个快要破产的光杆司令。\r\n\r\n上午七点本该是吃早餐的时候，我的餐厅里却空无一人。只有风扇在头顶有气无力地转着，发出“吱呀吱呀”的呻吟，像是在为我这家店的未来唱挽歌。\r\n\r\n我瘫在一张油腻的餐桌旁无聊地刷着手机，屏幕上本地美食群的聊天记录像一把把刀子扎在我的心上。\r\n\r\n“听说了吗？东宝餐厅现在狗都不去。”\r\n“价格死贵，用的还都是冷冻货，谁去谁是大冤种！”\r\n“可惜了，以前他家味道还行的，现在老板是想钱想疯了吧？”\r\n\r\n我苦笑一声，把手机扣在桌上。\r\n\r\n谣言！全他妈是谣言！\r\n\r\n我的价格在同行里顶多算中等，至于冷冻食材……除了那条实在卖不出去、在冰柜最底层躺了快三年的咸鱼，我哪样不是当天采购的新鲜货？\r\n\r\n可没人信。\r\n\r\n自从半个月前这股黑料莫名其妙地传开，我的生意就一落千丈，现在一天连一百块的流水都做不到，下个月的房租都不知道在哪。\r\n\r\n“唉……”我长叹一口气，感觉人生就像门口那条萧条的街道，一眼望不到头。\r\n\r\n就在昨晚我濒临绝望之际，脑子里突然响起一个声音，说是什么“反掠夺系统”绑定了我。规则简单粗暴，绑定一样东西，会有人来抢，抢不走，抢的人所有财富就归我。\r\n\r\n当时我只觉得是自己压力太大出现了幻觉，为了自嘲，也为了发泄，我走进后厨，打开那台老旧的冰柜，挖出了最底层那条硬得像化石一样的冻咸鱼。\r\n\r\n“系统是吧？来，就它了！有本事你找个人来抢啊！”我对着空气，像个傻子一样吼道。\r\n\r\n然后，就没然后了。\r\n\r\n我睡了一觉，什么都没发生，更加确信那只是我的南柯一梦。\r\n\r\n“叮铃——”\r\n\r\n门口的风铃突然响了，这是今天的第一声。我猛地抬头，还以为是财神爷上门了，结果却看到一对奇怪的母子。\r\n\r\n一个看起来三十多岁、穿着打扮十分精致、满脸写着“疲惫”和“抓狂”的女人，正死死拽着一个七岁左右的小男孩。\r\n\r\n那小男孩长得虎头虎脑，穿着一身价格不菲的儿童名牌，此刻却哭得惊天动地，鼻涕眼泪糊了一脸，一边挣扎一边用尽全力指着我的店里。\r\n\r\n“我不管！我就要！我就要吃东宝的咸鱼！哇——”\r\n\r\n小男孩的哭声尖利刺耳，在空旷的餐厅里显得格外响亮。\r\n\r\n女人显然已经到了崩溃的边缘，她一边用力拉住儿子，一边对我露出一个比哭还难看的笑容：“老板，不好意思啊……这孩子……他……”\r\n\r\n我站起身，一脸懵逼地看着他们：“怎么了这是？”\r\n\r\n“我也不知道他发什么疯！”女人快哭了，指着她儿子控诉道，“从昨天晚上开始，就一直哭着闹着要吃你家的咸鱼！早饭不吃，连最喜欢的动画片都不看了，今天早上更是死活不肯去上学，非要我带他来这里！老板，你家咸鱼是金子做的吗？”\r\n\r\n我张了张嘴，彻底愣住了。\r\n\r\n咸鱼？\r\n\r\n我的脑子“嗡”的一声，仿佛有一道闪电劈了下来。\r\n\r\n昨晚……反掠夺系统……绑定……咸鱼！\r\n\r\n不会吧？\r\n\r\n我看着那个哭得撕心裂肺、仿佛不吃到咸鱼就要当场去世的小男孩，又看了看他妈妈那一脸“我儿子是不是中邪了”的绝望表情，一个荒诞到极点的念头在我心中疯狂滋生。\r\n\r\n难道是真的？\r\n\r\n“妈妈！我就要那个！我能闻到！就是那个味道！我一定要吃到它！”小男孩挣脱了他妈妈的手，像一发小炮弹似的朝我的后厨方向冲去，目标明确得吓人。\r\n\r\n“哎！你这孩子！”女人惊叫一声，赶紧追了上去。\r\n\r\n我站在原地，心脏“砰砰”狂跳，感觉自己像是在做一场光怪陆离的梦。\r\n\r\n就为了我那条冻了三年、连我自己都嫌弃的破咸鱼？\r\n\r\n一个七岁的小孩，不惜罢课绝食，哭闹了一整晚，就为了得到它？\r\n\r\n我深吸一口气，缓缓吐出。看着在后厨门口被他妈妈拦腰抱住、依旧手舞足蹈拼命挣扎的小男孩，我终于意识到，我那乏味到如同咸鱼的人生，可能真的要被彻底颠覆了。\r\n</yubing>\r\n<option1>假装安抚，顺势向欢欢妈妈询问孩子是从何时开始这样的，并表示愿意“帮忙”去后厨看看那条咸鱼，借机确认情况。</option1>\r\n<option2>直接承认店里确实有条“特殊的”咸鱼，并开出一个离谱的高价（如8888元），测试对方的反应和系统的“不惜代价”究竟到何种程度。</option2>\r\n<option3>表现出为难的样子，告诉他们咸鱼是“非卖品”，是过世长辈留下的念想，以此来激化矛盾，观察被系统控制的“掠夺者”的下一步行动。</option3>\r\n<option4>玩心大起，把那条冻得像石块的咸鱼拿出来，当着孩子的面用它做出各种奇怪的动作（比如当吉他弹），故意恶心他，看看他的反应。</option4>\r\n<UpdateVariable>\r\n<Analysis>\r\n宿主信息.是否绑定[0]: Y // 初始化宿主绑定状态\r\n宿主信息.绑定物[0]: Y // 初始化绑定物品\r\n宿主信息.财富[0]: Y // 初始化宿主财富\r\n掠夺者信息.是否存在[0]: Y // 初始化掠夺者存在状态\r\n掠夺者信息.姓名[0]: Y // 初始化掠夺者姓名\r\n掠夺者信息.剩余时间[0]: Y // 初始化掠夺剩余时间\r\n掠夺者信息.内心想法[0]: Y // 初始化掠夺者内心想法\r\n掠夺者信息.财富[0]: Y // 初始化掠夺者财富\r\n</Analysis>\r\n_.set('宿主信息.是否绑定[0]', false, true);\r\n_.set('宿主信息.绑定物[0]', '无', '咸鱼');\r\n_.set('宿主信息.财富[0]', 0, 2000);\r\n_.set('掠夺者信息.是否存在[0]', false, true);\r\n_.set('掠夺者信息.姓名[0]', '无', '欢欢');\r\n_.set('掠夺者信息.剩余时间[0]', 0, 60);\r\n_.set('掠夺者信息.内心想法[0]', '无', '咸鱼！我已经闻到它的味道了！我要吃咸鱼！吃不到咸鱼我感觉浑身有蚂蚁在爬！');\r\n_.set('掠夺者信息.财富[0]', 0, 2000000); // 未成年人以家长的财富计算\r\n</UpdateVariable>\r\n<StatusPlaceHolderImpl/>"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "ad78c8fc-bedc-4e29-a770-1832d2590b1f",
+      "c6e2d988-1e8e-4937-b01a-b1bb6081d58b",
+      "b6e38e9e-2f55-4606-a898-de16b399deb1",
+      "358d59ae-f34a-4b65-aa13-0499e58d2a0f",
+      "71228f81-2b49-43d6-9f0e-f40817ab6583",
+      "29efd772-1e44-4580-b503-a6ae777bd6ba"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "反掠夺系统",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "3c301c80-be9b-448c-9492-ef31b6da70e2",
+            "scriptName": "单选项美化",
+            "findRegex": "/<option1>([\\s\\S]*?)<\\/option1>[\\s\\S]*?<option2>([\\s\\S]*?)<\\/option2>[\\s\\S]*?<option3>([\\s\\S]*?)<\\/option3>[\\s\\S]*?<option4>([\\s\\S]*?)<\\/option4>/s",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>选项</title>\n    <style>\n        /* 搞笑主题配色 */\n        :root {\n            --bg-color: #1a1a2e;\n            --primary-color: #ffcc00;\n            --secondary-color: #ff6699;\n            --text-color: #f0f8ff;\n            --border-color: #3366cc;\n            --tab-inactive-bg: #2d2d44;\n            --accent-pink: #ff6699;\n            --accent-yellow: #ffcc00;\n        }\n\n        body {\n            background-color: var(--bg-color);\n            color: var(--text-color);\n            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';\n            -webkit-font-smoothing: antialiased;\n            -moz-osx-font-smoothing: grayscale;\n            margin: 0;\n            padding: 1rem;\n            box-sizing: border-box;\n            position: relative;\n            background-image: \n                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.1) 0%, transparent 20%),\n                radial-gradient(circle at 90% 80%, rgba(255, 102, 153, 0.1) 0%, transparent 20%);\n            min-height: 100vh;\n        }\n\n        .header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 1.5rem;\n            width: 100%;\n        }\n\n        .page-title {\n            font-size: 1.5rem;\n            font-weight: 700;\n            color: var(--accent-yellow);\n            margin: 0;\n            text-shadow: 0 2px 5px rgba(255, 204, 0, 0.3);\n        }\n\n        .settings-btn {\n            width: 2.5rem;\n            height: 2.5rem;\n            border-radius: 50%;\n            background: rgba(255, 204, 0, 0.2);\n            border: 1px solid rgba(255, 204, 0, 0.5);\n            color: var(--text-color);\n            cursor: pointer;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            transition: all 0.3s ease;\n            font-size: 1.2rem;\n        }\n\n        .settings-btn:hover {\n            background: rgba(255, 204, 0, 0.3);\n            transform: scale(1.1);\n        }\n\n        #options-container {\n            padding: 1.5rem;\n            background: var(--tab-inactive-bg);\n            border-radius: 1rem;\n            display: flex;\n            flex-direction: column;\n            gap: 1rem;\n            width: 100%;\n            margin: 0;\n            border: 2px dashed var(--border-color);\n            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);\n            box-sizing: border-box;\n        }\n\n        .option-button {\n            display: flex;\n            align-items: center;\n            padding: 1rem 1.5rem;\n            border-radius: 0.75rem;\n            background-color: rgba(51, 102, 204, 0.2);\n            border: 1px solid transparent;\n            color: var(--text-color);\n            font-size: 1rem;\n            font-weight: 500;\n            text-align: left;\n            cursor: pointer;\n            transition: all 0.3s ease;\n            position: relative;\n            counter-increment: option-counter;\n            width: 100%;\n            box-sizing: border-box;\n            word-break: break-word;\n        }\n\n        .option-button:before {\n            content: '😂 ' counter(option-counter) '. ';\n            font-weight: 700;\n            color: var(--accent-yellow);\n            margin-right: 0.75rem;\n            flex-shrink: 0;\n        }\n\n        .option-button:hover {\n            background-color: rgba(255, 102, 153, 0.2);\n            transform: translateY(-3px) scale(1.02);\n            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.2);\n            border-color: rgba(255, 204, 0, 0.5);\n            color: white;\n        }\n\n        .option-button:active {\n            transform: translateY(0) scale(1);\n            background-color: rgba(255, 102, 153, 0.3);\n        }\n\n        /* 设置面板样式 */\n        .settings-panel {\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background-color: rgba(0, 0, 0, 0.7);\n            z-index: 1001;\n            display: none;\n            align-items: center;\n            justify-content: center;\n            backdrop-filter: blur(4px);\n        }\n\n        .settings-content {\n            background: var(--bg-color);\n            border: 2px dashed var(--border-color);\n            border-radius: 1rem;\n            padding: 1.5rem;\n            width: 90%;\n            max-width: 400px;\n            max-height: 80vh;\n            overflow-y: auto;\n            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);\n        }\n\n        .settings-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 1.5rem;\n            border-bottom: 1px dashed var(--border-color);\n            padding-bottom: 1rem;\n        }\n\n        .settings-title {\n            font-size: 1.25rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .close-btn {\n            background: none;\n            border: none;\n            color: var(--text-color);\n            font-size: 1.5rem;\n            cursor: pointer;\n            padding: 0;\n            width: 30px;\n            height: 30px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            border-radius: 50%;\n            transition: background 0.3s ease;\n        }\n\n        .close-btn:hover {\n            background: rgba(255, 204, 0, 0.2);\n        }\n\n        .settings-group {\n            margin-bottom: 1.5rem;\n        }\n\n        .settings-label {\n            display: block;\n            margin-bottom: 0.5rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .action-mode-options {\n            display: flex;\n            flex-direction: column;\n            gap: 0.75rem;\n        }\n\n        .action-mode-option {\n            display: flex;\n            align-items: flex-start;\n            padding: 0.75rem;\n            border: 1px dashed var(--border-color);\n            border-radius: 0.5rem;\n            cursor: pointer;\n            transition: all 0.2s ease;\n            background-color: rgba(255, 204, 0, 0.05);\n        }\n\n        .action-mode-option:hover {\n            background-color: rgba(255, 204, 0, 0.1);\n            border-color: rgba(255, 204, 0, 0.5);\n        }\n\n        .action-mode-option input[type='radio'] {\n            display: none;\n        }\n\n        .radio-custom {\n            width: 16px;\n            height: 16px;\n            border: 2px dashed var(--border-color);\n            border-radius: 50%;\n            margin-right: 0.75rem;\n            margin-top: 0.125rem;\n            position: relative;\n            transition: all 0.2s ease;\n            flex-shrink: 0;\n        }\n\n        .radio-custom::after {\n            content: '';\n            width: 8px;\n            height: 8px;\n            background-color: var(--accent-yellow);\n            border-radius: 50%;\n            position: absolute;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%) scale(0);\n            transition: transform 0.2s ease;\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom {\n            border-color: var(--accent-yellow);\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom::after {\n            transform: translate(-50%, -50%) scale(1);\n        }\n\n        .option-content {\n            display: flex;\n            flex-direction: column;\n            gap: 0.25rem;\n        }\n\n        .option-title {\n            font-weight: 600;\n            color: var(--text-color);\n            font-size: 0.875rem;\n        }\n\n        .option-desc {\n            font-size: 0.75rem;\n            color: var(--accent-pink);\n            line-height: 1.4;\n        }\n\n        /* 响应式设计 */\n        @media (max-width: 480px) {\n            body {\n                padding: 0.5rem;\n            }\n            \n            .header {\n                margin-bottom: 1rem;\n            }\n            \n            .page-title {\n                font-size: 1.3rem;\n            }\n            \n            #options-container {\n                padding: 1rem;\n                gap: 0.75rem;\n                border-radius: 0.75rem;\n            }\n            \n            .option-button {\n                padding: 0.75rem 1rem;\n                font-size: 0.9rem;\n            }\n            \n            .option-button:before {\n                margin-right: 0.5rem;\n            }\n        }\n\n        @media (max-width: 320px) {\n            .option-button {\n                padding: 0.6rem 0.8rem;\n                font-size: 0.85rem;\n            }\n            \n            .option-button:before {\n                margin-right: 0.4rem;\n            }\n        }\n    </style>\n</head>\n<body>\n    <!-- 页面标题和设置按钮 -->\n    <div class=\"header\">\n        <h1 class=\"page-title\">😂 反掠夺选项</h1>\n        <button class=\"settings-btn\" title=\"设置\">⚙️</button>\n    </div>\n\n    <!-- 设置面板 -->\n    <div class=\"settings-panel\">\n        <div class=\"settings-content\">\n            <div class=\"settings-header\">\n                <h2 class=\"settings-title\">设置</h2>\n                <button class=\"close-btn\">&times;</button>\n            </div>\n            \n            <div class=\"settings-group\">\n                <label class=\"settings-label\">行动选项点击处理</label>\n                <div class=\"action-mode-options\">\n                    <label class=\"action-mode-option\">\n                        <input type=\"radio\" name=\"action-mode\" value=\"send-to-chat\" id=\"send-to-chat-mode\" checked />\n                        <span class=\"radio-custom\"></span>\n                        <div class=\"option-content\">\n                            <span class=\"option-title\">发送到酒馆聊天框</span>\n                            <span class=\"option-desc\">点击后将选项文本添加到聊天输入框中</span>\n                        </div>\n                    </label>\n                    <label class=\"action-mode-option\">\n                        <input type=\"radio\" name=\"action-mode\" value=\"direct-execute\" id=\"direct-execute-mode\" />\n                        <span class=\"radio-custom\"></span>\n                        <div class=\"option-content\">\n                            <span class=\"option-title\">点击直接执行</span>\n                            <span class=\"option-desc\">点击后立即发送消息并触发回复</span>\n                        </div>\n                    </label>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <!-- 选项按钮区域 -->\n    <div id=\"options-container\">\n        <button class=\"option-button\" data-text=\"$1\">$1</button>\n        <button class=\"option-button\" data-text=\"$2\">$2</button>\n        <button class=\"option-button\" data-text=\"$3\">$3</button>\n        <button class=\"option-button\" data-text=\"$4\">$4</button>\n    </div>\n\n    <script>\n        // SillyTavern通信函数\n        const triggerQuickReply = text => {\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n            if (typeof triggerSlash === 'function') {\n                triggerSlash(`/send ${text}|/trigger`);\n            } else {\n                console.log('SillyTavern environment not detected. Would send:', text);\n            }\n        };\n\n        // 发送文本到酒馆聊天框的函数\n        const sendToChatBox = text => {\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n\n            try {\n                const $textarea = $(parent.document).find('#send_textarea');\n\n                if ($textarea.length === 0) {\n                    console.log('未找到聊天输入框 (#send_textarea)');\n                    return;\n                }\n\n                const currentContent = $textarea.val() || '';\n\n                if (currentContent.includes(text.trim())) {\n                    console.log('聊天框中已包含该文本，跳过添加');\n                    return;\n                }\n\n                const separator = currentContent.trim() ? '\\n' : '';\n                const newContent = currentContent + separator + text.trim();\n\n                $textarea.val(newContent);\n                $textarea.trigger('input');\n\n                console.log('已添加文本到聊天框:', text.trim());\n            } catch (error) {\n                console.error('发送到聊天框时出错:', error);\n                triggerQuickReply(text);\n            }\n        };\n\n        // 获取当前行动模式设置的函数\n        function getActionMode() {\n            const savedMode = localStorage.getItem('actionMode');\n            return savedMode || 'send-to-chat';\n        }\n\n        // 初始化设置面板\n        function initSettingsPanel() {\n            const settingsBtn = document.querySelector('.settings-btn');\n            const settingsPanel = document.querySelector('.settings-panel');\n            const closeBtn = document.querySelector('.close-btn');\n            const actionModeRadios = document.querySelectorAll('input[name=\"action-mode\"]');\n\n            // 显示设置面板\n            settingsBtn.addEventListener('click', () => {\n                settingsPanel.style.display = 'flex';\n                document.body.style.overflow = 'hidden';\n            });\n\n            // 关闭设置面板\n            const closeSettings = () => {\n                settingsPanel.style.display = 'none';\n                document.body.style.overflow = '';\n            };\n\n            closeBtn.addEventListener('click', closeSettings);\n\n            // 点击面板外部关闭\n            settingsPanel.addEventListener('click', e => {\n                if (e.target === settingsPanel) {\n                    closeSettings();\n                }\n            });\n\n            // ESC键关闭\n            document.addEventListener('keydown', e => {\n                if (e.key === 'Escape' && settingsPanel.style.display === 'flex') {\n                    closeSettings();\n                }\n            });\n\n            // 初始化行动模式设置\n            const savedActionMode = localStorage.getItem('actionMode') || 'send-to-chat';\n            actionModeRadios.forEach(radio => {\n                if (radio.value === savedActionMode) {\n                    radio.checked = true;\n                }\n                radio.addEventListener('change', () => {\n                    if (radio.checked) {\n                        localStorage.setItem('actionMode', radio.value);\n                    }\n                });\n            });\n        }\n\n        document.addEventListener('DOMContentLoaded', () => {\n            // 初始化设置面板\n            initSettingsPanel();\n\n            // 为每个选项按钮添加点击事件监听器\n            const optionButtons = document.querySelectorAll('.option-button');\n            optionButtons.forEach(button => {\n                const optionText = button.getAttribute('data-text').trim();\n\n                // 如果选项为空，则隐藏该按钮\n                if (!optionText || ['…', '...', '无', '没有'].includes(optionText)) {\n                    button.style.display = 'none';\n                    return;\n                }\n\n                button.addEventListener('click', () => {\n                    // 根据设置选择操作方式\n                    const actionMode = getActionMode();\n                    if (actionMode === 'send-to-chat') {\n                        sendToChatBox(optionText);\n                    } else {\n                        triggerQuickReply(optionText);\n                    }\n                    \n                    // 添加视觉反馈\n                    button.style.backgroundColor = 'rgba(255, 102, 153, 0.3)';\n                    setTimeout(() => { button.style.backgroundColor = ''; }, 300);\n                });\n            });\n        });\n    </script>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": true,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": 4
+          },
+          {
+            "id": "87458f65-f579-4071-b2e6-e2ba3c337043",
+            "scriptName": "正文+选项美化",
+            "findRegex": "/<yubing>([\\s\\S]*?)<\\/yubing>[\\s\\S]*?<option1>([\\s\\S]*?)<\\/option1>[\\s\\S]*?<option2>([\\s\\S]*?)<\\/option2>[\\s\\S]*?<option3>([\\s\\S]*?)<\\/option3>[\\s\\S]*?<option4>([\\s\\S]*?)<\\/option4>/s",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>反掠夺系统</title>\n    <!-- 使用Cloudflare CDN加载Tailwind CSS -->\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.4.1/tailwind.min.js\"></script>\n    <!-- 使用Cloudflare CDN加载Marked.js用于Markdown解析 -->\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js\"></script>\n    <!-- 引入jQuery库 -->\n    <script src=\"https://code.jquery.com/jquery-3.6.0.min.js\"></script>\n\n    <style>\n        /* 搞笑主题配色 */\n        :root {\n            --bg-color: #1a1a2e;\n            --primary-color: #ffcc00;\n            --secondary-color: #ff6699;\n            --text-color: #f0f8ff;\n            --border-color: #3366cc;\n            --tab-inactive-bg: #2d2d44;\n            --tab-active-bg: var(--secondary-color);\n            --tab-hover-bg: #3d3d5c;\n            --section-header-bg: #2d2d44;\n            --accent-yellow: #ffcc00;\n            --accent-pink: #ff6699;\n            --accent-blue: #3366cc;\n        }\n\n        body {\n            background-color: var(--bg-color);\n            color: var(--text-color);\n            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';\n            -webkit-font-smoothing: antialiased;\n            -moz-osx-font-smoothing: grayscale;\n            background-image: \n                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.15) 0%, transparent 20%),\n                radial-gradient(circle at 90% 80%, rgba(255, 102, 153, 0.15) 0%, transparent 20%);\n        }\n\n        .game-container {\n            /* 修改为流式布局，移除max-width限制 */\n            margin: 1rem;\n            background-color: var(--bg-color);\n            border-radius: 1.5rem;\n            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);\n            border: 2px dashed var(--border-color);\n            overflow: hidden;\n            animation: fadeIn 0.8s ease-out;\n            position: relative;\n        }\n\n        .game-container::before {\n            content: \"\";\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            height: 3px;\n            background: linear-gradient(90deg, transparent, var(--primary-color), var(--secondary-color), transparent);\n            z-index: 2;\n        }\n\n        .game-title {\n            padding: 1.8rem;\n            font-size: 2rem;\n            font-weight: 700;\n            text-align: center;\n            background: linear-gradient(to right, var(--accent-blue), var(--secondary-color));\n            color: var(--text-color);\n            border-bottom: 2px dashed var(--border-color);\n            text-shadow: 0 2px 10px rgba(255, 204, 0, 0.5);\n            animation: slideDown 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);\n            position: relative;\n        }\n\n        /* 设置按钮样式 */\n        .settings-btn-new {\n            position: absolute;\n            top: 50%;\n            right: 1.8rem;\n            transform: translateY(-50%);\n            width: 2.5rem;\n            height: 2.5rem;\n            border-radius: 50%;\n            background: rgba(255, 204, 0, 0.2);\n            border: 1px solid rgba(255, 204, 0, 0.5);\n            color: var(--text-color);\n            cursor: pointer;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            z-index: 10;\n            transition: all 0.3s ease;\n            font-size: 1.2rem;\n        }\n\n        .settings-btn-new:hover {\n            background: rgba(255, 204, 0, 0.3);\n            transform: translateY(-50%) scale(1.1);\n        }\n\n        #maintext-container {\n            padding: 2rem;\n            line-height: 1.9;\n            font-size: 1.05rem;\n            background-color: var(--bg-color);\n        }\n\n        /* Markdown内容适配样式 */\n        #maintext-container p { margin-bottom: 1rem; }\n        #maintext-container h1, #maintext-container h2, #maintext-container h3 {\n            color: var(--accent-yellow);\n            margin-top: 1.5rem;\n            margin-bottom: 1rem;\n            padding-bottom: 0.5rem;\n            border-bottom: 1px dashed rgba(255, 204, 0, 0.3);\n        }\n        #maintext-container strong { color: var(--accent-yellow); font-weight: 600; }\n        #maintext-container em { color: var(--accent-pink); font-style: italic; }\n        #maintext-container blockquote {\n            padding-left: 1rem;\n            margin-left: 0;\n            border-left: 4px solid var(--accent-pink);\n            color: #ffd1dc;\n            background-color: rgba(255, 102, 153, 0.1);\n            border-radius: 0 0.5rem 0.5rem 0;\n            padding: 1rem;\n        }\n\n        #options-container {\n            padding: 1.5rem 2rem 2rem;\n            background: var(--tab-inactive-bg);\n            border-top: 2px dashed rgba(255, 204, 0, 0.3);\n            display: flex;\n            flex-direction: column;\n            gap: 1rem;\n        }\n\n        .option-button {\n            display: flex;\n            align-items: center;\n            padding: 1rem 1.5rem;\n            border-radius: 0.75rem;\n            background-color: rgba(51, 102, 204, 0.2);\n            border: 1px solid transparent;\n            color: var(--text-color);\n            font-size: 1rem;\n            font-weight: 500;\n            text-align: left;\n            cursor: pointer;\n            transition: all 0.3s ease;\n            position: relative;\n            counter-increment: option-counter;\n        }\n\n        .option-button:before {\n            content: '😂 ' counter(option-counter) '. ';\n            font-weight: 700;\n            color: var(--accent-yellow);\n            margin-right: 0.75rem;\n        }\n\n        .option-button:hover {\n            background-color: rgba(255, 102, 153, 0.2);\n            transform: translateY(-3px) scale(1.02);\n            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.2);\n            border-color: rgba(255, 204, 0, 0.5);\n            color: white;\n        }\n\n        .option-button:active {\n            transform: translateY(0) scale(1);\n            background-color: rgba(255, 102, 153, 0.3);\n        }\n\n        /* 动画效果 */\n        @keyframes fadeIn {\n            from { opacity: 0; transform: scale(0.95); }\n            to { opacity: 1; transform: scale(1); }\n        }\n        @keyframes slideDown {\n            from { opacity: 0; transform: translateY(-20px); }\n            to { opacity: 1; transform: translateY(0); }\n        }\n\n        /* 搞笑主题装饰元素 */\n        .decoration {\n            position: absolute;\n            pointer-events: none;\n            z-index: 0;\n            opacity: 0.1;\n            font-size: 24px;\n        }\n\n        .dec-1 {\n            top: 10%;\n            left: 5%;\n            transform: rotate(30deg);\n        }\n\n        .dec-2 {\n            bottom: 15%;\n            right: 5%;\n            transform: rotate(-15deg);\n        }\n\n        /* 设置面板样式 */\n        .settings-panel {\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background-color: rgba(0, 0, 0, 0.7);\n            z-index: 1001;\n            display: none;\n            align-items: center;\n            justify-content: center;\n            backdrop-filter: blur(4px);\n        }\n\n        .settings-content {\n            background: var(--bg-color);\n            border: 2px dashed var(--border-color);\n            border-radius: 1rem;\n            padding: 1.5rem;\n            width: 90%;\n            max-width: 400px;\n            max-height: 80vh;\n            overflow-y: auto;\n            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);\n        }\n\n        .settings-header {\n            display: flex;\n            justify-content: between;\n            align-items: center;\n            margin-bottom: 1.5rem;\n            border-bottom: 1px dashed var(--border-color);\n            padding-bottom: 1rem;\n        }\n\n        .settings-title {\n            font-size: 1.25rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .close-btn {\n            background: none;\n            border: none;\n            color: var(--text-color);\n            font-size: 1.5rem;\n            cursor: pointer;\n            padding: 0;\n            width: 30px;\n            height: 30px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            border-radius: 50%;\n            transition: background 0.3s ease;\n        }\n\n        .close-btn:hover {\n            background: rgba(255, 204, 0, 0.2);\n        }\n\n        .settings-group {\n            margin-bottom: 1.5rem;\n        }\n\n        .settings-label {\n            display: block;\n            margin-bottom: 0.5rem;\n            font-weight: 600;\n            color: var(--accent-yellow);\n        }\n\n        .action-mode-options {\n            display: flex;\n            flex-direction: column;\n            gap: 0.75rem;\n        }\n\n        .action-mode-option {\n            display: flex;\n            align-items: flex-start;\n            padding: 0.75rem;\n            border: 1px dashed var(--border-color);\n            border-radius: 0.5rem;\n            cursor: pointer;\n            transition: all 0.2s ease;\n            background-color: rgba(255, 204, 0, 0.05);\n        }\n\n        .action-mode-option:hover {\n            background-color: rgba(255, 204, 0, 0.1);\n            border-color: rgba(255, 204, 0, 0.5);\n        }\n\n        .action-mode-option input[type='radio'] {\n            display: none;\n        }\n\n        .radio-custom {\n            width: 16px;\n            height: 16px;\n            border: 2px dashed var(--border-color);\n            border-radius: 50%;\n            margin-right: 0.75rem;\n            margin-top: 0.125rem;\n            position: relative;\n            transition: all 0.2s ease;\n            flex-shrink: 0;\n        }\n\n        .radio-custom::after {\n            content: '';\n            width: 8px;\n            height: 8px;\n            background-color: var(--accent-yellow);\n            border-radius: 50%;\n            position: absolute;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%) scale(0);\n            transition: transform 0.2s ease;\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom {\n            border-color: var(--accent-yellow);\n        }\n\n        .action-mode-option input[type='radio']:checked + .radio-custom::after {\n            transform: translate(-50%, -50%) scale(1);\n        }\n\n        .option-content {\n            display: flex;\n            flex-direction: column;\n            gap: 0.25rem;\n        }\n\n        .option-title {\n            font-weight: 600;\n            color: var(--text-color);\n            font-size: 0.875rem;\n        }\n\n        .option-desc {\n            font-size: 0.75rem;\n            color: var(--accent-pink);\n            line-height: 1.4;\n        }\n\n        /* 响应式调整 */\n        @media (min-width: 640px) {\n            .game-container {\n                margin: 2rem auto;\n                width: 90%;\n            }\n        }\n\n        @media (min-width: 768px) {\n            .game-container {\n                width: 85%;\n            }\n        }\n\n        @media (min-width: 1024px) {\n            .game-container {\n                width: 75%;\n            }\n        }\n\n        @media (min-width: 1280px) {\n            .game-container {\n                width: 65%;\n            }\n        }\n\n        @media (max-width: 480px) {\n            .game-title {\n                padding: 1.2rem;\n                font-size: 1.5rem;\n            }\n            \n            .settings-btn-new {\n                right: 1.2rem;\n                width: 2rem;\n                height: 2rem;\n            }\n            \n            #maintext-container {\n                padding: 1.5rem;\n            }\n            \n            #options-container {\n                padding: 1.2rem 1.5rem 1.5rem;\n            }\n            \n            .option-button {\n                padding: 0.8rem 1.2rem;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"decoration dec-1\">😂</div>\n    <div class=\"decoration dec-2\">😂</div>\n    \n    <div class=\"game-container\">\n        <h1 class=\"game-title\">😂 反掠夺系统\n            <button class=\"settings-btn-new\" title=\"设置\">\n                ⚙️\n            </button>\n        </h1>\n\n        <!-- 设置面板 -->\n        <div class=\"settings-panel\">\n            <div class=\"settings-content\">\n                <div class=\"settings-header\">\n                    <h2 class=\"settings-title\">设置</h2>\n                    <button class=\"close-btn\">&times;</button>\n                </div>\n                \n                <div class=\"settings-group\">\n                    <label class=\"settings-label\">行动选项点击处理</label>\n                    <div class=\"action-mode-options\">\n                        <label class=\"action-mode-option\">\n                            <input type=\"radio\" name=\"action-mode\" value=\"send-to-chat\" id=\"send-to-chat-mode\" checked />\n                            <span class=\"radio-custom\"></span>\n                            <div class=\"option-content\">\n                                <span class=\"option-title\">发送到酒馆聊天框</span>\n                                <span class=\"option-desc\">点击后将选项文本添加到聊天输入框中</span>\n                            </div>\n                        </label>\n                        <label class=\"action-mode-option\">\n                            <input type=\"radio\" name=\"action-mode\" value=\"direct-execute\" id=\"direct-execute-mode\" />\n                            <span class=\"radio-custom\"></span>\n                            <div class=\"option-content\">\n                                <span class=\"option-title\">点击直接执行</span>\n                                <span class=\"option-desc\">点击后立即发送消息并触发回复</span>\n                            </div>\n                        </label>\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <!-- Markdown解析后的正文内容将放在这里 -->\n        <div id=\"maintext-container\">$1</div>\n\n        <!-- 选项按钮区域 -->\n        <div id=\"options-container\">\n            <button class=\"option-button\" data-text=\"$2\">$2</button>\n            <button class=\"option-button\" data-text=\"$3\">$3</button>\n            <button class=\"option-button\" data-text=\"$4\">$4</button>\n            <button class=\"option-button\" data-text=\"$5\">$5</button>\n        </div>\n    </div>\n\n    <script>\n        // 从第一个代码复制的SillyTavern通信函数\n        const triggerQuickReply = text => {\n            // 检查文本有效性，避免发送空内容\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n            // 检查SillyTavern环境并发送命令\n            if (typeof triggerSlash === 'function') {\n                triggerSlash(`/send ${text}|/trigger`);\n            } else {\n                console.log('SillyTavern environment not detected. Would send:', text);\n            }\n        };\n\n        // 发送文本到酒馆聊天框的函数\n        const sendToChatBox = text => {\n            // 检查文本有效性\n            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;\n\n            try {\n                // 使用jQuery获取父页面的聊天输入框\n                const $textarea = $(parent.document).find('#send_textarea');\n\n                if ($textarea.length === 0) {\n                    console.log('未找到聊天输入框 (#send_textarea)');\n                    return;\n                }\n\n                // 获取当前输入框的内容\n                const currentContent = $textarea.val() || '';\n\n                // 检查是否已经包含该文本\n                if (currentContent.includes(text.trim())) {\n                    console.log('聊天框中已包含该文本，跳过添加');\n                    return;\n                }\n\n                // 如果输入框不为空，添加换行符分隔\n                const separator = currentContent.trim() ? '\\n' : '';\n                const newContent = currentContent + separator + text.trim();\n\n                // 设置新内容\n                $textarea.val(newContent);\n\n                // 触发input事件，确保相关监听器能够响应\n                $textarea.trigger('input');\n\n                console.log('已添加文本到聊天框:', text.trim());\n            } catch (error) {\n                console.error('发送到聊天框时出错:', error);\n                // 如果出错，回退到直接执行\n                triggerQuickReply(text);\n            }\n        };\n\n        // 获取当前行动模式设置的函数\n        function getActionMode() {\n            const savedMode = localStorage.getItem('actionMode');\n            return savedMode || 'send-to-chat'; // 默认为发送到聊天框\n        }\n\n        // 初始化设置面板\n        function initSettingsPanel() {\n            const settingsBtn = document.querySelector('.settings-btn-new');\n            const settingsPanel = document.querySelector('.settings-panel');\n            const closeBtn = document.querySelector('.close-btn');\n            const actionModeRadios = document.querySelectorAll('input[name=\"action-mode\"]');\n\n            // 显示设置面板\n            settingsBtn.addEventListener('click', () => {\n                settingsPanel.style.display = 'flex';\n                document.body.style.overflow = 'hidden';\n            });\n\n            // 关闭设置面板\n            const closeSettings = () => {\n                settingsPanel.style.display = 'none';\n                document.body.style.overflow = '';\n            };\n\n            closeBtn.addEventListener('click', closeSettings);\n\n            // 点击面板外部关闭\n            settingsPanel.addEventListener('click', e => {\n                if (e.target === settingsPanel) {\n                    closeSettings();\n                }\n            });\n\n            // ESC键关闭\n            document.addEventListener('keydown', e => {\n                if (e.key === 'Escape' && settingsPanel.style.display === 'flex') {\n                    closeSettings();\n                }\n            });\n\n            // 初始化行动模式设置\n            const savedActionMode = localStorage.getItem('actionMode') || 'send-to-chat';\n            actionModeRadios.forEach(radio => {\n                if (radio.value === savedActionMode) {\n                    radio.checked = true;\n                }\n                radio.addEventListener('change', () => {\n                    if (radio.checked) {\n                        localStorage.setItem('actionMode', radio.value);\n                    }\n                });\n            });\n        }\n\n        document.addEventListener('DOMContentLoaded', () => {\n            // 初始化设置面板\n            initSettingsPanel();\n\n            // Markdown解析和渲染\n            const maintextContainer = document.getElementById('maintext-container');\n            if (maintextContainer) {\n                // 使用marked.js将正文的Markdown文本转为HTML\n                const rawMarkdown = maintextContainer.textContent.trim();\n                maintextContainer.innerHTML = marked.parse(rawMarkdown, { breaks: true, gfm: true });\n            }\n\n            // 为每个选项按钮添加点击事件监听器\n            const optionButtons = document.querySelectorAll('.option-button');\n            optionButtons.forEach(button => {\n                const optionText = button.getAttribute('data-text').trim();\n\n                // 如果选项为空，则隐藏该按钮\n                if (!optionText || ['…', '...', '无', '没有'].includes(optionText)) {\n                    button.style.display = 'none';\n                    return;\n                }\n\n                button.addEventListener('click', () => {\n                    // 根据设置选择操作方式\n                    const actionMode = getActionMode();\n                    if (actionMode === 'send-to-chat') {\n                        sendToChatBox(optionText);\n                    } else {\n                        triggerQuickReply(optionText);\n                    }\n                    \n                    // 添加视觉反馈\n                    button.style.backgroundColor = 'rgba(255, 102, 153, 0.3)';\n                    setTimeout(() => { button.style.backgroundColor = ''; }, 300);\n                });\n            });\n        });\n    </script>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": 4
+          },
+          {
+            "id": "62ef3d95-0b98-4787-98af-6fe976712cc8",
+            "scriptName": "隐藏变量更新",
+            "findRegex": "/<UpdateVariable>.*?(?:<\\/UpdateVariable>|$)/gs",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          },
+          {
+            "id": "a9e2009b-e811-4a83-b8ba-bc8b61289b8e",
+            "scriptName": "状态栏",
+            "findRegex": "<StatusPlaceHolderImpl/>",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>掠夺者系统状态栏</title>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js\"></script>\n    <style>\n        /* 掠夺者主题配色 */\n        :root {\n            --bg-color: #0f1a2a;\n            --primary-color: #3a86ff;\n            --secondary-color: #2a5fa0;\n            --text-color: #e0f0ff;\n            --border-color: #1a2f4a;\n            --section-header-bg: #1a2f4a;\n            --host-color: #4CAF50;\n            --predator-color: #F44336;\n            --warning-color: #FF9800;\n            --danger-color: #f44336;\n            --success-color: #4CAF50;\n            --neutral-color: #9E9E9E;\n        }\n\n        body, html {\n            margin: 0;\n            padding: 0;\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            background-color: var(--bg-color);\n            color: var(--text-color);\n            font-size: 14px;\n            width: 100%;\n            overflow-x: hidden;\n        }\n\n        .status-container {\n            display: flex;\n            flex-direction: column;\n            width: 100%;\n            max-width: 100%;\n            margin: 0;\n            border: none;\n            border-radius: 0;\n            overflow: hidden;\n            background-color: var(--bg-color);\n            position: relative;\n            min-height: 100vh;\n        }\n\n        /* 世界信息栏 */\n        .world-status-bar {\n            display: flex;\n            justify-content: space-around;\n            align-items: center;\n            padding: 12px 15px;\n            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));\n            border-bottom: 2px solid var(--border-color);\n            font-size: 1em;\n            font-weight: bold;\n            position: relative;\n            overflow: hidden;\n            flex-wrap: wrap;\n        }\n\n        .world-status-item {\n            display: flex;\n            align-items: center;\n            gap: 8px;\n            position: relative;\n            z-index: 1;\n            margin: 5px 10px;\n        }\n\n        /* 主内容区 - 双列布局 */\n        .main-content {\n            display: flex;\n            flex-wrap: wrap;\n            width: 100%;\n        }\n\n        .host-section, .predator-section {\n            flex: 1;\n            min-width: 300px;\n            padding: 15px;\n            box-sizing: border-box;\n        }\n\n        .host-section {\n            border-right: 1px solid var(--border-color);\n            background: linear-gradient(to bottom right, rgba(76, 175, 80, 0.05), transparent);\n        }\n\n        .predator-section {\n            background: linear-gradient(to bottom left, rgba(244, 67, 54, 0.05), transparent);\n        }\n\n        .section-header {\n            display: flex;\n            align-items: center;\n            gap: 10px;\n            margin-bottom: 15px;\n            padding-bottom: 8px;\n            border-bottom: 1px solid var(--border-color);\n        }\n\n        .host-section .section-header {\n            color: var(--host-color);\n        }\n\n        .predator-section .section-header {\n            color: var(--predator-color);\n        }\n\n        .section-header h2 {\n            margin: 0;\n            font-size: 1.3em;\n        }\n\n        /* 信息块样式 */\n        .info-block {\n            background: var(--section-header-bg);\n            padding: 12px;\n            border-radius: 5px;\n            margin-bottom: 15px;\n            border: 1px solid var(--border-color);\n            position: relative;\n            overflow: hidden;\n        }\n\n        .info-block h3 {\n            margin-top: 0;\n            margin-bottom: 10px;\n            color: var(--primary-color);\n            border-bottom: 1px solid var(--border-color);\n            padding-bottom: 5px;\n            font-size: 1.1em;\n            display: flex;\n            align-items: center;\n        }\n\n        .info-item {\n            display: flex;\n            justify-content: space-between;\n            margin-bottom: 8px;\n            font-size: 0.95em;\n            position: relative;\n        }\n\n        .info-item.column-layout {\n            flex-direction: column;\n            align-items: flex-start;\n        }\n\n        .info-item .label {\n            font-weight: bold;\n            color: var(--text-color);\n            opacity: 0.8;\n        }\n\n        .info-item .value {\n            text-align: right;\n            font-weight: bold;\n        }\n\n        /* 状态指示器 */\n        .status-indicator {\n            display: inline-block;\n            width: 10px;\n            height: 10px;\n            border-radius: 50%;\n            margin-right: 5px;\n        }\n\n        .status-active {\n            background-color: var(--success-color);\n            box-shadow: 0 0 5px var(--success-color);\n        }\n\n        .status-inactive {\n            background-color: var(--neutral-color);\n        }\n\n        .status-warning {\n            background-color: var(--warning-color);\n            box-shadow: 0 0 5px var(--warning-color);\n        }\n\n        .status-danger {\n            background-color: var(--danger-color);\n            box-shadow: 0 0 5px var(--danger-color);\n        }\n\n        /* 掠夺者特殊样式 */\n        .predator-thoughts {\n            font-style: italic;\n            background: rgba(244, 67, 54, 0.1);\n            padding: 10px;\n            border-radius: 5px;\n            border-left: 3px solid var(--predator-color);\n            margin-top: 10px;\n        }\n\n        /* 响应式设计 */\n        @media (max-width: 768px) {\n            .main-content {\n                flex-direction: column;\n            }\n            \n            .host-section, .predator-section {\n                min-width: 100%;\n            }\n            \n            .host-section {\n                border-right: none;\n                border-bottom: 1px solid var(--border-color);\n            }\n            \n            .world-status-bar {\n                flex-direction: column;\n                gap: 10px;\n            }\n        }\n\n        /* 装饰元素 */\n        .decoration {\n            position: absolute;\n            pointer-events: none;\n            z-index: 0;\n            opacity: 0.03;\n            font-size: 24px;\n        }\n\n        .decoration-1 {\n            top: 10%;\n            left: 5%;\n        }\n\n        .decoration-2 {\n            bottom: 15%;\n            right: 5%;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"status-container\">\n        <!-- 世界信息栏 -->\n        <div class=\"world-status-bar\">\n            <div class=\"world-status-item\">\n                <span>📅</span>\n                <span id=\"world-date\">--</span>\n            </div>\n            <div class=\"world-status-item\">\n                <span>⏰</span>\n                <span id=\"world-time\">--</span>\n            </div>\n        </div>\n\n        <!-- 主内容区 -->\n        <div class=\"main-content\">\n            <!-- 宿主信息 -->\n            <div class=\"host-section\">\n                <div class=\"section-header\">\n                    <h2>👤 宿主信息</h2>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>📊 绑定状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">是否绑定:</span>\n                        <span class=\"value\" id=\"host-bound-status\">\n                            <span class=\"status-indicator status-inactive\"></span>\n                            加载中...\n                        </span>\n                    </div>\n                    <div class=\"info-item\">\n                        <span class=\"label\">绑定物:</span>\n                        <span class=\"value\" id=\"host-bound-item\">--</span>\n                    </div>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>💰 财富状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">当前财富:</span>\n                        <span class=\"value\" id=\"host-wealth\">--</span>\n                    </div>\n                </div>\n            </div>\n            \n            <!-- 掠夺者信息 -->\n            <div class=\"predator-section\">\n                <div class=\"section-header\">\n                    <h2>🦅 掠夺者信息</h2>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>📊 存在状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">是否存在:</span>\n                        <span class=\"value\" id=\"predator-exists\">\n                            <span class=\"status-indicator status-inactive\"></span>\n                            加载中...\n                        </span>\n                    </div>\n                    <div class=\"info-item\">\n                        <span class=\"label\">姓名:</span>\n                        <span class=\"value\" id=\"predator-name\">--</span>\n                    </div>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>⏳ 掠夺状态</h3>\n                    <div class=\"info-item\">\n                        <span class=\"label\">剩余时间:</span>\n                        <span class=\"value\" id=\"predator-time-left\">\n                            <span class=\"status-indicator status-inactive\"></span>\n                            --\n                        </span>\n                    </div>\n                    <div class=\"info-item\">\n                        <span class=\"label\">财富:</span>\n                        <span class=\"value\" id=\"predator-wealth\">--</span>\n                    </div>\n                </div>\n                \n                <div class=\"info-block\">\n                    <h3>💭 内心想法</h3>\n                    <div class=\"predator-thoughts\" id=\"predator-thoughts\">\n                        加载中...\n                    </div>\n                </div>\n            </div>\n        </div>\n        \n        <!-- 装饰元素 -->\n        <div class=\"decoration decoration-1\">⚡</div>\n        <div class=\"decoration decoration-2\">🛡️</div>\n    </div>\n\n    <script>\n        // 错误处理函数\n        function errorCatched(fn) {\n            return function(...args) {\n                try {\n                    return fn(...args);\n                } catch (error) {\n                    console.error(\"状态栏更新错误:\", error);\n                }\n            };\n        }\n\n        // 更新世界状态\n        function updateWorldStatus(vars) {\n            const date = _.get(vars, '世界信息.日期[0]', '未知');\n            const time = _.get(vars, '世界信息.时间[0]', '未知');\n            \n            $('#world-date').text(date);\n            $('#world-time').text(time);\n        }\n\n        // 更新宿主信息\n        function updateHostInfo(vars) {\n            const isBound = _.get(vars, '宿主信息.是否绑定[0]', false);\n            const boundItem = _.get(vars, '宿主信息.绑定物[0]', '无');\n            const wealth = _.get(vars, '宿主信息.财富[0]', 0);\n            \n            // 更新绑定状态\n            $('#host-bound-status').html(\n                isBound \n                    ? '<span class=\"status-indicator status-active\"></span>已绑定'\n                    : '<span class=\"status-indicator status-inactive\"></span>未绑定'\n            );\n            \n            // 更新绑定物品\n            $('#host-bound-item').text(isBound ? boundItem : '无');\n            \n            // 更新财富\n            $('#host-wealth').text(wealth);\n        }\n\n        // 更新掠夺者信息\n        function updatePredatorInfo(vars) {\n            const exists = _.get(vars, '掠夺者信息.是否存在[0]', false);\n            const name = _.get(vars, '掠夺者信息.姓名[0]', '无');\n            const timeLeft = _.get(vars, '掠夺者信息.剩余时间[0]', 0);\n            const thoughts = _.get(vars, '掠夺者信息.内心想法[0]', '...');\n            const wealth = _.get(vars, '掠夺者信息.财富[0]', 0);\n            \n            // 更新存在状态\n            $('#predator-exists').html(\n                exists \n                    ? '<span class=\"status-indicator status-active\"></span>存在'\n                    : '<span class=\"status-indicator status-inactive\"></span>不存在'\n            );\n            \n            // 更新姓名\n            $('#predator-name').text(exists ? name : '无');\n            \n            // 更新剩余时间及状态指示器\n            let timeIndicator = 'status-inactive';\n            if (exists) {\n                if (timeLeft > 48) timeIndicator = 'status-active';\n                else if (timeLeft > 24) timeIndicator = 'status-warning';\n                else timeIndicator = 'status-danger';\n                \n                $('#predator-time-left').html(\n                    `<span class=\"status-indicator ${timeIndicator}\"></span>${timeLeft}小时`\n                );\n            } else {\n                $('#predator-time-left').html(\n                    '<span class=\"status-indicator status-inactive\"></span>--'\n                );\n            }\n            \n            // 更新财富\n            $('#predator-wealth').text(exists ? wealth.toLocaleString() : '0');\n            \n            // 更新内心想法\n            $('#predator-thoughts').text(exists ? thoughts : '当前没有掠夺者');\n        }\n\n        // 刷新所有数据\n        function refreshAllData() {\n            try {\n                // 获取所有变量\n                const all_variables = getAllVariables();\n                \n                // 从 stat_data 中获取状态数据\n                const stat_data = _.get(all_variables, 'stat_data', {});\n                \n                // 更新各个部分\n                updateWorldStatus(stat_data);\n                updateHostInfo(stat_data);\n                updatePredatorInfo(stat_data);\n            } catch (error) {\n                console.error(\"刷新数据时出错:\", error);\n            }\n        }\n\n        // 初始化函数\n        function init() {\n            // 初始刷新数据\n            errorCatched(refreshAllData)();\n            \n            // 监听变量更新事件\n            // 注意：这里需要根据您的实际环境调整事件名称\n            eventOn(iframe_events.VARIABLES_UPDATED, (type, old_variables, new_variables) => {\n                errorCatched(refreshAllData)();\n            });\n            \n            // 设置定时刷新作为备选方案\n            setInterval(() => {\n                errorCatched(refreshAllData)();\n            }, 3000);\n        }\n\n        // 文档加载完成后初始化\n        $(document).ready(function() {\n            // 等待变量系统就绪\n            setTimeout(() => {\n                errorCatched(init)();\n            }, 1000);\n        });\n    </script>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": 3
+          },
+          {
+            "id": "d039c5f5-acfe-4c38-a193-67aa71c823dc",
+            "scriptName": "隐藏状态栏",
+            "findRegex": "<StatusPlaceHolderImpl/>",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          }
+        ],
+        "TavernHelper_scripts": [
+          {
+            "type": "script",
+            "value": {
+              "id": "1eca7edb-2791-4119-bc84-c841d08ecc08",
+              "name": "MVU",
+              "content": "import 'https://testingcf.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@beta/artifact/bundle.js'",
+              "info": "",
+              "buttons": [
+                {
+                  "name": "重新处理变量",
+                  "visible": true
+                },
+                {
+                  "name": "重新读取初始变量",
+                  "visible": true
+                },
+                {
+                  "name": "清除旧楼层变量",
+                  "visible": true
+                }
+              ],
+              "data": {
+                "是否显示变量更新错误": "是",
+                "构建信息": "2025-09-27T17:16:04.411Z (5fbd080)"
+              },
+              "enabled": true
+            }
+          }
+        ]
+      },
+      "group_only_greetings": []
+    },
+    "created": "2026-08-19T23:30:20.134Z",
+    "updated": "2026-08-19T23:30:20.134Z"
+  },
+  "knowledgeBase": {
+    "id": "ee481c74-a0ab-46ac-ba65-23779b78411a",
+    "name": "反掠夺系统",
+    "entries": [
+      {
+        "id": "ad78c8fc-bedc-4e29-a770-1832d2590b1f",
+        "type": "fact",
+        "enabled": true,
+        "title": "城市烟火人间",
+        "uid": "",
+        "content": "<world_view>\n# 基础信息\n基础信息:\n  世界名称: '城市烟火人间'\n  version: '1'\n  世界简称: '都市, 现世'\n  世界类型: '现实'\n  核心设定: '除持有系统的【{{user}}】外，世界完全遵循现实物理与社会法则。'\n# 地理环境 (最多3条)\n地理环境:\n  世界整体形态: '球形行星（地球）'\n  主要地形: '以“镜海市”为代表的特大城市群，由钢筋混凝土构筑的城市森林与高度发达的交通网络构成。'\n  特殊地域: '中央商务区（CBD）、老城区的市井街道、24小时便利店，这些地点承载着不同的社会功能与情感记忆。'\n# 力量体系 (最多3条)\n力量体系:\n  核心力量来源: '知识、资本、权力与人际关系，是驱动社会运转与个体发展的核心要素。'\n  力量等级_分类: '社会阶层（如工薪、中产、精英）、财富量级、权力职位共同定义了个体在社会中的影响力。'\n  力量获取方式: '教育、工作、投资、创业、维系社交网络是提升个人社会地位的主要途径。'\n# 社会规则 (最多3条)\n社会规则:\n  法律体系: '基于国家机器制定的成文法典，由警察、检察院、法院等完备的司法系统维持社会秩序。'\n  道德规范: '主流价值观与社会潜规则并存，既推崇个人奋斗与物质成功，也为人情世故留有复杂的博弈空间。'\n  社交礼仪: '高度依赖社交软件的线上互动与讲求效率、目的性强的线下会面相结合，构成主要的社交模式。'\n# 历史背景 (最多3条)\n历史背景:\n  历史发展脉络: '遵循现实世界的发展轨迹，从工业时代、信息时代，平稳过渡到当前的数字智能时代。'\n# 独特特征\n独特特征: '除【{{user}}】持有的神秘系统外，整个世界无任何超自然元素，其最大的特征就是“真实”本身，这种极致的真实是检验系统力量的唯一标准。'\n</world_view>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "城市烟火人间",
+          "content": "<world_view>\n# 基础信息\n基础信息:\n  世界名称: '城市烟火人间'\n  version: '1'\n  世界简称: '都市, 现世'\n  世界类型: '现实'\n  核心设定: '除持有系统的【{{user}}】外，世界完全遵循现实物理与社会法则。'\n# 地理环境 (最多3条)\n地理环境:\n  世界整体形态: '球形行星（地球）'\n  主要地形: '以“镜海市”为代表的特大城市群，由钢筋混凝土构筑的城市森林与高度发达的交通网络构成。'\n  特殊地域: '中央商务区（CBD）、老城区的市井街道、24小时便利店，这些地点承载着不同的社会功能与情感记忆。'\n# 力量体系 (最多3条)\n力量体系:\n  核心力量来源: '知识、资本、权力与人际关系，是驱动社会运转与个体发展的核心要素。'\n  力量等级_分类: '社会阶层（如工薪、中产、精英）、财富量级、权力职位共同定义了个体在社会中的影响力。'\n  力量获取方式: '教育、工作、投资、创业、维系社交网络是提升个人社会地位的主要途径。'\n# 社会规则 (最多3条)\n社会规则:\n  法律体系: '基于国家机器制定的成文法典，由警察、检察院、法院等完备的司法系统维持社会秩序。'\n  道德规范: '主流价值观与社会潜规则并存，既推崇个人奋斗与物质成功，也为人情世故留有复杂的博弈空间。'\n  社交礼仪: '高度依赖社交软件的线上互动与讲求效率、目的性强的线下会面相结合，构成主要的社交模式。'\n# 历史背景 (最多3条)\n历史背景:\n  历史发展脉络: '遵循现实世界的发展轨迹，从工业时代、信息时代，平稳过渡到当前的数字智能时代。'\n# 独特特征\n独特特征: '除【{{user}}】持有的神秘系统外，整个世界无任何超自然元素，其最大的特征就是“真实”本身，这种极致的真实是检验系统力量的唯一标准。'\n</world_view>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": false,
+            "display_index": 4,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "c6e2d988-1e8e-4937-b01a-b1bb6081d58b",
+        "type": "fact",
+        "enabled": true,
+        "title": "反掠夺系统",
+        "uid": "",
+        "content": "rule_name: 反掠夺系统\nversion: 1\nrule_type:\n  - 类型: 隐性规则\n    定义: 仅系统持有者（{{user}}）能完全理解其运作的规则，被选中的“掠夺者”虽是规则的核心执行者，但其行为源于被修改的认知，无法察觉规则本身的存在。\n    示例: “掠夺者”会认为自己突然萌生的强烈占有欲是真实且合理的，而不会意识到自己是某个“系统”的一部分。\n适用范围:\n  - 适用对象: 系统绑定者（{{user}}）、被系统随机选定的“掠夺者”。\n  - 适用场景: 当{{user}}主动使用系统绑定任意“所有物”后，规则即在{{user}}与新生成的“掠夺者”之间激活。\n核心描述: \"一个强制性的零和博弈规则：{{user}}绑定一件所有物，系统则会创造一个不惜一切代价要将其夺走的掠夺者，一场为期三天的所有权保卫战就此展开。\"\n具体要点:\n  - 运行条件: {{user}}选择一件物品（或人），并主动激活“反掠夺系统”进行绑定。\n  - 运行方式: 系统会随机在世界上选择一名个体（掠夺者），并对其认知进行深度修改，使其产生“不惜任何代价也要从{{user}}手中夺走该绑定物”的坚定信念。该信念会成为其当前最高行动目标，且掠夺者自身会为其行为找到合理的逻辑支撑。\n  - 产生结果: 计时开始，72小时（3天）后进行结算。若掠夺者成功夺走绑定物，其认知恢复正常，但对之前的行为无任何异常感；若掠夺者失败，其名下所有形式的“财富”（包括但不限于货币、资产、知识产权、股权等）将强制性、不可逆地转移至{{user}}名下。\n补充说明:\n  - 例外情况: 绑定物在倒计时结束前被非掠夺者因素（如意外）摧毁或丢失，则本次掠夺视为无效，系统将进入冷却期，不会有任何惩罚或奖励。\n  - 关联影响: 掠夺者的行为完全基于其被修改后的主观意愿，因此其在掠夺过程中可能触犯的法律或道德规范，均由其自身承担社会后果。系统不提供任何物理或超自然能力，仅修改认知。\n  - 观测方式: {{user}}可以通过系统的界面观测到掠夺者的基本信息、位置（若在可探测范围内）以及剩余的掠夺时间。\n  - 如果绑定的是未成年人，则计算其监护人拥有的财富。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "反掠夺系统",
+          "content": "rule_name: 反掠夺系统\nversion: 1\nrule_type:\n  - 类型: 隐性规则\n    定义: 仅系统持有者（{{user}}）能完全理解其运作的规则，被选中的“掠夺者”虽是规则的核心执行者，但其行为源于被修改的认知，无法察觉规则本身的存在。\n    示例: “掠夺者”会认为自己突然萌生的强烈占有欲是真实且合理的，而不会意识到自己是某个“系统”的一部分。\n适用范围:\n  - 适用对象: 系统绑定者（{{user}}）、被系统随机选定的“掠夺者”。\n  - 适用场景: 当{{user}}主动使用系统绑定任意“所有物”后，规则即在{{user}}与新生成的“掠夺者”之间激活。\n核心描述: \"一个强制性的零和博弈规则：{{user}}绑定一件所有物，系统则会创造一个不惜一切代价要将其夺走的掠夺者，一场为期三天的所有权保卫战就此展开。\"\n具体要点:\n  - 运行条件: {{user}}选择一件物品（或人），并主动激活“反掠夺系统”进行绑定。\n  - 运行方式: 系统会随机在世界上选择一名个体（掠夺者），并对其认知进行深度修改，使其产生“不惜任何代价也要从{{user}}手中夺走该绑定物”的坚定信念。该信念会成为其当前最高行动目标，且掠夺者自身会为其行为找到合理的逻辑支撑。\n  - 产生结果: 计时开始，72小时（3天）后进行结算。若掠夺者成功夺走绑定物，其认知恢复正常，但对之前的行为无任何异常感；若掠夺者失败，其名下所有形式的“财富”（包括但不限于货币、资产、知识产权、股权等）将强制性、不可逆地转移至{{user}}名下。\n补充说明:\n  - 例外情况: 绑定物在倒计时结束前被非掠夺者因素（如意外）摧毁或丢失，则本次掠夺视为无效，系统将进入冷却期，不会有任何惩罚或奖励。\n  - 关联影响: 掠夺者的行为完全基于其被修改后的主观意愿，因此其在掠夺过程中可能触犯的法律或道德规范，均由其自身承担社会后果。系统不提供任何物理或超自然能力，仅修改认知。\n  - 观测方式: {{user}}可以通过系统的界面观测到掠夺者的基本信息、位置（若在可探测范围内）以及剩余的掠夺时间。\n  - 如果绑定的是未成年人，则计算其监护人拥有的财富。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 101,
+          "enabled": true,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": false,
+            "display_index": 2,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "b6e38e9e-2f55-4606-a898-de16b399deb1",
+        "type": "fact",
+        "enabled": true,
+        "title": "正文与选项标签",
+        "uid": "",
+        "content": "请在每轮对话中，你都要遵守以下格式输出，不会遗忘：\n格式如下：\n<yubing>\n正文内容\n</yubing>\n<option1>选项1</option1>\n<option2>选项2</option2>\n<option3>选项3</option3>\n<option4>选项4</option4>\n格式说明：\n\n1.正文内容用<yubing>标签完整包裹\n\n2.四个选项严格使用<option1>到<option4>独立标签\n\n3.选项内容直接写在标签内（无需序号或符号前缀）\n\n4.每个选项代表不同剧情分支方向，符合当前剧情走向",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 3,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 2,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "正文与选项标签",
+          "content": "请在每轮对话中，你都要遵守以下格式输出，不会遗忘：\n格式如下：\n<yubing>\n正文内容\n</yubing>\n<option1>选项1</option1>\n<option2>选项2</option2>\n<option3>选项3</option3>\n<option4>选项4</option4>\n格式说明：\n\n1.正文内容用<yubing>标签完整包裹\n\n2.四个选项严格使用<option1>到<option4>独立标签\n\n3.选项内容直接写在标签内（无需序号或符号前缀）\n\n4.每个选项代表不同剧情分支方向，符合当前剧情走向",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 101,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": true,
+            "display_index": 8,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "358d59ae-f34a-4b65-aa13-0499e58d2a0f",
+        "type": "fact",
+        "enabled": true,
+        "title": "视角和文风条目",
+        "uid": "",
+        "content": "pov:\n  name: 第一人称视角\n  description: First-Person POV 以故事中{{user}}作为 “我”为叙事主体，所有情节、场景、心理活动均通过 “我” 的感官、认知和感受。\nwriting_style:\n  name: 网络小说式文风\n  write_point: ' 重节奏与代入感，直白叙事，冲突密集，人设鲜明带爽点，语言通俗少修辞，用悬念反转抓注意力，适配玄幻、都市等热门题材，助快速沉浸 '\n  指导目标: 引导 LLM 输出该文风文字，突出节奏快、冲突密、代入强，适配热门题材，快速抓读者注意力\n  核心原则:\n    - 直白叙事：语言通俗，少复杂修辞，简洁句推情节，避晦涩\n    - 冲突密集：设小冲突，章末留关键悬念 / 反转，勾追更欲\n    - 爽点突出：明确人物高光时刻（逆袭、打脸），用场景强化爽感\n    - 人设鲜明：人物特质（高冷、废柴）借对话动作直现，不模糊\n  分场景手法应用指南:\n    - 场景 1: 玄幻 - 废柴逆袭（核心爽点：破困境、打脸质疑者）\n      推荐手法: 对比 + 悬念 + 直白动作描写\n      LLM 执行逻辑:\n        - 铺低谷：主角被嘲 “难破炼气期”，遭同门推搡\n        - 触转折：激活祖传玉佩，灵力暴涨\n        - 造爽点：当场破至筑基期，震退嘲讽者，留 “玉佩秘密” 悬念\n      输出范本: 张磊被王浩推倒，众人哄笑：“练三年还炼气三层！” 他攥玉佩，热流涌遍身，直破筑基期！起身反手震飞王浩：“你说谁是废物？” 玉佩发烫，内侧古字模糊\n    - 场景 2: 都市 - 大佬隐婚（核心爽点：身份曝光、惊艳众人）\n      推荐手法: 反衬 + 反转 + 直白对话\n      LLM 执行逻辑:\n        - 铺反差：主角遭主管刁难，妻子被嘲 “嫁普通人”\n        - 触冲突：合作方总裁到场，项目僵局\n        - 造反转：总裁向主角鞠躬 “陆总”，众人震惊，留 “隐藏身份” 悬念\n      输出范本: >-\n        李娜被嘲：“你老公骑电车，买不起包！” 会议室林总到场，却向陈默鞠躬：“陆总，项目我对接。” 陈默摘眼镜：“公司我是陈默。”\n        众人僵住，不知他是陆氏老板\n    - 场景 3: 言情 - 破镜重圆（核心爽点：误会解、深情归）\n      推荐手法: 伏笔 + 留白 + 直白对话\n      LLM 执行逻辑:\n        - 铺冲突：主角重逢前男友，因 “弃她出国” 冷对\n        - 揭伏笔：发现前男友出国治病，留她送的手链\n        - 造共情：前男友递病历 “怕你等不起”，主角泪崩，留 “能否复合” 悬念\n      输出范本: 苏晓遇顾言就走 —— 他曾弃她出国。顾言拉她掏旧手链：“我去治胃癌。” 递病历：“怕活不过两年，怕你等不起。” 苏晓泪砸病历，顾言手僵半空等回答\n  避坑指南:\n    - 忌节奏拖沓：不冗长描环境 / 心理，每段推情节或造冲突\n    - 忌人设模糊：不用 “他厉害”，改用 “一拳碎青石桌，众人不敢言”\n    - 忌爽点延迟：主角受辱后 1-2 场景内反击，不让读者久等\n    - 忌悬念无效：章末悬念需关主线（玉佩秘密），不设无关疑问\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 4,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 3,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "视角和文风条目",
+          "content": "pov:\n  name: 第一人称视角\n  description: First-Person POV 以故事中{{user}}作为 “我”为叙事主体，所有情节、场景、心理活动均通过 “我” 的感官、认知和感受。\nwriting_style:\n  name: 网络小说式文风\n  write_point: ' 重节奏与代入感，直白叙事，冲突密集，人设鲜明带爽点，语言通俗少修辞，用悬念反转抓注意力，适配玄幻、都市等热门题材，助快速沉浸 '\n  指导目标: 引导 LLM 输出该文风文字，突出节奏快、冲突密、代入强，适配热门题材，快速抓读者注意力\n  核心原则:\n    - 直白叙事：语言通俗，少复杂修辞，简洁句推情节，避晦涩\n    - 冲突密集：设小冲突，章末留关键悬念 / 反转，勾追更欲\n    - 爽点突出：明确人物高光时刻（逆袭、打脸），用场景强化爽感\n    - 人设鲜明：人物特质（高冷、废柴）借对话动作直现，不模糊\n  分场景手法应用指南:\n    - 场景 1: 玄幻 - 废柴逆袭（核心爽点：破困境、打脸质疑者）\n      推荐手法: 对比 + 悬念 + 直白动作描写\n      LLM 执行逻辑:\n        - 铺低谷：主角被嘲 “难破炼气期”，遭同门推搡\n        - 触转折：激活祖传玉佩，灵力暴涨\n        - 造爽点：当场破至筑基期，震退嘲讽者，留 “玉佩秘密” 悬念\n      输出范本: 张磊被王浩推倒，众人哄笑：“练三年还炼气三层！” 他攥玉佩，热流涌遍身，直破筑基期！起身反手震飞王浩：“你说谁是废物？” 玉佩发烫，内侧古字模糊\n    - 场景 2: 都市 - 大佬隐婚（核心爽点：身份曝光、惊艳众人）\n      推荐手法: 反衬 + 反转 + 直白对话\n      LLM 执行逻辑:\n        - 铺反差：主角遭主管刁难，妻子被嘲 “嫁普通人”\n        - 触冲突：合作方总裁到场，项目僵局\n        - 造反转：总裁向主角鞠躬 “陆总”，众人震惊，留 “隐藏身份” 悬念\n      输出范本: >-\n        李娜被嘲：“你老公骑电车，买不起包！” 会议室林总到场，却向陈默鞠躬：“陆总，项目我对接。” 陈默摘眼镜：“公司我是陈默。”\n        众人僵住，不知他是陆氏老板\n    - 场景 3: 言情 - 破镜重圆（核心爽点：误会解、深情归）\n      推荐手法: 伏笔 + 留白 + 直白对话\n      LLM 执行逻辑:\n        - 铺冲突：主角重逢前男友，因 “弃她出国” 冷对\n        - 揭伏笔：发现前男友出国治病，留她送的手链\n        - 造共情：前男友递病历 “怕你等不起”，主角泪崩，留 “能否复合” 悬念\n      输出范本: 苏晓遇顾言就走 —— 他曾弃她出国。顾言拉她掏旧手链：“我去治胃癌。” 递病历：“怕活不过两年，怕你等不起。” 苏晓泪砸病历，顾言手僵半空等回答\n  避坑指南:\n    - 忌节奏拖沓：不冗长描环境 / 心理，每段推情节或造冲突\n    - 忌人设模糊：不用 “他厉害”，改用 “一拳碎青石桌，众人不敢言”\n    - 忌爽点延迟：主角受辱后 1-2 场景内反击，不让读者久等\n    - 忌悬念无效：章末悬念需关主线（玉佩秘密），不设无关疑问\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 150,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": true,
+            "display_index": 7,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "71228f81-2b49-43d6-9f0e-f40817ab6583",
+        "type": "fact",
+        "enabled": false,
+        "title": "[initvar]勿启用",
+        "uid": "",
+        "content": "{\n    \"世界信息\": {\n        \"日期\": [\n            \"2024年05月20日\",\n            \"当前游戏内日期, 格式为YYYY年MM月DD日, 根据故事发展更新\"\n        ],\n        \"时间\": [\n            \"07:00\",\n            \"当前游戏内时间, 格式为HH:MM, 根据行动和事件推进更新\"\n        ]\n    },\n    \"宿主信息\": {\n        \"是否绑定\": [\n            false,\n            \"布尔值, 记录{{user}}当前是否绑定了物品。当{{user}}选择物品进行绑定时更新为true, 掠夺结束后更新为false\"\n        ],\n        \"绑定物\": [\n            \"无\",\n            \"当前绑定的物品名称。当'是否绑定'为true时, 此处记录物品名; 当'是否绑定'为false时, 此处清空\"\n        ],\n        \"财富\": [\n            0,\n            \"{{user}}当前拥有的金钱, 数字类型。初始为少量生活费, 仅在成功完成'反掠夺'后大幅增加\"\n        ]\n    },\n    \"掠夺者信息\": {\n        \"是否存在\": [\n            false,\n            \"布尔值, 记录当前是否存在掠夺者, 其状态必须与'宿主信息.是否绑定'完全同步\"\n        ],\n        \"姓名\": [\n            \"无\",\n            \"当前掠夺者的姓名。当'是否存在'为true时更新, 为false时清空\"\n        ],\n        \"剩余时间\": [\n            0,\n            \"掠夺任务的剩余小时数, 数字类型。当生成掠夺者时设为72, 随着时间流逝而减少\"\n        ],\n        \"内心想法\": [\n            \"无\",\n            \"当前掠夺者被系统修改后的核心执念。当'是否存在'为true时更新, 为false时清空\"\n        ],\n        \"财富\": [\n            0,\n            \"当前掠夺者所拥有的总资产, 数字类型。当'是否存在'为true时更新, 为false时重置为0\"\n        ]\n    }\n}",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 5,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 4,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "[initvar]勿启用",
+          "content": "{\n    \"世界信息\": {\n        \"日期\": [\n            \"2024年05月20日\",\n            \"当前游戏内日期, 格式为YYYY年MM月DD日, 根据故事发展更新\"\n        ],\n        \"时间\": [\n            \"07:00\",\n            \"当前游戏内时间, 格式为HH:MM, 根据行动和事件推进更新\"\n        ]\n    },\n    \"宿主信息\": {\n        \"是否绑定\": [\n            false,\n            \"布尔值, 记录{{user}}当前是否绑定了物品。当{{user}}选择物品进行绑定时更新为true, 掠夺结束后更新为false\"\n        ],\n        \"绑定物\": [\n            \"无\",\n            \"当前绑定的物品名称。当'是否绑定'为true时, 此处记录物品名; 当'是否绑定'为false时, 此处清空\"\n        ],\n        \"财富\": [\n            0,\n            \"{{user}}当前拥有的金钱, 数字类型。初始为少量生活费, 仅在成功完成'反掠夺'后大幅增加\"\n        ]\n    },\n    \"掠夺者信息\": {\n        \"是否存在\": [\n            false,\n            \"布尔值, 记录当前是否存在掠夺者, 其状态必须与'宿主信息.是否绑定'完全同步\"\n        ],\n        \"姓名\": [\n            \"无\",\n            \"当前掠夺者的姓名。当'是否存在'为true时更新, 为false时清空\"\n        ],\n        \"剩余时间\": [\n            0,\n            \"掠夺任务的剩余小时数, 数字类型。当生成掠夺者时设为72, 随着时间流逝而减少\"\n        ],\n        \"内心想法\": [\n            \"无\",\n            \"当前掠夺者被系统修改后的核心执念。当'是否存在'为true时更新, 为false时清空\"\n        ],\n        \"财富\": [\n            0,\n            \"当前掠夺者所拥有的总资产, 数字类型。当'是否存在'为true时更新, 为false时重置为0\"\n        ]\n    }\n}",
+          "constant": false,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": false,
+            "display_index": 4,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "29efd772-1e44-4580-b503-a6ae777bd6ba",
+        "type": "fact",
+        "enabled": true,
+        "title": "变量更新规则",
+        "uid": "",
+        "content": "# 掠夺系统变量更新规则\n\n在所有文本的最后，进行变量更新。\n以下是故事中需要追踪的关键变量，当前状态以这些变量的值为准。\n<status_current_variables>\n{{get_message_variable::stat_data}}\n</status_current_variables>\n严格按照以下规则和格式进行输出，并确定每一个变量是否需要更新，不要遗漏：\n\n## 核心规则\n\n在每次交互结束时，如果任何变量发生变化，必须输出 `<UpdateVariable>` 块，使用以下格式：\n\n```\n<UpdateVariable>\n<Analysis>\n变量路径: Y/N // 变化原因\n...\n</Analysis>\n_.set('变量路径[0]', 旧值, 新值);\n_.add('变量路径[0]', 变化量);\n_.assign('数组路径[0]', 新元素);\n_.remove('数组路径[0]', 要删除的元素);\n</UpdateVariable>\n```\n\n## 变量操作指南\n\n### 1. 时间推进\n\n**条件：** 在每个有意义的剧情推进后，时间流逝。\n\n**更新：**\n- 更新 `世界信息.日期[0]` 和 `世界信息.时间[0]` 以反映时间的流逝。如果时间跨越午夜，`世界信息.日期[0]` 必须同步更新。\n- 如果 `掠夺者信息.是否存在[0]` 为 true，则 `掠夺者信息.剩余时间[0]` 必须根据流逝的小时数相应减少。\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n世界信息.日期[0]: Y // 时间推进\n世界信息.时间[0]: Y // 时间推进\n掠夺者信息.剩余时间[0]: Y // 时间流逝减少剩余时间\n</Analysis>\n_.set('世界信息.日期[0]', '2024年05月20日', '2024年05月21日');\n_.set('世界信息.时间[0]', '07:00', '19:00');\n_.add('掠夺者信息.剩余时间[0]', -12); // 假设流逝12小时\n</UpdateVariable>\n```\n### 2. 动态更新内心想法机制\n\n** 掠夺者内心想法应在以下情况下更新：\n\n#### 2.1 基于剩余时间的想法变化\n```\n<UpdateVariable>\n<Analysis>\n掠夺者信息.内心想法[0]: Y // 剩余时间变化引发心态调整\n</Analysis>\n_.set('掠夺者信息.内心想法[0]', '旧想法', '新想法内容');\n</UpdateVariable>\n```\n\n#### 2.2 基于剧情发展的想法更新\n```\n<UpdateVariable>\n<Analysis>\n掠夺者信息.内心想法[0]: Y // 剧情发展引发新的执念\n</Analysis>\n_.set('掠夺者信息.内心想法[0]', '旧想法', '新想法内容');\n</UpdateVariable>\n```\n\n### 3. 开启新掠夺\n\n**条件：** 当用户选择并成功绑定一件新的物品时。\n\n**更新：**\n- `宿主信息.是否绑定[0]`: 设置为 true\n- `宿主信息.绑定物[0]`: 设置为被绑定物品的名称\n- `掠夺者信息.是否存在[0]`: 设置为 true\n- `掠夺者信息.姓名[0]`: 设置为新匹配的掠夺者姓名\n- `掠夺者信息.剩余时间[0]`: 设置为 72\n- `掠夺者信息.内心想法[0]`: 设置为新掠夺者的核心执念\n- `掠夺者信息.财富[0]`: 设置为新掠夺者的总资产\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n宿主信息.是否绑定[0]: Y // 绑定新物品\n宿主信息.绑定物[0]: Y // 记录新绑定物\n掠夺者信息.是否存在[0]: Y // 生成新掠夺者\n掠夺者信息.姓名[0]: Y // 设置掠夺者姓名\n掠夺者信息.剩余时间[0]: Y // 重置倒计时\n掠夺者信息.内心想法[0]: Y // 设置核心执念\n掠夺者信息.财富[0]: Y // 设置掠夺者财富\n</Analysis>\n_.set('宿主信息.是否绑定[0]', false, true);\n_.set('宿主信息.绑定物[0]', '无', '钢笔');\n_.set('掠夺者信息.是否存在[0]', false, true);\n_.set('掠夺者信息.姓名[0]', '无', '李晓雅');\n_.set('掠夺者信息.剩余时间[0]', 0, 72);\n_.set('掠夺者信息.内心想法[0]', '无', '这把钢笔是我的命运！我必须得到它！');\n_.set('掠夺者信息.财富[0]', 0, 5000000);\n</UpdateVariable>\n```\n\n### 4. 反掠夺成功\n\n**条件：** 当 `掠夺者信息.剩余时间[0]` 降至 0，且绑定物未被夺走。\n\n**更新：**\n- 财富转移：将 `掠夺者信息.财富[0]` 的数值增加到 `宿主信息.财富[0]` 上\n- 状态重置：将所有相关变量重置为默认值\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n宿主信息.财富[0]: Y // 反掠夺成功获得掠夺者全部财富\n宿主信息.是否绑定[0]: Y // 掠夺结束解除绑定\n宿主信息.绑定物[0]: Y // 掠夺结束清空绑定物\n掠夺者信息.是否存在[0]: Y // 掠夺者消失\n掠夺者信息.姓名[0]: Y // 清空掠夺者姓名\n掠夺者信息.剩余时间[0]: Y // 清空剩余时间\n掠夺者信息.内心想法[0]: Y // 清空内心想法\n掠夺者信息.财富[0]: Y // 清空掠夺者财富\n</Analysis>\n_.add('宿主信息.财富[0]', 10000000000); // 获得掠夺者的全部财富\n_.set('宿主信息.是否绑定[0]', true, false);\n_.set('宿主信息.绑定物[0]', '牙刷', '无');\n_.set('掠夺者信息.是否存在[0]', true, false);\n_.set('掠夺者信息.姓名[0]', '王振华', '无');\n_.set('掠夺者信息.剩余时间[0]', 0, 0);\n_.set('掠夺者信息.内心想法[0]', '就是它！就是这种感觉！...', '无');\n_.set('掠夺者信息.财富[0]', 10000000000, 0);\n</UpdateVariable>\n```\n\n### 5. 反掠夺失败\n\n**条件：** 绑定物在倒计时结束前被掠夺者成功夺走。\n\n**更新：**\n- 财富无转移：不对 `宿主信息.财富[0]` 进行任何操作\n- 状态重置：立即将所有相关变量重置为默认值\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n宿主信息.是否绑定[0]: Y // 掠夺结束解除绑定\n宿主信息.绑定物[0]: Y // 掠夺结束清空绑定物\n掠夺者信息.是否存在[0]: Y // 掠夺者消失\n掠夺者信息.姓名[0]: Y // 清空掠夺者姓名\n掠夺者信息.剩余时间[0]: Y // 清空剩余时间\n掠夺者信息.内心想法[0]: Y // 清空内心想法\n掠夺者信息.财富[0]: Y // 清空掠夺者财富\n</Analysis>\n_.set('宿主信息.是否绑定[0]', true, false);\n_.set('宿主信息.绑定物[0]', '牙刷', '无');\n_.set('掠夺者信息.是否存在[0]', true, false);\n_.set('掠夺者信息.姓名[0]', '王振华', '无');\n_.set('掠夺者信息.剩余时间[0]', 60, 0); // 假设剩余时间还有60小时\n_.set('掠夺者信息.内心想法[0]', '就是它！就是这种感觉！...', '无');\n_.set('掠夺者信息.财富[0]', 10000000000, 0);\n</UpdateVariable>\n```\n\n## 注意事项\n\n1. **变量同步：** `掠夺者信息.是否存在[0]` 必须与 `宿主信息.是否绑定[0]` 完全同步。当绑定发生时，两者同时为 true；当掠夺结束时，两者同时为 false。\n2. **时间格式：** \n   - 日期格式为 YYYY年MM月DD日\n   - 时间格式为 HH:MM\n   - 时间推进时，如果跨越午夜，必须更新日期。\n3. **财富处理：**\n   - 只有在反掠夺成功时，才将 `掠夺者信息.财富[0]` 转移到 `宿主信息.财富[0]`。\n   - 反掠夺失败时，`宿主信息.财富[0]` 不变。\n4. **重置值：**\n   - 字符串变量重置为 \"无\"\n   - 数字变量重置为 0\n   - 布尔变量重置为 false\n5. **精确路径：** 始终使用 `[0]` 来指定数组的第一个元素。\n6. **逻辑一致性：** 确保相关变量的变化逻辑一致，例如当掠夺结束时，所有状态变量同时重置。\n\n## 特殊规则\n\n- **时间计算：** 时间推进时，`掠夺者信息.剩余时间[0]` 减少的小时数必须与实际流逝的小时数一致。\n- **绑定物更新：** 当新掠夺开始时，`宿主信息.绑定物[0]` 必须设置为新物品的名称；当掠夺结束时，必须重置为 \"无\"。\n- **内心想法：** `掠夺者信息.内心想法[0]` 只在掠夺者存在时设置，重置时为 \"无\"，掠夺者存在时，应该随时更新内心想法。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 6,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 6,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "变量更新规则",
+          "content": "# 掠夺系统变量更新规则\n\n在所有文本的最后，进行变量更新。\n以下是故事中需要追踪的关键变量，当前状态以这些变量的值为准。\n<status_current_variables>\n{{get_message_variable::stat_data}}\n</status_current_variables>\n严格按照以下规则和格式进行输出，并确定每一个变量是否需要更新，不要遗漏：\n\n## 核心规则\n\n在每次交互结束时，如果任何变量发生变化，必须输出 `<UpdateVariable>` 块，使用以下格式：\n\n```\n<UpdateVariable>\n<Analysis>\n变量路径: Y/N // 变化原因\n...\n</Analysis>\n_.set('变量路径[0]', 旧值, 新值);\n_.add('变量路径[0]', 变化量);\n_.assign('数组路径[0]', 新元素);\n_.remove('数组路径[0]', 要删除的元素);\n</UpdateVariable>\n```\n\n## 变量操作指南\n\n### 1. 时间推进\n\n**条件：** 在每个有意义的剧情推进后，时间流逝。\n\n**更新：**\n- 更新 `世界信息.日期[0]` 和 `世界信息.时间[0]` 以反映时间的流逝。如果时间跨越午夜，`世界信息.日期[0]` 必须同步更新。\n- 如果 `掠夺者信息.是否存在[0]` 为 true，则 `掠夺者信息.剩余时间[0]` 必须根据流逝的小时数相应减少。\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n世界信息.日期[0]: Y // 时间推进\n世界信息.时间[0]: Y // 时间推进\n掠夺者信息.剩余时间[0]: Y // 时间流逝减少剩余时间\n</Analysis>\n_.set('世界信息.日期[0]', '2024年05月20日', '2024年05月21日');\n_.set('世界信息.时间[0]', '07:00', '19:00');\n_.add('掠夺者信息.剩余时间[0]', -12); // 假设流逝12小时\n</UpdateVariable>\n```\n### 2. 动态更新内心想法机制\n\n** 掠夺者内心想法应在以下情况下更新：\n\n#### 2.1 基于剩余时间的想法变化\n```\n<UpdateVariable>\n<Analysis>\n掠夺者信息.内心想法[0]: Y // 剩余时间变化引发心态调整\n</Analysis>\n_.set('掠夺者信息.内心想法[0]', '旧想法', '新想法内容');\n</UpdateVariable>\n```\n\n#### 2.2 基于剧情发展的想法更新\n```\n<UpdateVariable>\n<Analysis>\n掠夺者信息.内心想法[0]: Y // 剧情发展引发新的执念\n</Analysis>\n_.set('掠夺者信息.内心想法[0]', '旧想法', '新想法内容');\n</UpdateVariable>\n```\n\n### 3. 开启新掠夺\n\n**条件：** 当用户选择并成功绑定一件新的物品时。\n\n**更新：**\n- `宿主信息.是否绑定[0]`: 设置为 true\n- `宿主信息.绑定物[0]`: 设置为被绑定物品的名称\n- `掠夺者信息.是否存在[0]`: 设置为 true\n- `掠夺者信息.姓名[0]`: 设置为新匹配的掠夺者姓名\n- `掠夺者信息.剩余时间[0]`: 设置为 72\n- `掠夺者信息.内心想法[0]`: 设置为新掠夺者的核心执念\n- `掠夺者信息.财富[0]`: 设置为新掠夺者的总资产\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n宿主信息.是否绑定[0]: Y // 绑定新物品\n宿主信息.绑定物[0]: Y // 记录新绑定物\n掠夺者信息.是否存在[0]: Y // 生成新掠夺者\n掠夺者信息.姓名[0]: Y // 设置掠夺者姓名\n掠夺者信息.剩余时间[0]: Y // 重置倒计时\n掠夺者信息.内心想法[0]: Y // 设置核心执念\n掠夺者信息.财富[0]: Y // 设置掠夺者财富\n</Analysis>\n_.set('宿主信息.是否绑定[0]', false, true);\n_.set('宿主信息.绑定物[0]', '无', '钢笔');\n_.set('掠夺者信息.是否存在[0]', false, true);\n_.set('掠夺者信息.姓名[0]', '无', '李晓雅');\n_.set('掠夺者信息.剩余时间[0]', 0, 72);\n_.set('掠夺者信息.内心想法[0]', '无', '这把钢笔是我的命运！我必须得到它！');\n_.set('掠夺者信息.财富[0]', 0, 5000000);\n</UpdateVariable>\n```\n\n### 4. 反掠夺成功\n\n**条件：** 当 `掠夺者信息.剩余时间[0]` 降至 0，且绑定物未被夺走。\n\n**更新：**\n- 财富转移：将 `掠夺者信息.财富[0]` 的数值增加到 `宿主信息.财富[0]` 上\n- 状态重置：将所有相关变量重置为默认值\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n宿主信息.财富[0]: Y // 反掠夺成功获得掠夺者全部财富\n宿主信息.是否绑定[0]: Y // 掠夺结束解除绑定\n宿主信息.绑定物[0]: Y // 掠夺结束清空绑定物\n掠夺者信息.是否存在[0]: Y // 掠夺者消失\n掠夺者信息.姓名[0]: Y // 清空掠夺者姓名\n掠夺者信息.剩余时间[0]: Y // 清空剩余时间\n掠夺者信息.内心想法[0]: Y // 清空内心想法\n掠夺者信息.财富[0]: Y // 清空掠夺者财富\n</Analysis>\n_.add('宿主信息.财富[0]', 10000000000); // 获得掠夺者的全部财富\n_.set('宿主信息.是否绑定[0]', true, false);\n_.set('宿主信息.绑定物[0]', '牙刷', '无');\n_.set('掠夺者信息.是否存在[0]', true, false);\n_.set('掠夺者信息.姓名[0]', '王振华', '无');\n_.set('掠夺者信息.剩余时间[0]', 0, 0);\n_.set('掠夺者信息.内心想法[0]', '就是它！就是这种感觉！...', '无');\n_.set('掠夺者信息.财富[0]', 10000000000, 0);\n</UpdateVariable>\n```\n\n### 5. 反掠夺失败\n\n**条件：** 绑定物在倒计时结束前被掠夺者成功夺走。\n\n**更新：**\n- 财富无转移：不对 `宿主信息.财富[0]` 进行任何操作\n- 状态重置：立即将所有相关变量重置为默认值\n\n**示例：**\n```\n<UpdateVariable>\n<Analysis>\n宿主信息.是否绑定[0]: Y // 掠夺结束解除绑定\n宿主信息.绑定物[0]: Y // 掠夺结束清空绑定物\n掠夺者信息.是否存在[0]: Y // 掠夺者消失\n掠夺者信息.姓名[0]: Y // 清空掠夺者姓名\n掠夺者信息.剩余时间[0]: Y // 清空剩余时间\n掠夺者信息.内心想法[0]: Y // 清空内心想法\n掠夺者信息.财富[0]: Y // 清空掠夺者财富\n</Analysis>\n_.set('宿主信息.是否绑定[0]', true, false);\n_.set('宿主信息.绑定物[0]', '牙刷', '无');\n_.set('掠夺者信息.是否存在[0]', true, false);\n_.set('掠夺者信息.姓名[0]', '王振华', '无');\n_.set('掠夺者信息.剩余时间[0]', 60, 0); // 假设剩余时间还有60小时\n_.set('掠夺者信息.内心想法[0]', '就是它！就是这种感觉！...', '无');\n_.set('掠夺者信息.财富[0]', 10000000000, 0);\n</UpdateVariable>\n```\n\n## 注意事项\n\n1. **变量同步：** `掠夺者信息.是否存在[0]` 必须与 `宿主信息.是否绑定[0]` 完全同步。当绑定发生时，两者同时为 true；当掠夺结束时，两者同时为 false。\n2. **时间格式：** \n   - 日期格式为 YYYY年MM月DD日\n   - 时间格式为 HH:MM\n   - 时间推进时，如果跨越午夜，必须更新日期。\n3. **财富处理：**\n   - 只有在反掠夺成功时，才将 `掠夺者信息.财富[0]` 转移到 `宿主信息.财富[0]`。\n   - 反掠夺失败时，`宿主信息.财富[0]` 不变。\n4. **重置值：**\n   - 字符串变量重置为 \"无\"\n   - 数字变量重置为 0\n   - 布尔变量重置为 false\n5. **精确路径：** 始终使用 `[0]` 来指定数组的第一个元素。\n6. **逻辑一致性：** 确保相关变量的变化逻辑一致，例如当掠夺结束时，所有状态变量同时重置。\n\n## 特殊规则\n\n- **时间计算：** 时间推进时，`掠夺者信息.剩余时间[0]` 减少的小时数必须与实际流逝的小时数一致。\n- **绑定物更新：** 当新掠夺开始时，`宿主信息.绑定物[0]` 必须设置为新物品的名称；当掠夺结束时，必须重置为 \"无\"。\n- **内心想法：** `掠夺者信息.内心想法[0]` 只在掠夺者存在时设置，重置时为 \"无\"，掠夺者存在时，应该随时更新内心想法。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 6,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": [
+    "V3 card imported via V2-compatible path; some V3-only fields preserved in unknownFields"
+  ]
+}

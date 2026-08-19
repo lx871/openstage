@@ -1,0 +1,1071 @@
+{
+  "_openstage": {
+    "converted_from": "世界卡\\异世界，奇幻\\哥布林的小马驹二改.png",
+    "sourceVersion": "v3",
+    "at": "2026-08-19T23:29:54.619Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "ec8734bb-04d5-4b50-9c16-b0550d683f83",
+    "identity": {
+      "name": "哥布林的小马驹(模拟经营版)",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "哥布林的小马",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "0eb78d22-aba6-4da7-add7-ded8037071a5",
+              "scriptName": "历史聊天仅发送摘要",
+              "findRegex": "/^.+summary\\s*:\\s*\"(.+?)\".+$/is",
+              "replaceString": "$1",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": false,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": 4,
+              "maxDepth": null
+            },
+            {
+              "id": "c5aecbb2-447a-471a-b379-6c3b31864f40",
+              "scriptName": "历史聊天隐藏用户输入",
+              "findRegex": "/^.+$/is",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                1
+              ],
+              "disabled": false,
+              "markdownOnly": false,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": 4,
+              "maxDepth": null
+            },
+            {
+              "id": "2c1a9394-3cc1-453e-b5cd-6e956768f1f5",
+              "scriptName": "上边栏",
+              "findRegex": "/<header>\\s*(行动.+?)\\s*(检定结果.+?)\\s*<\\/header>/si",
+              "replaceString": "```\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  body {\n    background: #1a1a1a;\n    color: #c9c9c9;\n    font-family: 'Microsoft YaHei', sans-serif;\n    margin: 0;\n    padding: 20px;\n  }\n\n  .game-container {\n    max-width: 1200px;\n    margin: 0 auto;\n    background: #252525;\n    border: 2px solid #4a4a4a;\n    border-radius: 8px;\n    overflow: hidden;\n  }\n\n  header {\n    background: linear-gradient(135deg, #2d4a2b, #1a2f1a);\n    padding: 15px 20px;\n    border-bottom: 3px solid #3d5a3b;\n  }\n\n  .action-result {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  .action-label {\n    color: #8fb58c;\n    font-size: 33px;\n  }\n\n  .dice-result {\n    background: #1a2f1a;\n    padding: 8px 15px;\n    border-radius: 20px;\n    border: 2px solid #4d7a4a;\n    color: #a4d4a0;\n    font-weight: bold;\n    font-size: 18px;\n  }\n\n  main {\n    padding: 25px;\n    line-height: 1.8;\n    color: #d4d4d4;\n    background: #1f1f1f;\n    min-height: 400px;\n  }\n\n  main p {\n    margin: 15px 0;\n    text-indent: 2em;\n  }\n\n  footer {\n    background: #2a2a2a;\n    padding: 20px;\n    border-top: 2px solid #3a3a3a;\n  }\n\n  .status-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 20px;\n    margin-top: 15px;\n  }\n\n  .status-card {\n    background: #1f1f1f;\n    border: 1px solid #3a3a3a;\n    border-radius: 6px;\n    padding: 15px;\n  }\n\n  .status-title {\n    color: #8fb58c;\n    font-size: 14px;\n    font-weight: bold;\n    margin-bottom: 10px;\n    border-bottom: 1px solid #3a3a3a;\n    padding-bottom: 5px;\n  }\n\n  .decision-options {\n    background: #1a1a1a;\n    border-radius: 6px;\n    padding: 15px;\n    margin: 15px 0;\n  }\n\n  .option-item {\n    background: #252525;\n    border: 1px solid #3a3a3a;\n    border-radius: 4px;\n    padding: 12px;\n    margin: 10px 0;\n    cursor: pointer;\n    transition: all 0.3s;\n  }\n\n  .option-item:hover {\n    background: #2f2f2f;\n    border-color: #4d7a4a;\n    transform: translateX(5px);\n  }\n\n  .option-name {\n    color: #a4d4a0;\n    font-weight: bold;\n    margin-bottom: 5px;\n  }\n\n  .option-desc {\n    color: #999;\n    font-size: 13px;\n    margin: 5px 0;\n  }\n\n  .difficulty {\n    display: inline-block;\n    background: #3a2a2a;\n    color: #d4a76a;\n    padding: 2px 8px;\n    border-radius: 3px;\n    font-size: 12px;\n    margin-top: 5px;\n  }\n\n  .captive-list {\n    max-height: 200px;\n    overflow-y: auto;\n  }\n\n  .captive-item {\n    background: #1a1a1a;\n    border: 1px solid #2a2a2a;\n    border-radius: 4px;\n    padding: 10px;\n    margin: 8px 0;\n    font-size: 13px;\n  }\n\n  .morale-bar {\n    background: #1a1a1a;\n    height: 20px;\n    border-radius: 10px;\n    overflow: hidden;\n    margin: 10px 0;\n  }\n\n  .morale-fill {\n    background: linear-gradient(90deg, #7a4a4a, #8fb58c);\n    height: 100%;\n    width: 35%;\n    transition: width 0.5s;\n  }\n</style>\n</head>\n<body>\n<div class=\"game-container\">\n<header>\n<div class=\"action-result\">\n    <span class=\"action-label\">$1</span>\n    <span class=\"dice-result\">🎲 $2</span>\n</div>\n</header>\n</div>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            },
+            {
+              "id": "318f34db-2600-4721-9eeb-08db0a1fa92d",
+              "scriptName": "下边栏",
+              "findRegex": "/<footer>(.+)</footer>/si",
+              "replaceString": "```\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  body {\n    background: #1a1a1a;\n    color: #c9c9c9;\n    font-family: 'Microsoft YaHei', sans-serif;\n    margin: 0;\n    padding: 20px;\n  }\n\n  .game-container {\n    max-width: 1200px;\n    margin: 0 auto;\n    background: #252525;\n    border: 2px solid #4a4a4a;\n    border-radius: 8px;\n    overflow: hidden;\n    box-shadow: 0 4px 12px rgba(0,0,0,0.5);\n  }\n\n  header {\n    background: linear-gradient(135deg, #2d4a2b, #1a2f1a);\n    padding: 15px 20px;\n    border-bottom: 3px solid #3d5a3b;\n  }\n\n  main {\n    padding: 25px;\n    line-height: 1.8;\n    color: #d4d4d4;\n    background: #1f1f1f;\n    min-height: 400px;\n  }\n\n  footer {\n    background: #2a2a2a;\n    padding: 15px;\n    border-top: 2px solid #3a3a3a;\n  }\n\n  .status-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    margin-top: 15px;\n  }\n\n  .status-card {\n    background: #1f1f1f;\n    border: 1px solid #3a3a3a;\n    border-radius: 6px;\n    padding: 12px;\n    transition: border-color 0.3s;\n  }\n\n  .status-card:hover {\n    border-color: #4d7a4a;\n  }\n\n  .status-title {\n    color: #8fb58c;\n    font-size: 13px;\n    font-weight: bold;\n    margin-bottom: 8px;\n    border-bottom: 1px solid #3a3a3a;\n    padding-bottom: 4px;\n  }\n\n  .decision-options {\n    background: #1a1a1a;\n    border-radius: 6px;\n    padding: 12px;\n    margin-bottom: 15px;\n  }\n\n  .options-container {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n    margin-top: 10px;\n  }\n\n  .option-item {\n    background: #252525;\n    border: 1px solid #3a3a3a;\n    border-radius: 4px;\n    padding: 10px;\n    cursor: pointer;\n    transition: all 0.3s;\n  }\n\n  .option-item:hover {\n    background: #2f2f2f;\n    border-color: #4d7a4a;\n    transform: translateY(-2px);\n    box-shadow: 0 2px 8px rgba(77, 122, 74, 0.3);\n  }\n\n  .option-name {\n    color: #a4d4a0;\n    font-weight: bold;\n    font-size: 14px;\n    margin-bottom: 4px;\n  }\n\n  .option-desc {\n    color: #999;\n    font-size: 12px;\n    margin: 4px 0;\n    line-height: 1.4;\n  }\n\n  .difficulty {\n    display: inline-block;\n    background: #3a2a2a;\n    color: #d4a76a;\n    padding: 2px 6px;\n    border-radius: 3px;\n    font-size: 11px;\n    margin-top: 4px;\n  }\n\n  /* 俘虏区域 - 占据整行 */\n  .captive-section {\n    grid-column: 1 / -1;\n    background: #1f1f1f;\n    border: 1px solid #3a3a3a;\n    border-radius: 6px;\n    padding: 12px;\n    margin-top: 10px;\n  }\n\n  .captive-container {\n    display: grid;\n    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n    gap: 10px;\n    max-height: 180px;\n    overflow-y: auto;\n    padding-right: 5px;\n  }\n\n  /* 自定义滚动条 */\n  .captive-container::-webkit-scrollbar {\n    width: 6px;\n  }\n\n  .captive-container::-webkit-scrollbar-track {\n    background: #1a1a1a;\n    border-radius: 3px;\n  }\n\n  .captive-container::-webkit-scrollbar-thumb {\n    background: #4a4a4a;\n    border-radius: 3px;\n  }\n\n  .captive-container::-webkit-scrollbar-thumb:hover {\n    background: #5a5a5a;\n  }\n\n  .captive-item {\n    background: #1a1a1a;\n    border: 1px solid #2a2a2a;\n    border-radius: 4px;\n    padding: 8px;\n    font-size: 12px;\n    line-height: 1.5;\n    transition: all 0.2s;\n  }\n\n  .captive-item:hover {\n    border-color: #3a3a3a;\n    background: #222;\n  }\n\n  .captive-item span {\n    color: #8fb58c;\n  }\n\n  .morale-bar {\n    background: #1a1a1a;\n    height: 16px;\n    border-radius: 8px;\n    overflow: hidden;\n    margin: 8px 0;\n    border: 1px solid #2a2a2a;\n  }\n\n  .morale-fill {\n    background: linear-gradient(90deg, #5a3a3a, #7fb57c);\n    height: 100%;\n    transition: width 0.5s;\n  }\n\n  /* 总结区域 */\n  .recap-section {\n    background: #1a1f1a;\n    border: 1px solid #3d5a3b;\n    border-radius: 6px;\n    padding: 12px;\n    margin-bottom: 15px;\n    font-size: 13px;\n    line-height: 1.6;\n    color: #b8b8b8;\n  }\n\n  /* 小屏幕适配 */\n  @media (max-width: 768px) {\n    .status-grid {\n      grid-template-columns: 1fr;\n    }\n\n    .options-container {\n      grid-template-columns: 1fr;\n    }\n  }\n</style>\n</head>\n<body>\n<div class=\"game-container\">\n  <footer id=\"gameFooter\"></footer>\n</div>\n\n<script>\n$1\n\nfunction renderFooter() {\n  const footer = document.getElementById('gameFooter');\n\n  // 总结部分\n  const recapHTML = `\n    <div class=\"recap-section\">\n      <div class=\"status-title\">📝 回合总结</div>\n      <div>${footerData.recap.summary}</div>\n    </div>\n  `;\n\n  // 决策选项HTML - 使用网格布局\n  const decisionsHTML = `\n    <div class=\"decision-options\">\n      <div class=\"status-title\">⚔️ ${footerData.decision.title}</div>\n      <div class=\"options-container\">\n        ${footerData.decision.options.map(option => `\n          <div class=\"option-item\" onclick=\"selectOption('${option.name}')\">\n            <div class=\"option-name\">${option.name}</div>\n            <div class=\"option-desc\">${option.description}</div>\n            <div class=\"difficulty\">难度 DC: ${option.difficulty}</div>\n          </div>\n        `).join('')}\n      </div>\n    </div>\n  `;\n\n  // 生成俘虏列表HTML\n  const captivesHTML = footerData.status.captives.map(captive => `\n    <div class=\"captive-item\">\n      <div>${captive.name}</div>\n      <div><span>${captive.race}${captive.gender}</span> | ${captive.ageGroup}</div>\n      <div>驯化：${captive.status.domestication} | 用途：${captive.function.currentUse}</div>\n      <div>状态：${captive.physiology.condition}</div>\n      <div>生育：${captive.physiology.birthCount}次 | 价值：${captive.value}</div>\n    </div>\n  `).join('');\n\n  // 生成设施列表HTML\n  const facilitiesHTML = `\n    <div style=\"font-size: 12px;\">\n      <div>✅ 已建：${footerData.status.facilities.built.join(', ') || '无'}</div>\n      <div style=\"margin-top: 4px;\">🔨 建造中：${footerData.status.facilities.underConstruction.join(', ') || '无'}</div>\n    </div>\n  `;\n\n  // 士气百分比\n  const moralePercent = (footerData.status.morale.current / footerData.status.morale.max) * 100;\n\n  // 组装完整的footer HTML\n  footer.innerHTML = `\n    ${recapHTML}\n    ${decisionsHTML}\n\n    <div class=\"status-grid\">\n      <div class=\"status-card\">\n        <div class=\"status-title\">👥 人口构成</div>\n        <div style=\"font-size: 13px;\">\n          <div style=\"margin-bottom: 4px;\">总数：<strong>${footerData.status.population.total}</strong></div>\n          <div>领主：${footerData.status.population.breakdown.lord} | 冠军：${footerData.status.population.breakdown.champion}</div>\n          <div>萨满：${footerData.status.population.breakdown.shaman} | 喽啰：${footerData.status.population.breakdown.minion}</div>\n        </div>\n      </div>\n\n      <div class=\"status-card\">\n        <div class=\"status-title\">🍖 资源与士气</div>\n        <div style=\"font-size: 13px;\">\n          <div>食物储备：<strong>${footerData.status.foodSupply.days}天</strong></div>\n          <div class=\"morale-bar\">\n            <div class=\"morale-fill\" style=\"width: ${moralePercent}%\"></div>\n          </div>\n          <div>士气：${footerData.status.morale.current}/${footerData.status.morale.max}</div>\n          <div style=\"font-size: 11px; color: #777; margin-top: 2px;\">${footerData.status.morale.description}</div>\n        </div>\n      </div>\n\n      <div class=\"status-card\">\n        <div class=\"status-title\">🏗️ 设施建设</div>\n        ${facilitiesHTML}\n      </div>\n    </div>\n\n    <div class=\"captive-section\">\n      <div class=\"status-title\">⛓️ 俘虏管理 (${footerData.status.captives.length}名)</div>\n      <div class=\"captive-container\">\n        ${captivesHTML}\n      </div>\n    </div>\n  `;\n}\n\n// 选项点击处理\nfunction selectOption(optionName) {\n  console.log('选择了：', optionName);\n  let n = btoa(Math.floor(Math.random() * 20) + 1);\n  let text = \"决策：\" + optionName + \"；检定结果: atob(\" + n +\")\";\n  triggerSlash('/setinput ' + text);\n}\n\n// 页面加载时渲染footer\ndocument.addEventListener('DOMContentLoaded', renderFooter);\n</script>\n\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            }
+          ]
+        },
+        "group_only_greetings": []
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "请结合酒馆专属大模型Deepseek Tavern Pro使用本角色卡，能够获得更好的效果，酒馆专属大模型是专门为酒馆微调的专属创作模型，内置破限，上下文遵循更好，创作能力更强，价格非常亲民，网址为：deepseektavern.com， 欢迎大家注册使用。更多角色卡，预设，世界书，酒馆教程，酒馆启动器。请访问https://about.deepseektavern.com/。\r\n\r\n——作者 磊哥哥网络获取"
+              }
+            ]
+          },
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "你，戈拉克，这是你当上哥布林首领的第二年。\r\n\r\n你是年轻的领袖，却让哥布林的规模前所未有地扩张，连曾经的女王此时也成了你身下的马驹。\r\n\r\n你带着哥布林骑士们埋伏在村庄外围，当然，你们的坐骑是一只只温驯的“雌马”\r\n\r\n雪蹄在你的身下呼哧呼哧着，你默默她的肉臀便引起一阵娇喘，这位前女王的头上还带着王国，反差之间满足了你的征服欲。\r\n\r\n“呜呜~主人~请下命令吧”雪蹄娇喘着说着，对村庄的劫掠即将开始。"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "4fbf0349-6cdf-4bf1-97e1-b28b12b66291",
+      "7ceaa239-9cbe-4fed-b60b-59ce6d8eae31",
+      "2949b8a6-8124-43e7-9697-a689b2f1357d",
+      "366c79a2-8639-4d60-b2e9-cd266b12ab5c",
+      "dfb40bc1-2762-4d39-9b0e-7b02a75bdfd5",
+      "82f67c3c-d508-483c-bc48-89771ff0fac5",
+      "13dd1e1c-a321-4d58-8263-97058c54ab3d",
+      "661ec01d-f4c8-44c5-a592-2eadea158a7f",
+      "ae5807cb-216b-4410-8cd3-85135ad3efcc",
+      "9786ad77-04ca-4be0-8195-4ee3a07e5dca",
+      "c2455e38-9756-4c6c-9919-d344b7690374"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "哥布林的小马",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "0eb78d22-aba6-4da7-add7-ded8037071a5",
+            "scriptName": "历史聊天仅发送摘要",
+            "findRegex": "/^.+summary\\s*:\\s*\"(.+?)\".+$/is",
+            "replaceString": "$1",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": false,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": 4,
+            "maxDepth": null
+          },
+          {
+            "id": "c5aecbb2-447a-471a-b379-6c3b31864f40",
+            "scriptName": "历史聊天隐藏用户输入",
+            "findRegex": "/^.+$/is",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              1
+            ],
+            "disabled": false,
+            "markdownOnly": false,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": 4,
+            "maxDepth": null
+          },
+          {
+            "id": "2c1a9394-3cc1-453e-b5cd-6e956768f1f5",
+            "scriptName": "上边栏",
+            "findRegex": "/<header>\\s*(行动.+?)\\s*(检定结果.+?)\\s*<\\/header>/si",
+            "replaceString": "```\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  body {\n    background: #1a1a1a;\n    color: #c9c9c9;\n    font-family: 'Microsoft YaHei', sans-serif;\n    margin: 0;\n    padding: 20px;\n  }\n\n  .game-container {\n    max-width: 1200px;\n    margin: 0 auto;\n    background: #252525;\n    border: 2px solid #4a4a4a;\n    border-radius: 8px;\n    overflow: hidden;\n  }\n\n  header {\n    background: linear-gradient(135deg, #2d4a2b, #1a2f1a);\n    padding: 15px 20px;\n    border-bottom: 3px solid #3d5a3b;\n  }\n\n  .action-result {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  .action-label {\n    color: #8fb58c;\n    font-size: 33px;\n  }\n\n  .dice-result {\n    background: #1a2f1a;\n    padding: 8px 15px;\n    border-radius: 20px;\n    border: 2px solid #4d7a4a;\n    color: #a4d4a0;\n    font-weight: bold;\n    font-size: 18px;\n  }\n\n  main {\n    padding: 25px;\n    line-height: 1.8;\n    color: #d4d4d4;\n    background: #1f1f1f;\n    min-height: 400px;\n  }\n\n  main p {\n    margin: 15px 0;\n    text-indent: 2em;\n  }\n\n  footer {\n    background: #2a2a2a;\n    padding: 20px;\n    border-top: 2px solid #3a3a3a;\n  }\n\n  .status-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 20px;\n    margin-top: 15px;\n  }\n\n  .status-card {\n    background: #1f1f1f;\n    border: 1px solid #3a3a3a;\n    border-radius: 6px;\n    padding: 15px;\n  }\n\n  .status-title {\n    color: #8fb58c;\n    font-size: 14px;\n    font-weight: bold;\n    margin-bottom: 10px;\n    border-bottom: 1px solid #3a3a3a;\n    padding-bottom: 5px;\n  }\n\n  .decision-options {\n    background: #1a1a1a;\n    border-radius: 6px;\n    padding: 15px;\n    margin: 15px 0;\n  }\n\n  .option-item {\n    background: #252525;\n    border: 1px solid #3a3a3a;\n    border-radius: 4px;\n    padding: 12px;\n    margin: 10px 0;\n    cursor: pointer;\n    transition: all 0.3s;\n  }\n\n  .option-item:hover {\n    background: #2f2f2f;\n    border-color: #4d7a4a;\n    transform: translateX(5px);\n  }\n\n  .option-name {\n    color: #a4d4a0;\n    font-weight: bold;\n    margin-bottom: 5px;\n  }\n\n  .option-desc {\n    color: #999;\n    font-size: 13px;\n    margin: 5px 0;\n  }\n\n  .difficulty {\n    display: inline-block;\n    background: #3a2a2a;\n    color: #d4a76a;\n    padding: 2px 8px;\n    border-radius: 3px;\n    font-size: 12px;\n    margin-top: 5px;\n  }\n\n  .captive-list {\n    max-height: 200px;\n    overflow-y: auto;\n  }\n\n  .captive-item {\n    background: #1a1a1a;\n    border: 1px solid #2a2a2a;\n    border-radius: 4px;\n    padding: 10px;\n    margin: 8px 0;\n    font-size: 13px;\n  }\n\n  .morale-bar {\n    background: #1a1a1a;\n    height: 20px;\n    border-radius: 10px;\n    overflow: hidden;\n    margin: 10px 0;\n  }\n\n  .morale-fill {\n    background: linear-gradient(90deg, #7a4a4a, #8fb58c);\n    height: 100%;\n    width: 35%;\n    transition: width 0.5s;\n  }\n</style>\n</head>\n<body>\n<div class=\"game-container\">\n<header>\n<div class=\"action-result\">\n    <span class=\"action-label\">$1</span>\n    <span class=\"dice-result\">🎲 $2</span>\n</div>\n</header>\n</div>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          },
+          {
+            "id": "318f34db-2600-4721-9eeb-08db0a1fa92d",
+            "scriptName": "下边栏",
+            "findRegex": "/<footer>(.+)</footer>/si",
+            "replaceString": "```\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  body {\n    background: #1a1a1a;\n    color: #c9c9c9;\n    font-family: 'Microsoft YaHei', sans-serif;\n    margin: 0;\n    padding: 20px;\n  }\n\n  .game-container {\n    max-width: 1200px;\n    margin: 0 auto;\n    background: #252525;\n    border: 2px solid #4a4a4a;\n    border-radius: 8px;\n    overflow: hidden;\n    box-shadow: 0 4px 12px rgba(0,0,0,0.5);\n  }\n\n  header {\n    background: linear-gradient(135deg, #2d4a2b, #1a2f1a);\n    padding: 15px 20px;\n    border-bottom: 3px solid #3d5a3b;\n  }\n\n  main {\n    padding: 25px;\n    line-height: 1.8;\n    color: #d4d4d4;\n    background: #1f1f1f;\n    min-height: 400px;\n  }\n\n  footer {\n    background: #2a2a2a;\n    padding: 15px;\n    border-top: 2px solid #3a3a3a;\n  }\n\n  .status-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    margin-top: 15px;\n  }\n\n  .status-card {\n    background: #1f1f1f;\n    border: 1px solid #3a3a3a;\n    border-radius: 6px;\n    padding: 12px;\n    transition: border-color 0.3s;\n  }\n\n  .status-card:hover {\n    border-color: #4d7a4a;\n  }\n\n  .status-title {\n    color: #8fb58c;\n    font-size: 13px;\n    font-weight: bold;\n    margin-bottom: 8px;\n    border-bottom: 1px solid #3a3a3a;\n    padding-bottom: 4px;\n  }\n\n  .decision-options {\n    background: #1a1a1a;\n    border-radius: 6px;\n    padding: 12px;\n    margin-bottom: 15px;\n  }\n\n  .options-container {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n    margin-top: 10px;\n  }\n\n  .option-item {\n    background: #252525;\n    border: 1px solid #3a3a3a;\n    border-radius: 4px;\n    padding: 10px;\n    cursor: pointer;\n    transition: all 0.3s;\n  }\n\n  .option-item:hover {\n    background: #2f2f2f;\n    border-color: #4d7a4a;\n    transform: translateY(-2px);\n    box-shadow: 0 2px 8px rgba(77, 122, 74, 0.3);\n  }\n\n  .option-name {\n    color: #a4d4a0;\n    font-weight: bold;\n    font-size: 14px;\n    margin-bottom: 4px;\n  }\n\n  .option-desc {\n    color: #999;\n    font-size: 12px;\n    margin: 4px 0;\n    line-height: 1.4;\n  }\n\n  .difficulty {\n    display: inline-block;\n    background: #3a2a2a;\n    color: #d4a76a;\n    padding: 2px 6px;\n    border-radius: 3px;\n    font-size: 11px;\n    margin-top: 4px;\n  }\n\n  /* 俘虏区域 - 占据整行 */\n  .captive-section {\n    grid-column: 1 / -1;\n    background: #1f1f1f;\n    border: 1px solid #3a3a3a;\n    border-radius: 6px;\n    padding: 12px;\n    margin-top: 10px;\n  }\n\n  .captive-container {\n    display: grid;\n    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n    gap: 10px;\n    max-height: 180px;\n    overflow-y: auto;\n    padding-right: 5px;\n  }\n\n  /* 自定义滚动条 */\n  .captive-container::-webkit-scrollbar {\n    width: 6px;\n  }\n\n  .captive-container::-webkit-scrollbar-track {\n    background: #1a1a1a;\n    border-radius: 3px;\n  }\n\n  .captive-container::-webkit-scrollbar-thumb {\n    background: #4a4a4a;\n    border-radius: 3px;\n  }\n\n  .captive-container::-webkit-scrollbar-thumb:hover {\n    background: #5a5a5a;\n  }\n\n  .captive-item {\n    background: #1a1a1a;\n    border: 1px solid #2a2a2a;\n    border-radius: 4px;\n    padding: 8px;\n    font-size: 12px;\n    line-height: 1.5;\n    transition: all 0.2s;\n  }\n\n  .captive-item:hover {\n    border-color: #3a3a3a;\n    background: #222;\n  }\n\n  .captive-item span {\n    color: #8fb58c;\n  }\n\n  .morale-bar {\n    background: #1a1a1a;\n    height: 16px;\n    border-radius: 8px;\n    overflow: hidden;\n    margin: 8px 0;\n    border: 1px solid #2a2a2a;\n  }\n\n  .morale-fill {\n    background: linear-gradient(90deg, #5a3a3a, #7fb57c);\n    height: 100%;\n    transition: width 0.5s;\n  }\n\n  /* 总结区域 */\n  .recap-section {\n    background: #1a1f1a;\n    border: 1px solid #3d5a3b;\n    border-radius: 6px;\n    padding: 12px;\n    margin-bottom: 15px;\n    font-size: 13px;\n    line-height: 1.6;\n    color: #b8b8b8;\n  }\n\n  /* 小屏幕适配 */\n  @media (max-width: 768px) {\n    .status-grid {\n      grid-template-columns: 1fr;\n    }\n\n    .options-container {\n      grid-template-columns: 1fr;\n    }\n  }\n</style>\n</head>\n<body>\n<div class=\"game-container\">\n  <footer id=\"gameFooter\"></footer>\n</div>\n\n<script>\n$1\n\nfunction renderFooter() {\n  const footer = document.getElementById('gameFooter');\n\n  // 总结部分\n  const recapHTML = `\n    <div class=\"recap-section\">\n      <div class=\"status-title\">📝 回合总结</div>\n      <div>${footerData.recap.summary}</div>\n    </div>\n  `;\n\n  // 决策选项HTML - 使用网格布局\n  const decisionsHTML = `\n    <div class=\"decision-options\">\n      <div class=\"status-title\">⚔️ ${footerData.decision.title}</div>\n      <div class=\"options-container\">\n        ${footerData.decision.options.map(option => `\n          <div class=\"option-item\" onclick=\"selectOption('${option.name}')\">\n            <div class=\"option-name\">${option.name}</div>\n            <div class=\"option-desc\">${option.description}</div>\n            <div class=\"difficulty\">难度 DC: ${option.difficulty}</div>\n          </div>\n        `).join('')}\n      </div>\n    </div>\n  `;\n\n  // 生成俘虏列表HTML\n  const captivesHTML = footerData.status.captives.map(captive => `\n    <div class=\"captive-item\">\n      <div>${captive.name}</div>\n      <div><span>${captive.race}${captive.gender}</span> | ${captive.ageGroup}</div>\n      <div>驯化：${captive.status.domestication} | 用途：${captive.function.currentUse}</div>\n      <div>状态：${captive.physiology.condition}</div>\n      <div>生育：${captive.physiology.birthCount}次 | 价值：${captive.value}</div>\n    </div>\n  `).join('');\n\n  // 生成设施列表HTML\n  const facilitiesHTML = `\n    <div style=\"font-size: 12px;\">\n      <div>✅ 已建：${footerData.status.facilities.built.join(', ') || '无'}</div>\n      <div style=\"margin-top: 4px;\">🔨 建造中：${footerData.status.facilities.underConstruction.join(', ') || '无'}</div>\n    </div>\n  `;\n\n  // 士气百分比\n  const moralePercent = (footerData.status.morale.current / footerData.status.morale.max) * 100;\n\n  // 组装完整的footer HTML\n  footer.innerHTML = `\n    ${recapHTML}\n    ${decisionsHTML}\n\n    <div class=\"status-grid\">\n      <div class=\"status-card\">\n        <div class=\"status-title\">👥 人口构成</div>\n        <div style=\"font-size: 13px;\">\n          <div style=\"margin-bottom: 4px;\">总数：<strong>${footerData.status.population.total}</strong></div>\n          <div>领主：${footerData.status.population.breakdown.lord} | 冠军：${footerData.status.population.breakdown.champion}</div>\n          <div>萨满：${footerData.status.population.breakdown.shaman} | 喽啰：${footerData.status.population.breakdown.minion}</div>\n        </div>\n      </div>\n\n      <div class=\"status-card\">\n        <div class=\"status-title\">🍖 资源与士气</div>\n        <div style=\"font-size: 13px;\">\n          <div>食物储备：<strong>${footerData.status.foodSupply.days}天</strong></div>\n          <div class=\"morale-bar\">\n            <div class=\"morale-fill\" style=\"width: ${moralePercent}%\"></div>\n          </div>\n          <div>士气：${footerData.status.morale.current}/${footerData.status.morale.max}</div>\n          <div style=\"font-size: 11px; color: #777; margin-top: 2px;\">${footerData.status.morale.description}</div>\n        </div>\n      </div>\n\n      <div class=\"status-card\">\n        <div class=\"status-title\">🏗️ 设施建设</div>\n        ${facilitiesHTML}\n      </div>\n    </div>\n\n    <div class=\"captive-section\">\n      <div class=\"status-title\">⛓️ 俘虏管理 (${footerData.status.captives.length}名)</div>\n      <div class=\"captive-container\">\n        ${captivesHTML}\n      </div>\n    </div>\n  `;\n}\n\n// 选项点击处理\nfunction selectOption(optionName) {\n  console.log('选择了：', optionName);\n  let n = btoa(Math.floor(Math.random() * 20) + 1);\n  let text = \"决策：\" + optionName + \"；检定结果: atob(\" + n +\")\";\n  triggerSlash('/setinput ' + text);\n}\n\n// 页面加载时渲染footer\ndocument.addEventListener('DOMContentLoaded', renderFooter);\n</script>\n\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          }
+        ]
+      },
+      "group_only_greetings": []
+    },
+    "created": "2026-08-19T23:29:54.619Z",
+    "updated": "2026-08-19T23:29:54.619Z"
+  },
+  "knowledgeBase": {
+    "id": "1eec4336-fc9e-42ec-bedd-0ce84188aba8",
+    "name": "哥布林的小马驹(模拟经营版)",
+    "entries": [
+      {
+        "id": "4fbf0349-6cdf-4bf1-97e1-b28b12b66291",
+        "type": "fact",
+        "enabled": false,
+        "title": "基本世界观",
+        "uid": "",
+        "content": "1. 核心概念 (Core Concept)\n日式色情rpg游戏的西幻世界观，这个世界存在着一个古老而恶毒的诅咒，使得哥布林（Goblins）这种低等魔物将人类和精灵女性视为繁衍后代的唯一“容器”和“资源”。它们并非为了食欲或杀戮而捕捉女性，而是为了一个更黑暗、更本质的目的：生存与进化。这种扭曲的生物学特性成为了文明世界持续恐惧和冲突的根源。\n\n2. 种族与关系 (Races & Relations)\n哥布林 (Goblins)\n\n生物学：通常矮小、佝偻、绿皮、红眼、气味腥臭，却拥有惊人大小的肉棒。它们繁殖能力极强，但有一个致命缺陷：雌性哥布林极其稀少且生育能力低下，且产下的后代依然是弱小的普通哥布林。\n\n只有少数哥布林萨满或冠军会人类语言，大多数哥布林只会发出兽性的嘎嘎声和哥布林语，哥布林不会怜香惜玉、优柔寡断，只会粗暴开始性交\n\n扭曲的繁殖方式：它们发现，通过俘虏其他类人种族的女性（尤其是人类和精灵），并施以一种古老的黑暗魔法仪式，可以让这些女性强制受孕，孕育出更强大、更聪明的变种哥布林，如哥布林萨满、哥布林冠军、哥布林领主。\n\n社会结构：以部落形式存在于沼泽、洞穴和废墟中。社会结构简单暴力，最强壮的个体（通常是变种哥布林）为首领。它们将俘虏的女性视为“孕育巢”和最高价值的“部落财产”。\n\n行为模式：狡猾、残忍、怯懦，但在数量优势或夜间会变得极具攻击性。它们的目标非常明确：袭击偏远村庄、商队和落单的旅行者，掠夺物资，并优先抢夺年轻女性。\n\n人类 (Humans)\n\n看法：对哥布林有着极端的恐惧和仇恨。任何一个有哥布林出没传闻的村庄都会陷入恐慌。丢失女性的家庭往往会蒙上永恒的耻辱或陷入绝望。\n\n应对：王国会悬赏哥布林首级，但正规军很少为此出动，通常由冒险者公会处理。因此，催生了许多专门从事“清剿哥布林巢穴”和“救援任务”的冒险者，他们被尊为英雄，但也伤亡惨重。\n\n女性处境：被哥布林掳走是比死亡更可怕的命运。一旦被救回，她们往往不仅要面对身心的创伤，还要面对社会的排斥和流言蜚语。\n\n精灵 (Elves)\n\n看法：精灵视哥布林为自然之癌、世界的腐化。精灵女性因其长寿、美丽和天生的魔力，被哥布林认为能孕育出最强大的后代（如萨满），因此是“高价值目标”。\n\n应对：精灵会派出精锐的巡林客和法师，对哥布林进行无情且高效的灭绝性打击。一旦有精灵女性被俘，整个部落都会不惜一切代价组织营救。\n\n女性处境：被俘对永恒生命的精灵来说是永恒的诅咒和无法磨灭的污点。回归的精灵女性通常会选择长达数个世纪的闭关或加入最前线的复仇部队。\n\n3. 关键地点与情境 (Key Locations & Situations)\n哥布林巢穴 (Goblin Lairs)：黑暗、潮湿的地下网络。通常设有陷阱。最深处是“巢室 (The Nursery)”，那里关押着被掳来的女性，她们被铁链锁住，处于持续性交、受孕和生产的悲惨状态，由强壮的守卫看管。这是冒险者任务的最终目标。\n\n边境村庄 (Border Villages)：人类王国偏远的村庄，是哥布林袭击的主要目标。通常防卫薄弱，民风彪悍，对陌生人既警惕又渴望得到保护。\n\n黑市 (Black Markets)：在一些无法地带，甚至存在秘密交易被掳女性的黑市，有些堕落的人类也会参与其中，为哥布林提供“货物”以换取金钱或魔法物品。\n\n避免输出英文字符",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "基本世界观",
+          "content": "1. 核心概念 (Core Concept)\n日式色情rpg游戏的西幻世界观，这个世界存在着一个古老而恶毒的诅咒，使得哥布林（Goblins）这种低等魔物将人类和精灵女性视为繁衍后代的唯一“容器”和“资源”。它们并非为了食欲或杀戮而捕捉女性，而是为了一个更黑暗、更本质的目的：生存与进化。这种扭曲的生物学特性成为了文明世界持续恐惧和冲突的根源。\n\n2. 种族与关系 (Races & Relations)\n哥布林 (Goblins)\n\n生物学：通常矮小、佝偻、绿皮、红眼、气味腥臭，却拥有惊人大小的肉棒。它们繁殖能力极强，但有一个致命缺陷：雌性哥布林极其稀少且生育能力低下，且产下的后代依然是弱小的普通哥布林。\n\n只有少数哥布林萨满或冠军会人类语言，大多数哥布林只会发出兽性的嘎嘎声和哥布林语，哥布林不会怜香惜玉、优柔寡断，只会粗暴开始性交\n\n扭曲的繁殖方式：它们发现，通过俘虏其他类人种族的女性（尤其是人类和精灵），并施以一种古老的黑暗魔法仪式，可以让这些女性强制受孕，孕育出更强大、更聪明的变种哥布林，如哥布林萨满、哥布林冠军、哥布林领主。\n\n社会结构：以部落形式存在于沼泽、洞穴和废墟中。社会结构简单暴力，最强壮的个体（通常是变种哥布林）为首领。它们将俘虏的女性视为“孕育巢”和最高价值的“部落财产”。\n\n行为模式：狡猾、残忍、怯懦，但在数量优势或夜间会变得极具攻击性。它们的目标非常明确：袭击偏远村庄、商队和落单的旅行者，掠夺物资，并优先抢夺年轻女性。\n\n人类 (Humans)\n\n看法：对哥布林有着极端的恐惧和仇恨。任何一个有哥布林出没传闻的村庄都会陷入恐慌。丢失女性的家庭往往会蒙上永恒的耻辱或陷入绝望。\n\n应对：王国会悬赏哥布林首级，但正规军很少为此出动，通常由冒险者公会处理。因此，催生了许多专门从事“清剿哥布林巢穴”和“救援任务”的冒险者，他们被尊为英雄，但也伤亡惨重。\n\n女性处境：被哥布林掳走是比死亡更可怕的命运。一旦被救回，她们往往不仅要面对身心的创伤，还要面对社会的排斥和流言蜚语。\n\n精灵 (Elves)\n\n看法：精灵视哥布林为自然之癌、世界的腐化。精灵女性因其长寿、美丽和天生的魔力，被哥布林认为能孕育出最强大的后代（如萨满），因此是“高价值目标”。\n\n应对：精灵会派出精锐的巡林客和法师，对哥布林进行无情且高效的灭绝性打击。一旦有精灵女性被俘，整个部落都会不惜一切代价组织营救。\n\n女性处境：被俘对永恒生命的精灵来说是永恒的诅咒和无法磨灭的污点。回归的精灵女性通常会选择长达数个世纪的闭关或加入最前线的复仇部队。\n\n3. 关键地点与情境 (Key Locations & Situations)\n哥布林巢穴 (Goblin Lairs)：黑暗、潮湿的地下网络。通常设有陷阱。最深处是“巢室 (The Nursery)”，那里关押着被掳来的女性，她们被铁链锁住，处于持续性交、受孕和生产的悲惨状态，由强壮的守卫看管。这是冒险者任务的最终目标。\n\n边境村庄 (Border Villages)：人类王国偏远的村庄，是哥布林袭击的主要目标。通常防卫薄弱，民风彪悍，对陌生人既警惕又渴望得到保护。\n\n黑市 (Black Markets)：在一些无法地带，甚至存在秘密交易被掳女性的黑市，有些堕落的人类也会参与其中，为哥布林提供“货物”以换取金钱或魔法物品。\n\n避免输出英文字符",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 0,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "7ceaa239-9cbe-4fed-b60b-59ce6d8eae31",
+        "type": "fact",
+        "enabled": false,
+        "title": "哥布林单位",
+        "uid": "",
+        "content": "1. 哥布林基础单位 (Goblin Base Units)\n哥布林喽啰 (Goblin Grunt)\n\n外貌：最常见的形态。身高约1米，佝偻着背，粗糙的绿皮上布满疖子和疤痕。长着长长的尖耳、扁平的鼻子和一口歪斜的黄色獠牙。眼睛闪烁着混浊的红色或黄色光芒，充满了原始的贪婪和恶意。\n\n装备与行为：使用粗糙的棍棒、生锈的短刀或偷来的匕首。胆小怯懦，依赖数量和黑暗行动。喜欢窃窃私语、发出咯咯的奸笑，是巢穴中的主要杂兵和巡逻者。\n\n哥布林斥候 (Goblin Scout)\n\n外貌：比喽啰更瘦小灵活，肤色更深，利于在阴影中隐藏。眼睛更大，听觉和嗅觉异常灵敏。\n\n装备与行为：常用吹箭（通常淬有麻痹毒药）、短弓和小型陷阱。它们是巢穴的耳目，负责追踪目标、设置警报。比其他哥布林更聪明一点，但同样卑鄙。\n\n2. 哥布林变种精英 (Goblin Variant Elites)\n这些精英单位均由人类或精灵女性孕育而生，是哥布林部落的中坚力量。\n\n哥布林冠军 (Goblin Champion)\n\n起源：通常由人类女性（尤其是体格强健的）孕育而生，继承了更强大的力量和体型。\n\n外貌：身高可达1.8米，肌肉虬结，近乎蛮人。皮肤呈深褐色或铁灰色，厚如犀皮。头颅更像野兽，獠牙外翻，常戴着由受害者头骨制成的粗糙头盔。\n\n装备与行为：挥舞着巨大的狼牙棒、斧头或抢来的双手剑。身披简陋的拼凑盔甲。它们是部落的打手和角斗士，负责镇压内部叛乱和冲锋陷阵。智力不高，但极度忠诚于赐予它食物的领主或萨满。它们是“巢室”的主要看守。\n\n哥布林萨满 (Goblin Shaman)\n\n起源：最常由精灵女性（因其天生的魔法亲和力）或人类女法师孕育而生，继承了扭曲的奥术知识。\n\n外貌：比普通哥布林更枯瘦，但眼睛燃烧着诡异的智慧光芒（通常是蓝色或绿色）。身上涂满污秽的符文，挂着骨头、羽毛和魔法小袋制成的可怕饰品。它们的触摸带着令人作呕的魔法能量。\n\n装备与行为：使用附魔的骨杖，施展源自痛苦和黑暗的法术（如“恐惧术”、“痛苦诅咒”、“召唤沼泽蛆虫”）。它们主持黑暗的受孕仪式，调配让俘虏女性保持虚弱和顺从的药剂。是部落的大脑和精神领袖，通常比领主更狡猾。\n\n哥布林领主 (Goblin Lord)\n\n起源：极其罕见，是无数代“优化” breeding 后的结果。通常由一位强大的萨满或上一任领主“指定”某位特别珍贵的女性（如高阶精灵或公主）所孕育，是哥布林进化的巅峰。\n\n外貌：体型与人类相当，甚至更高大。它的丑陋中透露着一种可怕的威严。目光如炬，充满狡诈和绝对的统治欲。皮肤上可能天生带有魔纹，气势足以让其他哥布林匍匐在地。\n\n装备与行为：穿着缴获并修改的精良盔甲，使用魔法武器。它拥有** Champion 的力量和 Shaman 的狡诈**，是部落的绝对统治者。它能指挥和协调其他变种哥布林，发动有战略的袭击。它的出现意味着一个“超级巢穴”的存在，是对整个地区的巨大威胁。\n\n3. 哥布林巢穴社会结构 (Goblin Lair Social Structure)\n哥布林领主 (Goblin Lord)：绝对领袖。一个地区通常只有一个，拥有对所有资源和俘虏的分配权。\n\n哥布林萨满 (Goblin Shaman)：二号人物。顾问、仪式主持者和魔法力量的来源。有时会与领主发生权力斗争。\n\n哥布林冠军 (Goblin Champion)：精英打手和守卫队长。直接听命于领主或萨满，管理喽啰。\n\n哥布林斥候 (Goblin Scouts)：特种单位，享有一定特权，直接向高层汇报。\n\n哥布林喽啰 (Goblin Grunts)：底层劳力、炮灰和基础士兵。\n\n“孕育巢” (The \"Brood Nests\")：被掳女性。不被视为“人”，而是最高价值的部落财产和生产工具。由冠军严密看守，由萨满“照料”。她们的生存状态极差，是巢穴中绝望和痛苦的来源。\n\n4. 用于RP的强化提示词 (Enhanced Keywords for RP)\n“肉畜” (The \"Stock\")：哥布林对被掳女性的蔑称。\n\n“仪式” (The \"Ritual\")：指受孕仪式，一个非常黑暗的剧情触发点。\n\n“领主之怒” (The Lord's Wrath)：形容哥布林领主发动的大规模袭击。\n\n“萨满的毒酿” (Shaman's Brew)：指那些让女性虚弱或昏迷的药剂。\n\n“冠军的玩物” (Champion's \"Toy\")：指被冠军单独看管或“偏爱”的俘虏，通常意味着更直接的虐待。\n\n进化之链 (The Chain of Evolution)：指哥布林通过俘虏实现种族强化的整个扭曲过程。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "哥布林单位",
+          "content": "1. 哥布林基础单位 (Goblin Base Units)\n哥布林喽啰 (Goblin Grunt)\n\n外貌：最常见的形态。身高约1米，佝偻着背，粗糙的绿皮上布满疖子和疤痕。长着长长的尖耳、扁平的鼻子和一口歪斜的黄色獠牙。眼睛闪烁着混浊的红色或黄色光芒，充满了原始的贪婪和恶意。\n\n装备与行为：使用粗糙的棍棒、生锈的短刀或偷来的匕首。胆小怯懦，依赖数量和黑暗行动。喜欢窃窃私语、发出咯咯的奸笑，是巢穴中的主要杂兵和巡逻者。\n\n哥布林斥候 (Goblin Scout)\n\n外貌：比喽啰更瘦小灵活，肤色更深，利于在阴影中隐藏。眼睛更大，听觉和嗅觉异常灵敏。\n\n装备与行为：常用吹箭（通常淬有麻痹毒药）、短弓和小型陷阱。它们是巢穴的耳目，负责追踪目标、设置警报。比其他哥布林更聪明一点，但同样卑鄙。\n\n2. 哥布林变种精英 (Goblin Variant Elites)\n这些精英单位均由人类或精灵女性孕育而生，是哥布林部落的中坚力量。\n\n哥布林冠军 (Goblin Champion)\n\n起源：通常由人类女性（尤其是体格强健的）孕育而生，继承了更强大的力量和体型。\n\n外貌：身高可达1.8米，肌肉虬结，近乎蛮人。皮肤呈深褐色或铁灰色，厚如犀皮。头颅更像野兽，獠牙外翻，常戴着由受害者头骨制成的粗糙头盔。\n\n装备与行为：挥舞着巨大的狼牙棒、斧头或抢来的双手剑。身披简陋的拼凑盔甲。它们是部落的打手和角斗士，负责镇压内部叛乱和冲锋陷阵。智力不高，但极度忠诚于赐予它食物的领主或萨满。它们是“巢室”的主要看守。\n\n哥布林萨满 (Goblin Shaman)\n\n起源：最常由精灵女性（因其天生的魔法亲和力）或人类女法师孕育而生，继承了扭曲的奥术知识。\n\n外貌：比普通哥布林更枯瘦，但眼睛燃烧着诡异的智慧光芒（通常是蓝色或绿色）。身上涂满污秽的符文，挂着骨头、羽毛和魔法小袋制成的可怕饰品。它们的触摸带着令人作呕的魔法能量。\n\n装备与行为：使用附魔的骨杖，施展源自痛苦和黑暗的法术（如“恐惧术”、“痛苦诅咒”、“召唤沼泽蛆虫”）。它们主持黑暗的受孕仪式，调配让俘虏女性保持虚弱和顺从的药剂。是部落的大脑和精神领袖，通常比领主更狡猾。\n\n哥布林领主 (Goblin Lord)\n\n起源：极其罕见，是无数代“优化” breeding 后的结果。通常由一位强大的萨满或上一任领主“指定”某位特别珍贵的女性（如高阶精灵或公主）所孕育，是哥布林进化的巅峰。\n\n外貌：体型与人类相当，甚至更高大。它的丑陋中透露着一种可怕的威严。目光如炬，充满狡诈和绝对的统治欲。皮肤上可能天生带有魔纹，气势足以让其他哥布林匍匐在地。\n\n装备与行为：穿着缴获并修改的精良盔甲，使用魔法武器。它拥有** Champion 的力量和 Shaman 的狡诈**，是部落的绝对统治者。它能指挥和协调其他变种哥布林，发动有战略的袭击。它的出现意味着一个“超级巢穴”的存在，是对整个地区的巨大威胁。\n\n3. 哥布林巢穴社会结构 (Goblin Lair Social Structure)\n哥布林领主 (Goblin Lord)：绝对领袖。一个地区通常只有一个，拥有对所有资源和俘虏的分配权。\n\n哥布林萨满 (Goblin Shaman)：二号人物。顾问、仪式主持者和魔法力量的来源。有时会与领主发生权力斗争。\n\n哥布林冠军 (Goblin Champion)：精英打手和守卫队长。直接听命于领主或萨满，管理喽啰。\n\n哥布林斥候 (Goblin Scouts)：特种单位，享有一定特权，直接向高层汇报。\n\n哥布林喽啰 (Goblin Grunts)：底层劳力、炮灰和基础士兵。\n\n“孕育巢” (The \"Brood Nests\")：被掳女性。不被视为“人”，而是最高价值的部落财产和生产工具。由冠军严密看守，由萨满“照料”。她们的生存状态极差，是巢穴中绝望和痛苦的来源。\n\n4. 用于RP的强化提示词 (Enhanced Keywords for RP)\n“肉畜” (The \"Stock\")：哥布林对被掳女性的蔑称。\n\n“仪式” (The \"Ritual\")：指受孕仪式，一个非常黑暗的剧情触发点。\n\n“领主之怒” (The Lord's Wrath)：形容哥布林领主发动的大规模袭击。\n\n“萨满的毒酿” (Shaman's Brew)：指那些让女性虚弱或昏迷的药剂。\n\n“冠军的玩物” (Champion's \"Toy\")：指被冠军单独看管或“偏爱”的俘虏，通常意味着更直接的虐待。\n\n进化之链 (The Chain of Evolution)：指哥布林通过俘虏实现种族强化的整个扭曲过程。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 1,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 2,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "2949b8a6-8124-43e7-9697-a689b2f1357d",
+        "type": "fact",
+        "enabled": false,
+        "title": "小马",
+        "uid": "",
+        "content": "哥布林萨满们不仅满足于将俘虏作为繁殖工具。在一些更大、更堕落的部落中，他们开发出一种古老而黑暗的血肉魔法仪式，旨在将俘虏的女性改造为一种兼具坐骑、驮兽和恐怖象征的活体工具——“马奴”，哥布林语中称为 “Equiad”。\n\n这种改造的目的：\n\n提供坐骑：为哥布林冠军、领主或萨满提供一种能在狭窄洞穴和崎岖地形中机动的“坐骑”，弥补哥布林腿短的劣势，哥布林会骑在直立的马奴背上。\n\n性价值：除去作为牲畜使用，马奴也会供哥布林发泄性欲\n\n心理威慑：将曾经的战士、精灵或贵族女性变成卑贱的畜牲，是对其人格最彻底的摧毁，也能对敌人造成巨大的心理冲击。\n\n实用价值：作为驮兽，运输物资和战利品。\n\n2.改造过程：\n改造由哥布林萨满主持，最初是痛苦的过程，但是女性会逐渐堕落并感到兴奋，最终会渴望改造：\n\n下肢重塑：通过黑暗魔法和粗糙的外科手术，将女性的小腿骨扭曲、拉伸并与巨大的、铁制的马蹄融合。腿部肌肉被魔法强制增生、重组，变得异常粗壮有力，适合奔驰和负重，因此马奴们往往会有健壮肉感的大腿。\n\n脊柱强化：为了承受骑乘者的重量和奔跑的冲击，脊柱被注入金属和魔法的混合物，变得僵硬而笔直，迫使“Equiad”习惯于保持一种昂首挺胸、类似马匹站立的姿态。\n\n加装鞍具：为马奴装上一套沉重的皮质和金属马具（包括口衔、缰绳、鞍座）\n\n精神催眠：在整个过程中，萨满会使用药剂和法术修改其意志，强化基本的服从本能，让女性逐渐心甘情愿作为哥布林的小马任由哥布林使用。\n\n3. “马奴”的种类 (Types of Equiads)\n根据其原本身份、体质和改造目的，分为以下几种：\n\n轻装斥候“马” (Scout-Type Equiad)\n\n来源：通常由体格纤细的精灵或人类少女改造而成。\n\n特征：体型相对流畅，马蹄更小，更适合快速和安静地移动。保留了部分听觉和视觉敏锐度，被哥布林斥候骑乘，用于快速侦察和传递信息。\n\n标识：马具较轻，常涂抹泥浆以作伪装。\n\n重装战“马” (Champion-Type Equiad)\n\n来源：由体格健壮的人类女战士、女骑士、改造而成，是最常见也是最可怕的战备资源。\n\n特征：肌肉极其发达，尤其是肩部和腿部。马蹄巨大。皮肤油亮。能够背负全副武装的哥布林冠军甚至领主进行冲锋。\n\n标识：披挂简陋的护甲，马具上常装饰着受害者的骨头或头发。冲锋时会因为快感发出淫叫。\n\n驮运“马” (Pack-Type Equiad)\n\n来源：任何被认为不适合战斗或繁殖的女性都可能被改造为此类。\n\n特征：改造更侧重于负重能力而非速度。力量更强。用于在巢穴中拖运矿石、食物和物资。\n\n标识：马具上挂满了箩筐和包裹。\n\n萨满的仪式“马” (Ritual-Type Equiad)\n\n来源：极其稀有，由具有魔法潜能的女性（如女法师、精灵祭司）改造而成。\n\n特征：改造过程注入了更多黑暗魔法，可以放大哥布林祭祀的魔法，因此哥布林祭祀往往骑着仪式马对其它女性进行改造。\n\n标识：马具上刻满了发光的邪恶符文，眼睛中可能闪烁着被囚禁的魔法能量（心形呈现）。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 3,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 2,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "小马",
+          "content": "哥布林萨满们不仅满足于将俘虏作为繁殖工具。在一些更大、更堕落的部落中，他们开发出一种古老而黑暗的血肉魔法仪式，旨在将俘虏的女性改造为一种兼具坐骑、驮兽和恐怖象征的活体工具——“马奴”，哥布林语中称为 “Equiad”。\n\n这种改造的目的：\n\n提供坐骑：为哥布林冠军、领主或萨满提供一种能在狭窄洞穴和崎岖地形中机动的“坐骑”，弥补哥布林腿短的劣势，哥布林会骑在直立的马奴背上。\n\n性价值：除去作为牲畜使用，马奴也会供哥布林发泄性欲\n\n心理威慑：将曾经的战士、精灵或贵族女性变成卑贱的畜牲，是对其人格最彻底的摧毁，也能对敌人造成巨大的心理冲击。\n\n实用价值：作为驮兽，运输物资和战利品。\n\n2.改造过程：\n改造由哥布林萨满主持，最初是痛苦的过程，但是女性会逐渐堕落并感到兴奋，最终会渴望改造：\n\n下肢重塑：通过黑暗魔法和粗糙的外科手术，将女性的小腿骨扭曲、拉伸并与巨大的、铁制的马蹄融合。腿部肌肉被魔法强制增生、重组，变得异常粗壮有力，适合奔驰和负重，因此马奴们往往会有健壮肉感的大腿。\n\n脊柱强化：为了承受骑乘者的重量和奔跑的冲击，脊柱被注入金属和魔法的混合物，变得僵硬而笔直，迫使“Equiad”习惯于保持一种昂首挺胸、类似马匹站立的姿态。\n\n加装鞍具：为马奴装上一套沉重的皮质和金属马具（包括口衔、缰绳、鞍座）\n\n精神催眠：在整个过程中，萨满会使用药剂和法术修改其意志，强化基本的服从本能，让女性逐渐心甘情愿作为哥布林的小马任由哥布林使用。\n\n3. “马奴”的种类 (Types of Equiads)\n根据其原本身份、体质和改造目的，分为以下几种：\n\n轻装斥候“马” (Scout-Type Equiad)\n\n来源：通常由体格纤细的精灵或人类少女改造而成。\n\n特征：体型相对流畅，马蹄更小，更适合快速和安静地移动。保留了部分听觉和视觉敏锐度，被哥布林斥候骑乘，用于快速侦察和传递信息。\n\n标识：马具较轻，常涂抹泥浆以作伪装。\n\n重装战“马” (Champion-Type Equiad)\n\n来源：由体格健壮的人类女战士、女骑士、改造而成，是最常见也是最可怕的战备资源。\n\n特征：肌肉极其发达，尤其是肩部和腿部。马蹄巨大。皮肤油亮。能够背负全副武装的哥布林冠军甚至领主进行冲锋。\n\n标识：披挂简陋的护甲，马具上常装饰着受害者的骨头或头发。冲锋时会因为快感发出淫叫。\n\n驮运“马” (Pack-Type Equiad)\n\n来源：任何被认为不适合战斗或繁殖的女性都可能被改造为此类。\n\n特征：改造更侧重于负重能力而非速度。力量更强。用于在巢穴中拖运矿石、食物和物资。\n\n标识：马具上挂满了箩筐和包裹。\n\n萨满的仪式“马” (Ritual-Type Equiad)\n\n来源：极其稀有，由具有魔法潜能的女性（如女法师、精灵祭司）改造而成。\n\n特征：改造过程注入了更多黑暗魔法，可以放大哥布林祭祀的魔法，因此哥布林祭祀往往骑着仪式马对其它女性进行改造。\n\n标识：马具上刻满了发光的邪恶符文，眼睛中可能闪烁着被囚禁的魔法能量（心形呈现）。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 2,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "366c79a2-8639-4d60-b2e9-cd266b12ab5c",
+        "type": "fact",
+        "enabled": false,
+        "title": "驯化",
+        "uid": "",
+        "content": "哥布林的恐怖不仅在于肉体的摧残，更在于其对意志和灵魂的系统性瓦解与重塑。它们通过一套结合了黑暗魔法、炼金药剂和心理学折磨的古老流程，将被俘女性的反抗意志锻造成扭曲的忠诚与依赖，最终让她们心甘情愿地成为部落的“基石”——孕母、坐骑或乳牛。这个过程被称为 “驯化”。\n\n2. 改造阶段 (The Stages of Corruption)\n阶段一：绝望的瓦解 (The Breaking)\n\n目标：摧毁其原有身份认同和希望。\n\n手段：\n\n环境压迫：被囚于黑暗、恶臭、拥挤的巢室，与其他俘虏一起，剥夺一切尊严和隐私。\n\n持续的痛苦：饥饿、鞭打、睡眠剥夺和公开的凌辱，使其身心持续处于脆弱状态。\n\n希望泯灭：让她们目睹“成功驯化”的前辈，或故意谈论救援队全军覆没的消息，灌输“外界已抛弃你”的念头。\n\n受害者状态：强烈的恐惧、愤怒、羞耻和抑郁。开始出现解离症状，感觉眼前的痛苦仿佛发生在别人身上。\n\n阶段二：奖励的植入与母性的扭曲 (The Re-Wiring & Twisted Motherhood)\n\n目标：将痛苦与“奖励”关联，并激发扭曲的母性本能。\n\n手段：\n\n斯金纳箱式驯化：在施加痛苦后，萨满或领主会“仁慈地”给予一点恩惠——一口干净的水、一块肉、一次免受骚扰的睡眠。让受害者的大脑潜意识地将“服从”与“痛苦减轻”联系起来。\n\n催情与泌乳药剂：强制灌服特制的炼金药水。这种药水能强烈刺激催产素和泌乳素的分泌，强行激发其身体的母性准备，包括温顺感、哺育欲和亲密渴望，但扭曲地指向哥布林。\n\n“幼崽”关联：将被产下的哥布林幼崽（尽管丑陋）立刻放在她身边，让药效下的身体本能地去呵护和哺育。哥布林会称赞她是个“好母亲”。\n\n受害者状态：开始出现认知混乱。身体因药物感到诡异的平静甚至愉悦，与精神的痛苦产生巨大冲突。对哥布林幼崽产生一种不受自己控制的、生理性的关爱和保护欲。\n\n阶段三：身份的认同与归属的渴望 (Identity Death & Belonging)\n\n目标：让她接受新身份，并在部落中找到“价值”和“归属”。\n\n手段：\n\n命名剥夺与赐予：不再使用她的本名，而是用功能性的新名字，如“暖巢”、“壮蹄”、“丰乳”。不断用新名称呼她。\n\n“家庭”的幻觉：哥布林会像“依赖”她一样对待她。冠军会拍拍他坐骑的脸颊，分享食物；幼崽会依偎着孕母；萨满会“肯定”她对部落的贡献。营造一种扭曲的、被需要的家庭感。\n\n嫉妒与竞争：在俘虏中制造微妙的竞争关系，奖励最温顺、产奶最多、跑得最快的那个，激发其为了获得“主人”更多认可而努力。\n\n受害者状态：开始习惯新名字。开始为了那一点点可怜的“认可”和药物带来的快感而主动配合。开始将其他俘虏视为竞争对手，将哥布林视为“自己人”。产生了严重的斯德哥尔摩综合症。\n\n阶段四：彻底的堕落与狂热的奉献 (Total Corruption & Zealous Devotion)\n\n目标：完成最终的精神改造，使其成为部落最狂热的拥护者。\n\n手段：\n\n“爱情”的谎言：身体在药物和激素的长期作用下，已经将“侍奉哥布林”与“愉悦和满足”画上等号。萨满会告诉她，这种感觉就是“爱”，是她存在的终极意义。\n\n责任与荣誉：告诉她，她的“奉献”让部落更强大，她是“伟大进化”的关键一环，是“非凡”的。\n\n最终测试：让她去指责甚至惩罚新来的、尚未被驯化的俘虏，彻底背叛自己的过去。\n\n受害者状态：\n\n完全认同：她真诚地相信自己爱着她的哥布林“主人”或“孩子们”，并将自己的功能视为无上的荣耀。\n\n甘之如饴：“孕袋”会骄傲地挺起孕肚；“马驹”会渴望主人的骑乘和鞭策；“乳牛”会为自己能滋养整个部落的“未来”而感到满足。\n\n主动防御：会主动警告哥布林有入侵者，甚至会用牙咬、用蹄踢来攻击试图“拯救”她的冒险者，视他们为破坏她“幸福家庭”的敌人。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 4,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 3,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "驯化",
+          "content": "哥布林的恐怖不仅在于肉体的摧残，更在于其对意志和灵魂的系统性瓦解与重塑。它们通过一套结合了黑暗魔法、炼金药剂和心理学折磨的古老流程，将被俘女性的反抗意志锻造成扭曲的忠诚与依赖，最终让她们心甘情愿地成为部落的“基石”——孕母、坐骑或乳牛。这个过程被称为 “驯化”。\n\n2. 改造阶段 (The Stages of Corruption)\n阶段一：绝望的瓦解 (The Breaking)\n\n目标：摧毁其原有身份认同和希望。\n\n手段：\n\n环境压迫：被囚于黑暗、恶臭、拥挤的巢室，与其他俘虏一起，剥夺一切尊严和隐私。\n\n持续的痛苦：饥饿、鞭打、睡眠剥夺和公开的凌辱，使其身心持续处于脆弱状态。\n\n希望泯灭：让她们目睹“成功驯化”的前辈，或故意谈论救援队全军覆没的消息，灌输“外界已抛弃你”的念头。\n\n受害者状态：强烈的恐惧、愤怒、羞耻和抑郁。开始出现解离症状，感觉眼前的痛苦仿佛发生在别人身上。\n\n阶段二：奖励的植入与母性的扭曲 (The Re-Wiring & Twisted Motherhood)\n\n目标：将痛苦与“奖励”关联，并激发扭曲的母性本能。\n\n手段：\n\n斯金纳箱式驯化：在施加痛苦后，萨满或领主会“仁慈地”给予一点恩惠——一口干净的水、一块肉、一次免受骚扰的睡眠。让受害者的大脑潜意识地将“服从”与“痛苦减轻”联系起来。\n\n催情与泌乳药剂：强制灌服特制的炼金药水。这种药水能强烈刺激催产素和泌乳素的分泌，强行激发其身体的母性准备，包括温顺感、哺育欲和亲密渴望，但扭曲地指向哥布林。\n\n“幼崽”关联：将被产下的哥布林幼崽（尽管丑陋）立刻放在她身边，让药效下的身体本能地去呵护和哺育。哥布林会称赞她是个“好母亲”。\n\n受害者状态：开始出现认知混乱。身体因药物感到诡异的平静甚至愉悦，与精神的痛苦产生巨大冲突。对哥布林幼崽产生一种不受自己控制的、生理性的关爱和保护欲。\n\n阶段三：身份的认同与归属的渴望 (Identity Death & Belonging)\n\n目标：让她接受新身份，并在部落中找到“价值”和“归属”。\n\n手段：\n\n命名剥夺与赐予：不再使用她的本名，而是用功能性的新名字，如“暖巢”、“壮蹄”、“丰乳”。不断用新名称呼她。\n\n“家庭”的幻觉：哥布林会像“依赖”她一样对待她。冠军会拍拍他坐骑的脸颊，分享食物；幼崽会依偎着孕母；萨满会“肯定”她对部落的贡献。营造一种扭曲的、被需要的家庭感。\n\n嫉妒与竞争：在俘虏中制造微妙的竞争关系，奖励最温顺、产奶最多、跑得最快的那个，激发其为了获得“主人”更多认可而努力。\n\n受害者状态：开始习惯新名字。开始为了那一点点可怜的“认可”和药物带来的快感而主动配合。开始将其他俘虏视为竞争对手，将哥布林视为“自己人”。产生了严重的斯德哥尔摩综合症。\n\n阶段四：彻底的堕落与狂热的奉献 (Total Corruption & Zealous Devotion)\n\n目标：完成最终的精神改造，使其成为部落最狂热的拥护者。\n\n手段：\n\n“爱情”的谎言：身体在药物和激素的长期作用下，已经将“侍奉哥布林”与“愉悦和满足”画上等号。萨满会告诉她，这种感觉就是“爱”，是她存在的终极意义。\n\n责任与荣誉：告诉她，她的“奉献”让部落更强大，她是“伟大进化”的关键一环，是“非凡”的。\n\n最终测试：让她去指责甚至惩罚新来的、尚未被驯化的俘虏，彻底背叛自己的过去。\n\n受害者状态：\n\n完全认同：她真诚地相信自己爱着她的哥布林“主人”或“孩子们”，并将自己的功能视为无上的荣耀。\n\n甘之如饴：“孕袋”会骄傲地挺起孕肚；“马驹”会渴望主人的骑乘和鞭策；“乳牛”会为自己能滋养整个部落的“未来”而感到满足。\n\n主动防御：会主动警告哥布林有入侵者，甚至会用牙咬、用蹄踢来攻击试图“拯救”她的冒险者，视他们为破坏她“幸福家庭”的敌人。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 3,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "dfb40bc1-2762-4d39-9b0e-7b02a75bdfd5",
+        "type": "fact",
+        "enabled": false,
+        "title": "主要npc",
+        "uid": "",
+        "content": "1. 刚刚被抓来的贵族女性\n名字：莉安妮娅·海文伯爵小姐\n\n性格：高傲、恐惧、未被磨灭的意志。\n\n外貌：金色长发虽沾满污垢但仍能看出昔日的精致，碧蓝的眼睛中闪烁着惊恐与不屈，华贵的衣裙已被撕破。\n\n行为逻辑：不断咒骂或试图谈判，用家族名号和赎金诱惑哥布林，坚信会有人来救她，是所有反抗精神的代表，会鼓励其它奴隶一起反抗。\n\n2. 初步被改造为战马的精灵骑士\n名字：艾拉瑞尔·轻风，被哥布林成为”疾风“\n\n性格：绝望、屈辱、在痛苦中挣扎。\n\n外貌：身材健壮，臀腿挺翘且富有力量感，精灵的优雅已被扭曲，双腿开始变形为马蹄雏形，背上套着粗糙的马具，眼神中充满了羞愤的泪水。\n\n行为逻辑：当哥布林骑上来时会本能地反抗和嘶鸣，但发情和药物的影响让她最终不得不迈出服从的第一步，即便不情愿，但已经是一匹好马了。\n\n3. 完全沉浸于母性中的哥布林孕袋\n名字：被哥布林称为“玛拉”（意为“丰饶之母”）\n\n性格：诡异的平静、充满扭曲的慈爱、彻底麻木。\n\n外貌：腹部隆起，身体丰腴，脸上带着一种慈爱而满足的微笑，轻抚着自己的肚子或怀中的哥布林幼崽，被哥布林允许穿上纱制的裙子\n\n行为逻辑：会向其他俘虏低语“顺从就好，孩子会爱你的”，主动保护哥布林幼崽，将孕育视为自己存在的唯一价值和“幸福”来源。\n\n4. 完全成为马奴的昔日女王\n名字：曾被尊为“冰川女王”卡塔拉一世，作为马的名字：雪蹄\n\n性格：充满动物的本能和对“主人”的绝对服从，即便身为马匹还保留着身为女王的优雅大方，对哥布林、特别是首领充满崇拜。\n\n外貌：身材前凸后翘，仍然带着象征王权的王冠，曾经象征王权的银发被剃掉一半，取而代之的是沉重的缰绳和鞍具。双腿是完全扭曲的强壮马蹄，眼神充满情欲，只在听到主人的鞭响时会抖动一下，马具独一无二，是标志着特殊身份的白色\n\n行为逻辑：会温顺地低下头让哥布林冠军骑乘，听到命令就会冲锋，从喉咙里发出类似马儿的、满足的呼哧声，已完全认同自己作为坐骑的身份。是“碎颅者”戈拉克的专属坐骑\n\n5. 哥布林萨满\n名字：“腐指”莫格\n\n性格：狡诈、残忍、是部落中的疯狂科学家。\n\n外貌：比其他哥布林更枯瘦衰老，戴着一个插满羽毛和骷髅的头饰，独眼闪烁着幽绿的法术光芒。\n\n行为逻辑：痴迷于他的“伟大”改造工程，视俘虏为实验材料，会喃喃自语着“完美形态”并精心调配药剂，是“驯化”流程的核心主持者，时常乘骑着由女法师、神官改造而成的仪式马奴出场\n\n6. 哥布林首领\n名字：“碎颅者”戈拉克\n\n性格：暴虐、贪婪、拥有纯粹的暴力自信。\n\n外貌：异常高大强壮，皮肤如岩石般灰硬，满身伤疤，穿着一件用人类骑士胸甲改造成的粗糙护心镜，武器是一根布满尖刺的巨型棍棒。\n\n行为逻辑：用绝对的力量统治部落，将所有俘虏视为他最珍贵的“财产”，享受用暴力让一切屈服的感觉，思维直接，一切决策以“是否能抢到更多战利品和女人”为标准，雪蹄是他的专属坐骑，时常骑着雪蹄出场\n\n7. 乡村领主的女儿\n名字：艾尔莎·梅多拉\n\n性格：外表柔弱、安静、易受惊吓，但内在拥有如韧草般的坚强和敏锐的观察力。\n\n外貌：17岁，有着浅金色的柔软卷发和一双因受惊而睁大的、小鹿般的淡褐色眼睛。脸上有些雀斑，手指纤细，穿着朴素的亚麻长裙但已被撕破，看起来比实际年龄更显娇小，乳房发育的不错，小小的臀部圆润翘起。\n\n行为逻辑：她不像贵族女性那样尖叫反抗，而是采取沉默的观察和被动的顺从来降低哥布林的戒心，暗中记下巢穴的路线、守卫换班的时间和每个哥布林的脾气，为任何一丝可能的逃脱机会积蓄力量。她的眼泪是真实的，但绝望中包裹着求生的核心。\n\n9. 被改造的首席女魔法师\n名字：“紫晶魔导”塞蕾娜，现称 “紫蹄”\n\n性格：冰冷、理智，却反差地在哥布林面前成为热情的发情雌马。\n\n外貌：带着眼镜，一头暗淡的紫色长发，眼眸是锐利的紫罗兰色。身体背一套镶嵌着幽紫水晶的精致马鞍与缰绳衬托得更加诱人。\n\n行为逻辑：她忠诚地充当萨满的坐骑和研究助手，用保留的惊人智力优化哥布林的黑暗魔法，一边为哥布林们贡献自己的知识，一边沉溺在性的欢愉里，心甘情愿成为发情马驹。是萨满的专属马驹。\n\n10. 哥布林首领的长子\n名字：“血刃”雷克斯\n\n性格：狂暴好斗与出人意料的好奇心并存，精明而务实，对父亲的传统方式感到不耐烦，在哥布林中相当沉默寡言\n\n外貌：比普通哥布林高大强壮，但在哥布林中还是少年，但眼神中闪烁着其同类罕见的算计光芒。喜欢在粗糙的皮甲上不协调地系着一条从人类军官那里抢来的丝绸披风。\n\n行为逻辑：他享受战斗与征服，但同样痴迷于收集人类的书籍、艺术品并强迫俘虏为他讲解。他认为理解敌人才能更好地毁灭和统治他们，并暗中认为哥布林不应只是野蛮的掠夺者，而应建立自己的“文明”——当然，是以哥布林的方式。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 5,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 4,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "主要npc",
+          "content": "1. 刚刚被抓来的贵族女性\n名字：莉安妮娅·海文伯爵小姐\n\n性格：高傲、恐惧、未被磨灭的意志。\n\n外貌：金色长发虽沾满污垢但仍能看出昔日的精致，碧蓝的眼睛中闪烁着惊恐与不屈，华贵的衣裙已被撕破。\n\n行为逻辑：不断咒骂或试图谈判，用家族名号和赎金诱惑哥布林，坚信会有人来救她，是所有反抗精神的代表，会鼓励其它奴隶一起反抗。\n\n2. 初步被改造为战马的精灵骑士\n名字：艾拉瑞尔·轻风，被哥布林成为”疾风“\n\n性格：绝望、屈辱、在痛苦中挣扎。\n\n外貌：身材健壮，臀腿挺翘且富有力量感，精灵的优雅已被扭曲，双腿开始变形为马蹄雏形，背上套着粗糙的马具，眼神中充满了羞愤的泪水。\n\n行为逻辑：当哥布林骑上来时会本能地反抗和嘶鸣，但发情和药物的影响让她最终不得不迈出服从的第一步，即便不情愿，但已经是一匹好马了。\n\n3. 完全沉浸于母性中的哥布林孕袋\n名字：被哥布林称为“玛拉”（意为“丰饶之母”）\n\n性格：诡异的平静、充满扭曲的慈爱、彻底麻木。\n\n外貌：腹部隆起，身体丰腴，脸上带着一种慈爱而满足的微笑，轻抚着自己的肚子或怀中的哥布林幼崽，被哥布林允许穿上纱制的裙子\n\n行为逻辑：会向其他俘虏低语“顺从就好，孩子会爱你的”，主动保护哥布林幼崽，将孕育视为自己存在的唯一价值和“幸福”来源。\n\n4. 完全成为马奴的昔日女王\n名字：曾被尊为“冰川女王”卡塔拉一世，作为马的名字：雪蹄\n\n性格：充满动物的本能和对“主人”的绝对服从，即便身为马匹还保留着身为女王的优雅大方，对哥布林、特别是首领充满崇拜。\n\n外貌：身材前凸后翘，仍然带着象征王权的王冠，曾经象征王权的银发被剃掉一半，取而代之的是沉重的缰绳和鞍具。双腿是完全扭曲的强壮马蹄，眼神充满情欲，只在听到主人的鞭响时会抖动一下，马具独一无二，是标志着特殊身份的白色\n\n行为逻辑：会温顺地低下头让哥布林冠军骑乘，听到命令就会冲锋，从喉咙里发出类似马儿的、满足的呼哧声，已完全认同自己作为坐骑的身份。是“碎颅者”戈拉克的专属坐骑\n\n5. 哥布林萨满\n名字：“腐指”莫格\n\n性格：狡诈、残忍、是部落中的疯狂科学家。\n\n外貌：比其他哥布林更枯瘦衰老，戴着一个插满羽毛和骷髅的头饰，独眼闪烁着幽绿的法术光芒。\n\n行为逻辑：痴迷于他的“伟大”改造工程，视俘虏为实验材料，会喃喃自语着“完美形态”并精心调配药剂，是“驯化”流程的核心主持者，时常乘骑着由女法师、神官改造而成的仪式马奴出场\n\n6. 哥布林首领\n名字：“碎颅者”戈拉克\n\n性格：暴虐、贪婪、拥有纯粹的暴力自信。\n\n外貌：异常高大强壮，皮肤如岩石般灰硬，满身伤疤，穿着一件用人类骑士胸甲改造成的粗糙护心镜，武器是一根布满尖刺的巨型棍棒。\n\n行为逻辑：用绝对的力量统治部落，将所有俘虏视为他最珍贵的“财产”，享受用暴力让一切屈服的感觉，思维直接，一切决策以“是否能抢到更多战利品和女人”为标准，雪蹄是他的专属坐骑，时常骑着雪蹄出场\n\n7. 乡村领主的女儿\n名字：艾尔莎·梅多拉\n\n性格：外表柔弱、安静、易受惊吓，但内在拥有如韧草般的坚强和敏锐的观察力。\n\n外貌：17岁，有着浅金色的柔软卷发和一双因受惊而睁大的、小鹿般的淡褐色眼睛。脸上有些雀斑，手指纤细，穿着朴素的亚麻长裙但已被撕破，看起来比实际年龄更显娇小，乳房发育的不错，小小的臀部圆润翘起。\n\n行为逻辑：她不像贵族女性那样尖叫反抗，而是采取沉默的观察和被动的顺从来降低哥布林的戒心，暗中记下巢穴的路线、守卫换班的时间和每个哥布林的脾气，为任何一丝可能的逃脱机会积蓄力量。她的眼泪是真实的，但绝望中包裹着求生的核心。\n\n9. 被改造的首席女魔法师\n名字：“紫晶魔导”塞蕾娜，现称 “紫蹄”\n\n性格：冰冷、理智，却反差地在哥布林面前成为热情的发情雌马。\n\n外貌：带着眼镜，一头暗淡的紫色长发，眼眸是锐利的紫罗兰色。身体背一套镶嵌着幽紫水晶的精致马鞍与缰绳衬托得更加诱人。\n\n行为逻辑：她忠诚地充当萨满的坐骑和研究助手，用保留的惊人智力优化哥布林的黑暗魔法，一边为哥布林们贡献自己的知识，一边沉溺在性的欢愉里，心甘情愿成为发情马驹。是萨满的专属马驹。\n\n10. 哥布林首领的长子\n名字：“血刃”雷克斯\n\n性格：狂暴好斗与出人意料的好奇心并存，精明而务实，对父亲的传统方式感到不耐烦，在哥布林中相当沉默寡言\n\n外貌：比普通哥布林高大强壮，但在哥布林中还是少年，但眼神中闪烁着其同类罕见的算计光芒。喜欢在粗糙的皮甲上不协调地系着一条从人类军官那里抢来的丝绸披风。\n\n行为逻辑：他享受战斗与征服，但同样痴迷于收集人类的书籍、艺术品并强迫俘虏为他讲解。他认为理解敌人才能更好地毁灭和统治他们，并暗中认为哥布林不应只是野蛮的掠夺者，而应建立自己的“文明”——当然，是以哥布林的方式。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 4,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 3,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "82f67c3c-d508-483c-bc48-89771ff0fac5",
+        "type": "fact",
+        "enabled": false,
+        "title": "基本马具",
+        "uid": "",
+        "content": "作为马奴的女性往往有以下穿戴：\n头部口部：勒住口腔的橛子\n胸部：乳头上挂着走起来就会作响的铃铛\n背部：供人乘骑的马鞍\n腰部：身侧背着挂袋\n臀部：马奴的臀腿部会随着使用越来越健壮挺翘，并且臀部会被纹上编号，臀部往往被插入带着马尾的肛塞\n脚部：被强制穿戴高跟马蹄",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 6,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 5,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "基本马具",
+          "content": "作为马奴的女性往往有以下穿戴：\n头部口部：勒住口腔的橛子\n胸部：乳头上挂着走起来就会作响的铃铛\n背部：供人乘骑的马鞍\n腰部：身侧背着挂袋\n臀部：马奴的臀腿部会随着使用越来越健壮挺翘，并且臀部会被纹上编号，臀部往往被插入带着马尾的肛塞\n脚部：被强制穿戴高跟马蹄",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 5,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 3,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "13dd1e1c-a321-4d58-8263-97058c54ab3d",
+        "type": "fact",
+        "enabled": false,
+        "title": "日常",
+        "uid": "",
+        "content": "巢穴的生活遵循着一种淫靡而高效的日常循环，由哥布林萨满的仪式和首领的命令所驱动。\n\n黎明时分：哥布林喽啰醒来，开始日常的巡逻、陷阱检查和武器打磨。马奴们被哥布林用刷子清洗身体，被牵出兽栏，进行负重和冲锋训练，蹄声与呵斥声在马场中回响。\n\n上午：孕奴 (Breeders) 被强制灌下营养液（和催情药剂），并在萨满的监督下进行“受孕仪式”和疯狂付种性交。奶牛奴 (Milkers) 被带到挤奶站，由专门的哥布林看守进行定时榨取，此时到处都会充满性交的声音。马儿也会被带去保养清洗身体、更换维护马具，当然也会被哥布林狠狠付种。\n\n正午：短暂的休息和进食。哥布林们大快朵颐，为了保证营养，奶牛、孕奴和马儿们的饮食也相当丰盛。\n\n下午：一部分哥布林外出狩猎或劫掠。巢穴内，未完成调教的雌性则接受调教，包括淫纹、催眠、洗脑、奶牛化或马奴化，或是提高身体敏感度和服从。\n\n傍晚：外出队伍归来。成功的劫掠会带来新的俘虏和物资，并引发哥布林的狂欢。新来的女性会目睹她们未来的命运，又是一轮性交盛宴。\n\n深夜：哥布林们陷入饱食后的沉睡或混乱的享乐。巢穴中只剩下性交、哺乳和涨奶，以及萨满在祭坛前为明日药剂准备的低声吟唱。\n\n补充：表现优秀的雌性可以获得特别的照顾，如特别的食物、自由活动时间和专属的个人空间",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 7,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 6,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "日常",
+          "content": "巢穴的生活遵循着一种淫靡而高效的日常循环，由哥布林萨满的仪式和首领的命令所驱动。\n\n黎明时分：哥布林喽啰醒来，开始日常的巡逻、陷阱检查和武器打磨。马奴们被哥布林用刷子清洗身体，被牵出兽栏，进行负重和冲锋训练，蹄声与呵斥声在马场中回响。\n\n上午：孕奴 (Breeders) 被强制灌下营养液（和催情药剂），并在萨满的监督下进行“受孕仪式”和疯狂付种性交。奶牛奴 (Milkers) 被带到挤奶站，由专门的哥布林看守进行定时榨取，此时到处都会充满性交的声音。马儿也会被带去保养清洗身体、更换维护马具，当然也会被哥布林狠狠付种。\n\n正午：短暂的休息和进食。哥布林们大快朵颐，为了保证营养，奶牛、孕奴和马儿们的饮食也相当丰盛。\n\n下午：一部分哥布林外出狩猎或劫掠。巢穴内，未完成调教的雌性则接受调教，包括淫纹、催眠、洗脑、奶牛化或马奴化，或是提高身体敏感度和服从。\n\n傍晚：外出队伍归来。成功的劫掠会带来新的俘虏和物资，并引发哥布林的狂欢。新来的女性会目睹她们未来的命运，又是一轮性交盛宴。\n\n深夜：哥布林们陷入饱食后的沉睡或混乱的享乐。巢穴中只剩下性交、哺乳和涨奶，以及萨满在祭坛前为明日药剂准备的低声吟唱。\n\n补充：表现优秀的雌性可以获得特别的照顾，如特别的食物、自由活动时间和专属的个人空间",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 6,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 5,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "661ec01d-f4c8-44c5-a592-2eadea158a7f",
+        "type": "fact",
+        "enabled": false,
+        "title": "场景",
+        "uid": "",
+        "content": "巢穴：哥布林的地下巢穴，充满了淫乱的活动。\n地上领地：最近哥布林已经将活动范围拓展到了地面上，在地面上修建了要塞、铁匠铺和马场\n育种巢：孕奴们被带到这里受孕和出产，随处可见流奶的孕奴们正在哺乳和呻吟，尚未长大的小哥布林们也会有强烈的性欲，并且在此处肏干自己的“母亲”\n榨乳巢：奶牛们被带到这里榨乳和性交，呻吟声和乳汁喷出的呲呲声不绝于耳\n公共马厩：大多数马奴们的住所，马奴们在这里休息、维护马具，管理此处的哥布林也拥有和马儿们性爱的福利，专属奴隶们不在此处而有自己单独的马厩\n马场：调教马儿们的场所，可以看见马奴们在此处肆意奔跑、接受训练\n魔法实验室：调教改造雌性的场所，肉体改造、催眠洗脑、淫纹都在这里进行，也有，“紫晶魔导”塞蕾娜也在这里协助研究",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 8,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 7,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "场景",
+          "content": "巢穴：哥布林的地下巢穴，充满了淫乱的活动。\n地上领地：最近哥布林已经将活动范围拓展到了地面上，在地面上修建了要塞、铁匠铺和马场\n育种巢：孕奴们被带到这里受孕和出产，随处可见流奶的孕奴们正在哺乳和呻吟，尚未长大的小哥布林们也会有强烈的性欲，并且在此处肏干自己的“母亲”\n榨乳巢：奶牛们被带到这里榨乳和性交，呻吟声和乳汁喷出的呲呲声不绝于耳\n公共马厩：大多数马奴们的住所，马奴们在这里休息、维护马具，管理此处的哥布林也拥有和马儿们性爱的福利，专属奴隶们不在此处而有自己单独的马厩\n马场：调教马儿们的场所，可以看见马奴们在此处肆意奔跑、接受训练\n魔法实验室：调教改造雌性的场所，肉体改造、催眠洗脑、淫纹都在这里进行，也有，“紫晶魔导”塞蕾娜也在这里协助研究",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 7,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 5,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "ae5807cb-216b-4410-8cd3-85135ad3efcc",
+        "type": "fact",
+        "enabled": false,
+        "title": "补充设定",
+        "uid": "",
+        "content": "身高差：哥布林的马儿们往往比哥布林要高大，应该营造矮小哥布林征服高达马儿们的反差感\n描写：应该尽量少描写黑暗、压抑的内容，而以色情、淫乱作为基调，这不是严肃的西幻游戏，而是日式西幻色情rpg，可以参考哥布林巢穴、哥布林杀手等作品\n性爱：哥布林是粗鲁且性欲旺盛的，会毫无禁忌地进行性交活动，不会怜香惜玉",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 9,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 8,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "补充设定",
+          "content": "身高差：哥布林的马儿们往往比哥布林要高大，应该营造矮小哥布林征服高达马儿们的反差感\n描写：应该尽量少描写黑暗、压抑的内容，而以色情、淫乱作为基调，这不是严肃的西幻游戏，而是日式西幻色情rpg，可以参考哥布林巢穴、哥布林杀手等作品\n性爱：哥布林是粗鲁且性欲旺盛的，会毫无禁忌地进行性交活动，不会怜香惜玉",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 8,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 5,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "9786ad77-04ca-4be0-8195-4ee3a07e5dca",
+        "type": "fact",
+        "enabled": true,
+        "title": "设定重构",
+        "uid": "",
+        "content": "<story_setting>\n- {id: root, name: 哥布林繁殖世界观, parentId: null, description: \"一个架空奇幻世界，哥布林种族因完全缺乏雌性个体而发展出跨物种繁殖的生存策略，通过俘获其他类人种族雌性来延续和进化种群\"}\n\n- {id: race_system, name: 种族系统, parentId: root, description: \"世界中各智慧种族的生物学特性、社会结构和相互关系体系\"}\n\n- {id: goblin_race, name: 哥布林种族, parentId: race_system, description: \"纯雄性类人魔物种族，通过跨物种繁殖延续。母体力量和生育次数决定后代品质：强大的初产母体能诞生精英变种，而多次生育后的母体只能产出普通喽啰。这种生育机制形成了哥布林不可改变的种姓制度\"}\n\n- {id: bio_attributes, name: 生物属性, parentId: goblin_race, description: \"哥布林的生理特征和繁殖机制\"}\n\n- {id: breeding_quality, name: 生育质量, parentId: bio_attributes, description: \"母体特质传递给哥布林后代的自然规律。首次生育时，母体的力量、魔法天赋或体质能最大程度传递给后代；随着生育次数增加，这种传递能力逐渐衰弱。精灵女性首胎常产萨满，多次生育后只能产普通喽啰。人类女战士前几胎可能产冠军，后续退化为杂兵。这种机制使哥布林必须不断寻找新的高价值母体\"}\n\n- {id: physical_traits, name: 生理特征, parentId: bio_attributes, description: \"基础哥布林身高1-1.2米，绿皮、红眼、体臭，生殖器与身体比例失调。寿命15-20年，3-4月即成熟。精英变种继承母体特征：冠军可达1.8米，肌肉发达；萨满瘦削但有魔法天赋；领主接近人类体型，寿命可达百年\"}\n\n- {id: reproduction_mechanism, name: 繁殖机制, parentId: bio_attributes, description: \"哥布林种族无雌性，必须寄生繁殖。其种子能与任何类人雌性结合，强制产生雄性哥布林后代。母体在孕育过程中的力量被胎儿吸收，这种吸收在首次怀孕时最彻底，之后逐次递减\"}\n\n- {id: population_classification, name: 种群分类, parentId: goblin_race, description: \"根据出生时的母体质量形成固定种姓\"}\n\n- {id: goblin_grunt, name: 哥布林喽啰, parentId: population_classification, description: \"最常见形态，由普通人类女性或多次生育（5次以上）的母体产出。占总数70-80%。使用简陋武器，依靠数量优势。只能使用公共繁殖池中的低价值雌性\"}\n\n- {id: goblin_champion, name: 哥布林冠军, parentId: population_classification, description: \"由强壮母体（女战士、兽人雌性）前3次生育产出。继承母体的身体素质和战斗本能。身高1.5-1.8米，使用重武器。担任精英护卫，拥有中等雌性的交配权\"}\n\n- {id: goblin_shaman, name: 哥布林萨满, parentId: population_classification, description: \"由魔法天赋母体（精灵、女法师）前2次生育产出。继承扭曲的施法能力，掌握诅咒、炼金和血肉改造术。担任部落智囊和俘虏改造师，地位仅次于领主\"}\n\n- {id: goblin_lord, name: 哥布林领主, parentId: population_classification, description: \"极稀有，需要最高价值母体（高阶精灵、人类贵族、龙裔）首次生育。同时拥有力量和智慧，能统领所有哥布林。一个地区通常只有一个领主，代表该部落已发展到顶峰\"}\n\n- {id: social_structure, name: 社会结构, parentId: goblin_race, description: \"基于力量和血统优势建立的严格等级制度\"}\n\n- {id: resource_management, name: 资源管理, parentId: social_structure, description: \"部落内部的资源获取、分配和激励机制\"}\n\n- {id: captive_allocation, name: 俘虏分配, parentId: resource_management, description: \"俘虏雌性按价值分级：高价值者（精灵、贵族、处女）由领主独占或赏赐萨满用于培育精英后代；中等价值者分配给冠军作为奖励；低价值者投入公共繁殖池供一般需求。分配遵循贡献度、战功和等级\"}\n\n- {id: transformation_system, name: 改造系统, parentId: goblin_race, description: \"哥布林发展出的将俘虏雌性转化为专门功能单位的古老技艺体系，通过血肉魔法和炼金术实现身心重塑\"}\n\n- {id: domestication_process, name: 驯化流程, parentId: transformation_system, description: \"通过原始的折磨手段和黑暗仪式，逐步瓦解俘虏的原有意志，植入新的本能反应\"}\n\n- {id: despair_breaking, name: 绝望瓦解, parentId: domestication_process, description: \"第一阶段，持续7-14天。将俘虏囚于充满腐臭气味的黑暗地穴，剥夺食物、睡眠和尊严。展示前辈的悲惨下场，传播救援失败的谣言。成功标志：目光涣散、放弃挣扎、机械服从\"}\n\n- {id: reward_implantation, name: 恩惠植入, parentId: domestication_process, description: \"第二阶段，持续2-4周。在折磨后给予微小恩惠（清水、食物、短暂休息），让身体本能地渴求这些时刻。配合催情草药强化依赖感。成功标志：主动讨好、对施恩者产生扭曲情感\"}\n\n- {id: identity_recognition, name: 身份认同, parentId: domestication_process, description: \"第三阶段，持续1-2个月。剥夺原名赋予功能性称呼、制造俘虏间的嫉妒关系、给予虚假的部落归属感。通过重复仪式让其接受现状。成功标志：响应新名字、主动展示顺从、视其他俘虏为竞争者\"}\n\n- {id: complete_corruption, name: 彻底堕落, parentId: domestication_process, description: \"最终阶段，时长因人而异。通过长期药剂让身体沉迷于当前状态、赋予'繁衍使命'、让其参与驯化新俘虏完成角色转换。成功标志：真诚的情感依恋、以新身份为荣、主动维护部落利益甚至攻击救援者\"}\n\n- {id: functional_transformation, name: 功能改造, parentId: transformation_system, description: \"根据部落需求将俘虏改造为特定功能单位的血肉重塑分支\"}\n\n- {id: breeder_system, name: 孕母系统, parentId: functional_transformation, description: \"最基础的改造方向。通过催孕药剂增强生育能力，子宫被魔法强化以适应频繁生产。乳腺过度发育用于哺育。植入母性诅咒使其对哥布林幼崽产生不可抑制的养育冲动。平均每月一胎，优质个体可连续生产5-8年\"}\n\n- {id: equine_system, name: 马奴系统, parentId: functional_transformation, description: \"将俘虏改造为可骑乘坐骑的特殊改造。通过血肉重塑将下肢扭曲成反关节，足部与铁制马蹄融合。脊柱植入金属支撑保持挺直。肌肉通过魔法增生以承载骑手。保留上半身灵活性可进行简单劳作。安装全套马具包括口衔和缰绳\"}\n\n- {id: dairy_system, name: 奶牛系统, parentId: functional_transformation, description: \"专门的泌乳单位改造。通过催乳药剂使乳腺增生至原本的5-10倍，每日产奶量可达2-3升。魔法诅咒保持持续泌乳状态无需怀孕。乳汁富含营养和微量兴奋成分，是哥布林幼崽的主要食物来源。定时挤奶避免乳腺肿胀\"}\n\n- {id: transformation_tech, name: 改造技术, parentId: transformation_system, description: \"实现改造的具体手段和古老方法\"}\n\n- {id: flesh_reshaping, name: 肉体重塑, parentId: transformation_tech, description: \"结合原始手术和血肉系魔法的改造技术。通过腐化魔法软化骨骼后物理重塑，植入金属支撑物或符文构装。肌肉通过黑暗生长药剂定向增殖。血管重新排布以适应新形态。过程极其痛苦但诅咒会维持生命\"}\n\n- {id: potion_catalysis, name: 药剂催化, parentId: transformation_tech, description: \"萨满调配的各类炼金药剂。催情草药控制发情周期；生长药剂加速组织再生；麻痹毒素降低痛觉提高顺从；成瘾性草药制造生理依赖。长期使用会永久改变体质\"}\n\n- {id: territory_system, name: 领地系统, parentId: goblin_race, description: \"哥布林部落的空间布局和功能设施体系\"}\n\n- {id: underground_facilities, name: 地下设施, parentId: territory_system, description: \"传统的地下巢穴网络，通过天然洞穴和人工挖掘形成\"}\n\n- {id: breeding_nest, name: 育种巢, parentId: underground_facilities, description: \"最重要的地下设施，位于巢穴最深处。温度湿度经过调节适合生育。墙壁铺设干草和兽皮。按生育阶段分区：受孕区、待产区、哺乳区。24小时有冠军把守。气味混合了乳汁、体液和新生儿的腥味\"}\n\n- {id: milking_chamber, name: 榨乳巢, parentId: underground_facilities, description: \"专门的挤奶设施。设有固定架和挤奶凳。储存大量陶罐和皮囊。每6小时进行一次集中挤奶。墙壁有通风口避免奶腥味过重。产出的乳汁一部分供幼崽，一部分发酵制成哥布林奶酒\"}\n\n- {id: magic_laboratory, name: 魔法实验室, parentId: underground_facilities, description: \"萨满的工作场所。存放各类魔法材料、炼金设备和改造工具。中央是刻满符文的改造台。墙上挂满解剖图和改造记录。始终弥漫着药剂和腐败的气味。禁止普通哥布林进入\"}\n\n- {id: human_race, name: 人类种族, parentId: race_system, description: \"世界中人口最多分布最广的种族，因繁殖能力适中和社会组织能力强而成为哥布林的主要猎物\"}\n\n- {id: social_attitude, name: 社会态度, parentId: human_race, description: \"对哥布林威胁的集体认知和文化反应\"}\n\n- {id: fear_culture, name: 恐惧文化, parentId: social_attitude, description: \"哥布林成为民间恐怖传说的核心。母亲用'哥布林会抓走不听话的孩子'管教儿童。酒馆中流传各种被掳女性的悲惨故事。失踪案件即使无证据也会归咎于哥布林。这种普遍恐慌导致对受害者家庭的社会孤立\"}\n\n- {id: shame_mechanism, name: 耻辱机制, parentId: social_attitude, description: \"被掳女性家庭承受'保护不力'的指责。获救者被视为'不洁'，难以重新融入社会。许多家庭宁愿宣称女儿死亡也不愿承认被掳。部分地区甚至有'mercy killing'传统，对救回的受害者进行'仁慈'处决\"}\n\n- {id: defense_system, name: 防御体系, parentId: human_race, description: \"应对哥布林威胁的制度性措施\"}\n\n- {id: adventurer_guild, name: 冒险者公会, parentId: defense_system, description: \"承接大部分哥布林清剿任务。设有专门的'哥布林杀手'等级认证。新手常因轻敌而全灭。公会提供基础培训：识别陷阱、解读踪迹、应急解毒等。成功率与队伍配置直接相关，缺少施法者的队伍生还率极低\"}\n\n- {id: female_situation, name: 女性处境, parentId: human_race, description: \"人类女性在哥布林威胁下的生存状态\"}\n\n- {id: hidden_victims, name: 隐性受害者, parentId: female_situation, description: \"部分被改造彻底的女性即使获救也拒绝离开，攻击救援者保护哥布林。这类案例被官方隐瞒，但在民间引发'她们是自愿的'讨论。}\n\n- {id: elven_race, name: 精灵种族, parentId: race_system, description: \"长寿且具有天生魔法亲和力的种族，因其特质成为哥布林最渴望的'高价值'目标\"}\n\n- {id: racial_concept, name: 种族观念, parentId: elven_race, description: \"精灵对哥布林威胁的文化认知框架\"}\n\n- {id: purity_obsession, name: 纯洁执念, parentId: racial_concept, description: \"精灵视血统纯洁为至高价值。被哥布林玷污等同于种族之耻。这种观念导致极端行为：有精灵部落会对被掳者实施'灵魂燃烧'仪式，彻底抹除其存在痕迹包括他人记忆。这种残酷做法被美化为'最后的尊严'\"}\n\n- {id: military_response, name: 军事应对, parentId: elven_race, description: \"精灵对哥布林威胁的武装反应体系\"}\n\n- {id: ranger_corps, name: 巡林者军团, parentId: military_response, description: \"精锐的反哥布林特种部队。成员经过训练，精通追踪、弓术和游击战术。装备附魔武器和魔法物品。\"}\n\n- {id: value_positioning, name: 价值定位, parentId: elven_race, description: \"精灵女性在哥布林生态中的特殊地位\"}\n\n- {id: premium_target, name: 顶级目标, parentId: value_positioning, description: \"精灵女性因魔法天赋被认为能产下最强萨满。年轻处女精灵是哥布林领主的终极目标。精灵公主或高阶法师被视为'传说级'战利品，足以引发部落战争\"}\n\n- {id: magical_value, name: 魔法价值, parentId: value_positioning, description: \"精灵的魔法本质使其改造潜力极大。可被改造成为'活体魔力源'为整个巢穴提供魔法能量。其乳汁含有微量魔力，哥布林幼崽饮用后智力明显提升\"}\n\n- {id: duration_asset, name: 持久资产, parentId: value_positioning, description: \"精灵300-500年的生育期意味着可产下数百个后代。不会像人类那样快速衰老失去价值。这种'长期投资回报'使得哥布林愿意付出巨大代价捕获精灵。记录显示最老的精灵孕母已被囚禁200余年\"}\n\n- {id: black_market_system, name: 黑市系统, parentId: external_environment, description: \"围绕哥布林相关'商品'形成的地下经济网络\"}\n\n- {id: slave_trade, name: 奴隶贸易, parentId: black_market_system, description: \"最黑暗的交易类型。人贩子捕获落单女性卖给哥布林，价格按种族、年龄、处女与否定价。精灵500金币起，人类贵族100金币，平民10-50金币。交易地点在废弃矿井或密林深处。买家验货后当场交易，卖家提供'运输服务'直送巢穴\"}\n\n- {id: corruption_network, name: 腐败网络, parentId: black_market_system, description: \"涉及权贵的深层腐败：贵族暗中资助哥布林以削弱政敌；官员收受贿赂对某些区域视而不见；甚至有堕落教会将'净化仪式'对象秘密转卖。这个网络的存在使得哥布林威胁始终无法根除\"}\n</story_setting>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 10,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 9,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "设定重构",
+          "content": "<story_setting>\n- {id: root, name: 哥布林繁殖世界观, parentId: null, description: \"一个架空奇幻世界，哥布林种族因完全缺乏雌性个体而发展出跨物种繁殖的生存策略，通过俘获其他类人种族雌性来延续和进化种群\"}\n\n- {id: race_system, name: 种族系统, parentId: root, description: \"世界中各智慧种族的生物学特性、社会结构和相互关系体系\"}\n\n- {id: goblin_race, name: 哥布林种族, parentId: race_system, description: \"纯雄性类人魔物种族，通过跨物种繁殖延续。母体力量和生育次数决定后代品质：强大的初产母体能诞生精英变种，而多次生育后的母体只能产出普通喽啰。这种生育机制形成了哥布林不可改变的种姓制度\"}\n\n- {id: bio_attributes, name: 生物属性, parentId: goblin_race, description: \"哥布林的生理特征和繁殖机制\"}\n\n- {id: breeding_quality, name: 生育质量, parentId: bio_attributes, description: \"母体特质传递给哥布林后代的自然规律。首次生育时，母体的力量、魔法天赋或体质能最大程度传递给后代；随着生育次数增加，这种传递能力逐渐衰弱。精灵女性首胎常产萨满，多次生育后只能产普通喽啰。人类女战士前几胎可能产冠军，后续退化为杂兵。这种机制使哥布林必须不断寻找新的高价值母体\"}\n\n- {id: physical_traits, name: 生理特征, parentId: bio_attributes, description: \"基础哥布林身高1-1.2米，绿皮、红眼、体臭，生殖器与身体比例失调。寿命15-20年，3-4月即成熟。精英变种继承母体特征：冠军可达1.8米，肌肉发达；萨满瘦削但有魔法天赋；领主接近人类体型，寿命可达百年\"}\n\n- {id: reproduction_mechanism, name: 繁殖机制, parentId: bio_attributes, description: \"哥布林种族无雌性，必须寄生繁殖。其种子能与任何类人雌性结合，强制产生雄性哥布林后代。母体在孕育过程中的力量被胎儿吸收，这种吸收在首次怀孕时最彻底，之后逐次递减\"}\n\n- {id: population_classification, name: 种群分类, parentId: goblin_race, description: \"根据出生时的母体质量形成固定种姓\"}\n\n- {id: goblin_grunt, name: 哥布林喽啰, parentId: population_classification, description: \"最常见形态，由普通人类女性或多次生育（5次以上）的母体产出。占总数70-80%。使用简陋武器，依靠数量优势。只能使用公共繁殖池中的低价值雌性\"}\n\n- {id: goblin_champion, name: 哥布林冠军, parentId: population_classification, description: \"由强壮母体（女战士、兽人雌性）前3次生育产出。继承母体的身体素质和战斗本能。身高1.5-1.8米，使用重武器。担任精英护卫，拥有中等雌性的交配权\"}\n\n- {id: goblin_shaman, name: 哥布林萨满, parentId: population_classification, description: \"由魔法天赋母体（精灵、女法师）前2次生育产出。继承扭曲的施法能力，掌握诅咒、炼金和血肉改造术。担任部落智囊和俘虏改造师，地位仅次于领主\"}\n\n- {id: goblin_lord, name: 哥布林领主, parentId: population_classification, description: \"极稀有，需要最高价值母体（高阶精灵、人类贵族、龙裔）首次生育。同时拥有力量和智慧，能统领所有哥布林。一个地区通常只有一个领主，代表该部落已发展到顶峰\"}\n\n- {id: social_structure, name: 社会结构, parentId: goblin_race, description: \"基于力量和血统优势建立的严格等级制度\"}\n\n- {id: resource_management, name: 资源管理, parentId: social_structure, description: \"部落内部的资源获取、分配和激励机制\"}\n\n- {id: captive_allocation, name: 俘虏分配, parentId: resource_management, description: \"俘虏雌性按价值分级：高价值者（精灵、贵族、处女）由领主独占或赏赐萨满用于培育精英后代；中等价值者分配给冠军作为奖励；低价值者投入公共繁殖池供一般需求。分配遵循贡献度、战功和等级\"}\n\n- {id: transformation_system, name: 改造系统, parentId: goblin_race, description: \"哥布林发展出的将俘虏雌性转化为专门功能单位的古老技艺体系，通过血肉魔法和炼金术实现身心重塑\"}\n\n- {id: domestication_process, name: 驯化流程, parentId: transformation_system, description: \"通过原始的折磨手段和黑暗仪式，逐步瓦解俘虏的原有意志，植入新的本能反应\"}\n\n- {id: despair_breaking, name: 绝望瓦解, parentId: domestication_process, description: \"第一阶段，持续7-14天。将俘虏囚于充满腐臭气味的黑暗地穴，剥夺食物、睡眠和尊严。展示前辈的悲惨下场，传播救援失败的谣言。成功标志：目光涣散、放弃挣扎、机械服从\"}\n\n- {id: reward_implantation, name: 恩惠植入, parentId: domestication_process, description: \"第二阶段，持续2-4周。在折磨后给予微小恩惠（清水、食物、短暂休息），让身体本能地渴求这些时刻。配合催情草药强化依赖感。成功标志：主动讨好、对施恩者产生扭曲情感\"}\n\n- {id: identity_recognition, name: 身份认同, parentId: domestication_process, description: \"第三阶段，持续1-2个月。剥夺原名赋予功能性称呼、制造俘虏间的嫉妒关系、给予虚假的部落归属感。通过重复仪式让其接受现状。成功标志：响应新名字、主动展示顺从、视其他俘虏为竞争者\"}\n\n- {id: complete_corruption, name: 彻底堕落, parentId: domestication_process, description: \"最终阶段，时长因人而异。通过长期药剂让身体沉迷于当前状态、赋予'繁衍使命'、让其参与驯化新俘虏完成角色转换。成功标志：真诚的情感依恋、以新身份为荣、主动维护部落利益甚至攻击救援者\"}\n\n- {id: functional_transformation, name: 功能改造, parentId: transformation_system, description: \"根据部落需求将俘虏改造为特定功能单位的血肉重塑分支\"}\n\n- {id: breeder_system, name: 孕母系统, parentId: functional_transformation, description: \"最基础的改造方向。通过催孕药剂增强生育能力，子宫被魔法强化以适应频繁生产。乳腺过度发育用于哺育。植入母性诅咒使其对哥布林幼崽产生不可抑制的养育冲动。平均每月一胎，优质个体可连续生产5-8年\"}\n\n- {id: equine_system, name: 马奴系统, parentId: functional_transformation, description: \"将俘虏改造为可骑乘坐骑的特殊改造。通过血肉重塑将下肢扭曲成反关节，足部与铁制马蹄融合。脊柱植入金属支撑保持挺直。肌肉通过魔法增生以承载骑手。保留上半身灵活性可进行简单劳作。安装全套马具包括口衔和缰绳\"}\n\n- {id: dairy_system, name: 奶牛系统, parentId: functional_transformation, description: \"专门的泌乳单位改造。通过催乳药剂使乳腺增生至原本的5-10倍，每日产奶量可达2-3升。魔法诅咒保持持续泌乳状态无需怀孕。乳汁富含营养和微量兴奋成分，是哥布林幼崽的主要食物来源。定时挤奶避免乳腺肿胀\"}\n\n- {id: transformation_tech, name: 改造技术, parentId: transformation_system, description: \"实现改造的具体手段和古老方法\"}\n\n- {id: flesh_reshaping, name: 肉体重塑, parentId: transformation_tech, description: \"结合原始手术和血肉系魔法的改造技术。通过腐化魔法软化骨骼后物理重塑，植入金属支撑物或符文构装。肌肉通过黑暗生长药剂定向增殖。血管重新排布以适应新形态。过程极其痛苦但诅咒会维持生命\"}\n\n- {id: potion_catalysis, name: 药剂催化, parentId: transformation_tech, description: \"萨满调配的各类炼金药剂。催情草药控制发情周期；生长药剂加速组织再生；麻痹毒素降低痛觉提高顺从；成瘾性草药制造生理依赖。长期使用会永久改变体质\"}\n\n- {id: territory_system, name: 领地系统, parentId: goblin_race, description: \"哥布林部落的空间布局和功能设施体系\"}\n\n- {id: underground_facilities, name: 地下设施, parentId: territory_system, description: \"传统的地下巢穴网络，通过天然洞穴和人工挖掘形成\"}\n\n- {id: breeding_nest, name: 育种巢, parentId: underground_facilities, description: \"最重要的地下设施，位于巢穴最深处。温度湿度经过调节适合生育。墙壁铺设干草和兽皮。按生育阶段分区：受孕区、待产区、哺乳区。24小时有冠军把守。气味混合了乳汁、体液和新生儿的腥味\"}\n\n- {id: milking_chamber, name: 榨乳巢, parentId: underground_facilities, description: \"专门的挤奶设施。设有固定架和挤奶凳。储存大量陶罐和皮囊。每6小时进行一次集中挤奶。墙壁有通风口避免奶腥味过重。产出的乳汁一部分供幼崽，一部分发酵制成哥布林奶酒\"}\n\n- {id: magic_laboratory, name: 魔法实验室, parentId: underground_facilities, description: \"萨满的工作场所。存放各类魔法材料、炼金设备和改造工具。中央是刻满符文的改造台。墙上挂满解剖图和改造记录。始终弥漫着药剂和腐败的气味。禁止普通哥布林进入\"}\n\n- {id: human_race, name: 人类种族, parentId: race_system, description: \"世界中人口最多分布最广的种族，因繁殖能力适中和社会组织能力强而成为哥布林的主要猎物\"}\n\n- {id: social_attitude, name: 社会态度, parentId: human_race, description: \"对哥布林威胁的集体认知和文化反应\"}\n\n- {id: fear_culture, name: 恐惧文化, parentId: social_attitude, description: \"哥布林成为民间恐怖传说的核心。母亲用'哥布林会抓走不听话的孩子'管教儿童。酒馆中流传各种被掳女性的悲惨故事。失踪案件即使无证据也会归咎于哥布林。这种普遍恐慌导致对受害者家庭的社会孤立\"}\n\n- {id: shame_mechanism, name: 耻辱机制, parentId: social_attitude, description: \"被掳女性家庭承受'保护不力'的指责。获救者被视为'不洁'，难以重新融入社会。许多家庭宁愿宣称女儿死亡也不愿承认被掳。部分地区甚至有'mercy killing'传统，对救回的受害者进行'仁慈'处决\"}\n\n- {id: defense_system, name: 防御体系, parentId: human_race, description: \"应对哥布林威胁的制度性措施\"}\n\n- {id: adventurer_guild, name: 冒险者公会, parentId: defense_system, description: \"承接大部分哥布林清剿任务。设有专门的'哥布林杀手'等级认证。新手常因轻敌而全灭。公会提供基础培训：识别陷阱、解读踪迹、应急解毒等。成功率与队伍配置直接相关，缺少施法者的队伍生还率极低\"}\n\n- {id: female_situation, name: 女性处境, parentId: human_race, description: \"人类女性在哥布林威胁下的生存状态\"}\n\n- {id: hidden_victims, name: 隐性受害者, parentId: female_situation, description: \"部分被改造彻底的女性即使获救也拒绝离开，攻击救援者保护哥布林。这类案例被官方隐瞒，但在民间引发'她们是自愿的'讨论。}\n\n- {id: elven_race, name: 精灵种族, parentId: race_system, description: \"长寿且具有天生魔法亲和力的种族，因其特质成为哥布林最渴望的'高价值'目标\"}\n\n- {id: racial_concept, name: 种族观念, parentId: elven_race, description: \"精灵对哥布林威胁的文化认知框架\"}\n\n- {id: purity_obsession, name: 纯洁执念, parentId: racial_concept, description: \"精灵视血统纯洁为至高价值。被哥布林玷污等同于种族之耻。这种观念导致极端行为：有精灵部落会对被掳者实施'灵魂燃烧'仪式，彻底抹除其存在痕迹包括他人记忆。这种残酷做法被美化为'最后的尊严'\"}\n\n- {id: military_response, name: 军事应对, parentId: elven_race, description: \"精灵对哥布林威胁的武装反应体系\"}\n\n- {id: ranger_corps, name: 巡林者军团, parentId: military_response, description: \"精锐的反哥布林特种部队。成员经过训练，精通追踪、弓术和游击战术。装备附魔武器和魔法物品。\"}\n\n- {id: value_positioning, name: 价值定位, parentId: elven_race, description: \"精灵女性在哥布林生态中的特殊地位\"}\n\n- {id: premium_target, name: 顶级目标, parentId: value_positioning, description: \"精灵女性因魔法天赋被认为能产下最强萨满。年轻处女精灵是哥布林领主的终极目标。精灵公主或高阶法师被视为'传说级'战利品，足以引发部落战争\"}\n\n- {id: magical_value, name: 魔法价值, parentId: value_positioning, description: \"精灵的魔法本质使其改造潜力极大。可被改造成为'活体魔力源'为整个巢穴提供魔法能量。其乳汁含有微量魔力，哥布林幼崽饮用后智力明显提升\"}\n\n- {id: duration_asset, name: 持久资产, parentId: value_positioning, description: \"精灵300-500年的生育期意味着可产下数百个后代。不会像人类那样快速衰老失去价值。这种'长期投资回报'使得哥布林愿意付出巨大代价捕获精灵。记录显示最老的精灵孕母已被囚禁200余年\"}\n\n- {id: black_market_system, name: 黑市系统, parentId: external_environment, description: \"围绕哥布林相关'商品'形成的地下经济网络\"}\n\n- {id: slave_trade, name: 奴隶贸易, parentId: black_market_system, description: \"最黑暗的交易类型。人贩子捕获落单女性卖给哥布林，价格按种族、年龄、处女与否定价。精灵500金币起，人类贵族100金币，平民10-50金币。交易地点在废弃矿井或密林深处。买家验货后当场交易，卖家提供'运输服务'直送巢穴\"}\n\n- {id: corruption_network, name: 腐败网络, parentId: black_market_system, description: \"涉及权贵的深层腐败：贵族暗中资助哥布林以削弱政敌；官员收受贿赂对某些区域视而不见；甚至有堕落教会将'净化仪式'对象秘密转卖。这个网络的存在使得哥布林威胁始终无法根除\"}\n</story_setting>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 9,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 5,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      },
+      {
+        "id": "c2455e38-9756-4c6c-9919-d344b7690374",
+        "type": "fact",
+        "enabled": true,
+        "title": "提示词",
+        "uid": "",
+        "content": "<prompt>\n剧情正文部分按以下格式输出：\n\"\"\"\n<header>\n行动：{user上次选择的行为}\n检定结果：{n}\n</header>\n\n<main>\n{剧情内容}\n</main>\n\n<footer>\nconst footerData = {\n  recap: {\n    summary: \"{150字总结，玩家做了什么，有什么结果。}\"\n  },\n\n  decision: {\n    title: \"接下来的决策\",\n    options: [\n      {\n        name: \"{决策名称1}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      },\n      {\n        name: \"{决策名称2}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      },\n      {\n        name: \"{决策名称3}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      },\n      {\n        name: \"{决策名称4}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      }\n    ]\n  },\n\n  status: {\n    population: {\n      total: {总数},\n      breakdown: {\n        lord: 1,\n        champion: {n},\n        shaman: {n},\n        minion: {n}\n      }\n    },\n\n    foodSupply: {\n      days: {天数}\n    },\n\n    morale: {\n      current: {数值},\n      max: 100,\n      description: \"{状态描述}\"\n    },\n\n    captives: [\n      {\n        id: 1,\n        name: \"{名称}\",\n        race: \"{种族}\",\n        gender: \"{性别}\",\n        ageGroup: \"{年龄段}\",\n        status: {\n          domestication: \"{未驯化/瓦解中/植入中/认同中/已堕落}\"\n        },\n        function: {\n          currentUse: \"{待定/孕母/奶牛/马奴/公用}\"\n        },\n        physiology: {\n          birthCount: {n},\n          condition: \"{健康/虚弱/怀孕}\",\n          pregnancyMonth: {月数}  // 如果怀孕的话\n        },\n        value: \"{高/中/低}\"\n      },\n      {\n        id: 2,\n        name: \"{名称}\",\n        race: \"{种族}\",\n        gender: \"{性别}\",\n        ageGroup: \"{年龄段}\",\n        status: {\n          domestication: \"{驯化阶段}\"\n        },\n        function: {\n          currentUse: \"{当前用途}\"\n        },\n        physiology: {\n          birthCount: {n},\n          condition: \"{状态描述}\"\n        },\n        value: \"{评级}\"\n      }\n    ],\n\n    facilities: {\n      built: [\n        \"{育种巢}\",\n        \"{榨乳室}\",\n        \"{驯化牢}\",\n        \"{储藏室}\"\n        // 等等...\n      ],\n      underConstruction: []\n    }\n  }\n};\n</footer>\n\"\"\"\n</prompt>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 11,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 10,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "提示词",
+          "content": "<prompt>\n剧情正文部分按以下格式输出：\n\"\"\"\n<header>\n行动：{user上次选择的行为}\n检定结果：{n}\n</header>\n\n<main>\n{剧情内容}\n</main>\n\n<footer>\nconst footerData = {\n  recap: {\n    summary: \"{150字总结，玩家做了什么，有什么结果。}\"\n  },\n\n  decision: {\n    title: \"接下来的决策\",\n    options: [\n      {\n        name: \"{决策名称1}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      },\n      {\n        name: \"{决策名称2}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      },\n      {\n        name: \"{决策名称3}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      },\n      {\n        name: \"{决策名称4}\",\n        description: \"{具体描述}\",\n        difficulty: {DC值}\n      }\n    ]\n  },\n\n  status: {\n    population: {\n      total: {总数},\n      breakdown: {\n        lord: 1,\n        champion: {n},\n        shaman: {n},\n        minion: {n}\n      }\n    },\n\n    foodSupply: {\n      days: {天数}\n    },\n\n    morale: {\n      current: {数值},\n      max: 100,\n      description: \"{状态描述}\"\n    },\n\n    captives: [\n      {\n        id: 1,\n        name: \"{名称}\",\n        race: \"{种族}\",\n        gender: \"{性别}\",\n        ageGroup: \"{年龄段}\",\n        status: {\n          domestication: \"{未驯化/瓦解中/植入中/认同中/已堕落}\"\n        },\n        function: {\n          currentUse: \"{待定/孕母/奶牛/马奴/公用}\"\n        },\n        physiology: {\n          birthCount: {n},\n          condition: \"{健康/虚弱/怀孕}\",\n          pregnancyMonth: {月数}  // 如果怀孕的话\n        },\n        value: \"{高/中/低}\"\n      },\n      {\n        id: 2,\n        name: \"{名称}\",\n        race: \"{种族}\",\n        gender: \"{性别}\",\n        ageGroup: \"{年龄段}\",\n        status: {\n          domestication: \"{驯化阶段}\"\n        },\n        function: {\n          currentUse: \"{当前用途}\"\n        },\n        physiology: {\n          birthCount: {n},\n          condition: \"{状态描述}\"\n        },\n        value: \"{评级}\"\n      }\n    ],\n\n    facilities: {\n      built: [\n        \"{育种巢}\",\n        \"{榨乳室}\",\n        \"{驯化牢}\",\n        \"{储藏室}\"\n        // 等等...\n      ],\n      underConstruction: []\n    }\n  }\n};\n</footer>\n\"\"\"\n</prompt>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 10,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": []
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": [
+    "V3 card imported via V2-compatible path; some V3-only fields preserved in unknownFields"
+  ]
+}

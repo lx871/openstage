@@ -23,7 +23,9 @@ export function extractPngTextChunk(buffer: Uint8Array): string[] {
       if (nullIdx > 0) {
         const keyword = new TextDecoder().decode(chunkData.slice(0, nullIdx))
         if (keyword === 'chara' || keyword === 'ccv3') {
-          chunks.push(new TextDecoder().decode(chunkData.slice(nullIdx + 1)))
+          const raw = new TextDecoder().decode(chunkData.slice(nullIdx + 1)).trim()
+          const decoded = tryBase64Json(raw) ?? raw
+          chunks.push(decoded)
         }
       }
     } else if (type === 'zTXt' || type === 'iTXt') {
@@ -63,23 +65,23 @@ function tryDecompressChunk(type: string, data: Uint8Array): string | null {
   return null
 }
 
-function tryInflate(data: Uint8Array): Uint8Array | null {
+import { inflate as pakoInflate } from 'pako'
+
+function tryBase64Json(s: string): string | null {
+  const t = s.trim()
+  if (t.length < 20 || t.length % 4 !== 0) return null
+  if (!/^[A-Za-z0-9+/=]+$/.test(t.slice(0, 200))) return null
   try {
-    // pako is ESM-friendly via dynamic import fallback
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = eval("require") as (id: string) => { inflate: (d: Uint8Array) => Uint8Array }
-    const pako = mod('pako')
-    return pako.inflate(data)
-  } catch {
-    try {
-      // browser / ESM path
-      // @ts-ignore
-      const g: unknown = globalThis
-      const p = (g as { pako?: { inflate: (d: Uint8Array) => Uint8Array } })?.pako
-      if (p) return p.inflate(data)
-    } catch {}
-    return null
-  }
+    const bytes = Uint8Array.from(atob(t), (c) => c.charCodeAt(0))
+    const text = new TextDecoder().decode(bytes)
+    const tt = text.trim()
+    if (tt.startsWith('{') || tt.startsWith('[')) return text
+  } catch {}
+  return null
+}
+
+function tryInflate(data: Uint8Array): Uint8Array | null {
+  try { return pakoInflate(data) } catch { return null }
 }
 
 export function readIntBE(buf: Uint8Array, offset: number): number {

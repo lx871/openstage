@@ -34,46 +34,62 @@ function sanitizeJson(raw: string): string {
   } catch { return raw }
 }
 
+function collectFiles(dir: string, out: string[] = []): string[] {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) collectFiles(full, out)
+    else out.push(full)
+  }
+  return out
+}
+
 async function main(): Promise<void> {
   fs.mkdirSync(OUT, { recursive: true })
-  const files = fs.readdirSync(SRC)
+  const allFiles = collectFiles(SRC)
   let ok = 0, fail = 0, skipped = 0
-  const report: Array<{ file: string; status: string; detail?: string }> = []
-  for (const name of files) {
-    const full = path.join(SRC, name)
-    const stat = fs.statSync(full)
-    if (stat.isDirectory()) { skipped++; continue }
-    const lower = name.toLowerCase()
+  const report: Array<{ file: string; rel: string; status: string; detail?: string }> = []
+  for (const full of allFiles) {
+    const rel = path.relative(SRC, full)
+    const lower = full.toLowerCase()
     if (!lower.endsWith('.json') && !lower.endsWith('.png')) { skipped++; continue }
     try {
       let record
       if (lower.endsWith('.png')) {
         const bytes = new Uint8Array(fs.readFileSync(full))
-        if (bytes.length > 12 * 1024 * 1024) { report.push({ file: name, status: 'skip', detail: 'too large' }); skipped++; continue }
+        if (bytes.length > 12 * 1024 * 1024) { report.push({ file: rel, rel, status: 'skip', detail: 'too large' }); skipped++; continue }
         record = convertPngBytes(bytes)
       } else {
         const raw = fs.readFileSync(full, 'utf8')
         const cleaned = sanitizeJson(raw)
         record = convertJsonString(cleaned)
       }
-      const outName = name.replace(/\.(json|png)$/i, '.openstage.json')
+      const outRel = rel.replace(/\.(json|png)$/i, '.openstage.json')
+      const outPath = path.join(OUT, outRel)
+      fs.mkdirSync(path.dirname(outPath), { recursive: true })
       const payload = {
-        _openstage: { converted_from: name, sourceVersion: record.sourceVersion, at: new Date().toISOString(), ads_stripped: true },
+        _openstage: { converted_from: rel, sourceVersion: record.sourceVersion, at: new Date().toISOString(), ads_stripped: true },
         character: record.character,
         knowledgeBase: record.knowledgeBase,
         warnings: record.warnings,
       }
-      fs.writeFileSync(path.join(OUT, outName), JSON.stringify(payload, null, 2), 'utf8')
-      report.push({ file: name, status: 'ok', detail: record.character.identity.name })
+      fs.writeFileSync(outPath, JSON.stringify(payload, null, 2), 'utf8')
+      report.push({ file: rel, rel, status: 'ok', detail: record.character.identity.name })
       ok++
     } catch (e) {
-      report.push({ file: name, status: 'fail', detail: String((e as Error).message).slice(0, 120) })
+      report.push({ file: rel, rel, status: 'fail', detail: String((e as Error).message).slice(0, 160) })
       fail++
     }
   }
-  fs.writeFileSync(path.join(OUT, '_report.json'), JSON.stringify({ total: files.length, ok, fail, skipped, report }, null, 2), 'utf8')
-  console.log(`done: total=${files.length} ok=${ok} fail=${fail} skipped=${skipped}`)
-  if (fail > 0) console.log(report.filter((r) => r.status === 'fail').slice(0, 10).map((r) => `  fail ${r.file}: ${r.detail}`).join('\n'))
+  fs.writeFileSync(path.join(OUT, '_report.json'), JSON.stringify({ total: allFiles.length, ok, fail, skipped, report }, null, 2), 'utf8')
+  console.log(`done: total=${allFiles.length} ok=${ok} fail=${fail} skipped=${skipped}`)
+  if (fail > 0) {
+    const fails = report.filter((r) => r.status === 'fail')
+    console.log(fails.slice(0, 20).map((r) => `  fail ${r.file}: ${r.detail}`).join('\n'))
+    if (fails.length > 20) console.log(`  ... and ${fails.length - 20} more failures`)
+    const byReason = new Map<string, number>()
+    for (const r of fails) { const k = r.detail ?? 'unknown'; byReason.set(k, (byReason.get(k) ?? 0) + 1) }
+    console.log('fail reasons:', [...byReason.entries()].map(([k, v]) => `${k} x${v}`).join(' | '))
+  }
 }
 
 main().catch((e) => { console.error(e); process.exitCode = 1 })

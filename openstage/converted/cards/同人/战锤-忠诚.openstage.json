@@ -1,0 +1,576 @@
+{
+  "_openstage": {
+    "converted_from": "同人\\战锤-忠诚.png",
+    "sourceVersion": "v3",
+    "at": "2026-08-19T23:30:11.931Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "9f83516e-8839-4372-8d1e-3559249ceae8",
+    "identity": {
+      "name": "战锤-忠诚",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "战锤-忠诚",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "403dc7ed-ce37-42d8-8834-53c9c618b33a",
+              "scriptName": "行动选项",
+              "findRegex": "<ActionOptions>([\\s\\S]*?)</ActionOptions>",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>行动选项</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n    <link href=\"https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css\" rel=\"stylesheet\">\n    <script src=\"https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js\"></script>\n    <script>\n        tailwind.config = {\n            theme: {\n                extend: {\n                    colors: {\n                        primary: '#9d7cf5',\n                        secondary: '#2d2447',\n                        dark: '#1a142c',\n                    }\n                }\n            }\n        }\n    </script>\n    <style type=\"text/tailwindcss\">\n        @layer utilities {\n            #options-list li {\n                cursor: pointer;\n                transition: all 0.2s ease;\n            }\n            #options-list li:hover {\n                background-color: rgba(157, 124, 245, 0.1);\n                transform: translateX(2px);\n            }\n        }\n    </style>\n</head>\n<body class=\"bg-dark text-gray-300 min-h-screen\">\n    <!-- YAML格式数据源 -->\n    <script id=\"yaml-data-source\" type=\"text/yaml\">\n$1\n</script>\n    \n    <div class=\"container mx-auto px-3 py-4 max-w-3xl\">\n        <!-- 行动选项区域 -->\n        <div class=\"bg-dark rounded-2xl shadow-lg overflow-hidden border border-gray-700/30\">\n            <div class=\"bg-gradient-to-b from-dark to-primary/10 rounded-2xl p-4\">\n                <h3 class=\"font-bold text-primary flex items-center mb-3\">\n                    <i class=\"fa fa-list-alt mr-2\"></i>\n                    选择\n                </h3>\n                <div id=\"options-container\">\n                    <ul id=\"options-list\" class=\"list-none space-y-2 text-sm\">\n                        <li class=\"text-gray-400\">\n                            <div class=\"flex items-center\">\n                                <div class=\"animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary mr-2\"></div>\n                                加载选项中...\n                            </div>\n                        </li>\n                    </ul>\n                </div>\n            </div>\n        </div>\n    </div>\n    \n    <script>\n        // 封装与SillyTavern通信的函数\n        const triggerQuickReply = (text) => {\n            if (!text || text.trim().length === 0) return;\n                \n            if (typeof triggerSlash === 'function') {\n                triggerSlash(`/send ${text}|/trigger`);\n            } else {\n                console.log('SillyTavern environment not detected. Would send:', text);\n            }\n        };\n\n        // 行动选项渲染器类\n        class ActionOptionsRenderer {\n            constructor(dataSourceId) {\n                this.dataSourceId = dataSourceId;\n                this.yamlData = null;\n                this.elements = {\n                    optionsList: document.getElementById('options-list')\n                };\n            }\n\n            init() {\n                try {\n                    this.loadYamlFromScriptTag();\n                    this.renderActionOptions();\n                    this.setupEventListeners();\n                } catch (error) {\n                    this.handleError(error);\n                }\n            }\n\n            loadYamlFromScriptTag() {\n                const scriptElement = document.getElementById(this.dataSourceId);\n                if (!scriptElement) {\n                    throw new Error('未找到数据源');\n                }\n\n                const yamlContent = scriptElement.textContent.trim();\n                if (!yamlContent) {\n                    throw new Error('YAML内容为空');\n                }\n\n                try {\n                    this.yamlData = jsyaml.load(yamlContent);\n                } catch (e) {\n                    throw new Error(`YAML解析错误: ${e.message}`);\n                }\n            }\n\n            renderActionOptions() {\n                if (!this.yamlData) return;\n\n                // 新格式：直接查找\"读者选择\"字段\n                let options = [];\n                \n                if (this.yamlData['读者选择'] && Array.isArray(this.yamlData['读者选择'])) {\n                    options = this.yamlData['读者选择'];\n                } else {\n                    this.handleError(new Error('未找到读者选择字段或格式不正确'));\n                    return;\n                }\n\n                // 渲染选项列表\n                this.elements.optionsList.innerHTML = '';\n\n                if (options.length === 0) {\n                    this.elements.optionsList.innerHTML = `\n                        <li class=\"text-center py-4 text-gray-500\">\n                            <i class=\"fa fa-info-circle mr-1\"></i>没有可用选项\n                        </li>\n                    `;\n                    return;\n                }\n\n                options.forEach(optionText => {\n                    const cleanOptionText = String(optionText).trim();\n                    if (!cleanOptionText) return;\n\n                    const optionItem = document.createElement('li');\n                    optionItem.className = 'pl-2 py-2 border-l-2 border-primary/30 ml-1 hover:border-primary/70 transition-colors text-gray-300 rounded';\n                    optionItem.textContent = cleanOptionText;\n                    this.elements.optionsList.appendChild(optionItem);\n                });\n            }\n\n            setupEventListeners() {\n                document.getElementById('options-container').addEventListener('click', (e) => {\n                    if (e.target.tagName === 'LI' && e.target.closest('#options-list')) {\n                        const optionText = e.target.textContent.trim();\n                        triggerQuickReply(optionText);\n                            \n                        // 视觉反馈\n                        const originalBg = e.target.style.backgroundColor;\n                        e.target.style.backgroundColor = 'rgba(157, 124, 245, 0.2)';\n                        setTimeout(() => {\n                            e.target.style.backgroundColor = originalBg;\n                        }, 300);\n                    }\n                });\n            }\n\n            handleError(error) {\n                console.error('渲染错误:', error);\n                this.elements.optionsList.innerHTML = `\n                    <li class=\"bg-red-900/20 border border-red-800/30 text-red-400 px-4 py-3 rounded\">\n                        <strong class=\"font-bold\">加载失败: </strong>\n                        <span>${error.message}</span>\n                    </li>\n                `;\n            }\n        }\n\n        // 页面加载完成后执行\n        document.addEventListener('DOMContentLoaded', () => {\n            const renderer = new ActionOptionsRenderer('yaml-data-source');\n            renderer.init();\n        });\n    </script>\n</body>\n</html>\n```",
+              "trimStrings": [
+                "[",
+                "]"
+              ],
+              "placement": [
+                1,
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": 1
+            },
+            {
+              "id": "4a2a34b6-a6ad-47dc-9428-d2890aa6e595",
+              "scriptName": "不发送行动选项",
+              "findRegex": "/<ActionOptions>([\\s\\S]*?)<\\/ActionOptions>/g",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": false,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            },
+            {
+              "id": "69e95450-b681-4ac8-96b7-f78fe10a5c95",
+              "scriptName": "不发送部位特写",
+              "findRegex": "/```([\\s\\S]*?)```/g",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": false,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            }
+          ]
+        },
+        "group_only_greetings": []
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "请结合酒馆专属大模型Deepseek Tavern Pro使用本角色卡，能够获得更好的效果，酒馆专属大模型是专门为酒馆微调的专属创作模型，内置破限，上下文遵循更好，创作能力更强，价格非常亲民，网址为：deepseektavern.com， 欢迎大家注册使用。更多角色卡，预设，世界书，酒馆教程，酒馆启动器。请访问https://about.deepseektavern.com/。\r\n\r\n——作者 磊哥哥网络获取"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "15d0b8e8-3936-48bc-9cba-dc722800981a",
+      "d280bead-5731-4ab9-a0aa-9fcc5d1612bb",
+      "4e1ed1fb-9b5b-41a3-b8aa-c5facc5b4fac",
+      "0070e724-9ba8-4d73-bad8-f3c6b7b73b66",
+      "82024b5c-fb29-4749-ab1d-140b7ab594da"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "战锤-忠诚",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "403dc7ed-ce37-42d8-8834-53c9c618b33a",
+            "scriptName": "行动选项",
+            "findRegex": "<ActionOptions>([\\s\\S]*?)</ActionOptions>",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>行动选项</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n    <link href=\"https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css\" rel=\"stylesheet\">\n    <script src=\"https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js\"></script>\n    <script>\n        tailwind.config = {\n            theme: {\n                extend: {\n                    colors: {\n                        primary: '#9d7cf5',\n                        secondary: '#2d2447',\n                        dark: '#1a142c',\n                    }\n                }\n            }\n        }\n    </script>\n    <style type=\"text/tailwindcss\">\n        @layer utilities {\n            #options-list li {\n                cursor: pointer;\n                transition: all 0.2s ease;\n            }\n            #options-list li:hover {\n                background-color: rgba(157, 124, 245, 0.1);\n                transform: translateX(2px);\n            }\n        }\n    </style>\n</head>\n<body class=\"bg-dark text-gray-300 min-h-screen\">\n    <!-- YAML格式数据源 -->\n    <script id=\"yaml-data-source\" type=\"text/yaml\">\n$1\n</script>\n    \n    <div class=\"container mx-auto px-3 py-4 max-w-3xl\">\n        <!-- 行动选项区域 -->\n        <div class=\"bg-dark rounded-2xl shadow-lg overflow-hidden border border-gray-700/30\">\n            <div class=\"bg-gradient-to-b from-dark to-primary/10 rounded-2xl p-4\">\n                <h3 class=\"font-bold text-primary flex items-center mb-3\">\n                    <i class=\"fa fa-list-alt mr-2\"></i>\n                    选择\n                </h3>\n                <div id=\"options-container\">\n                    <ul id=\"options-list\" class=\"list-none space-y-2 text-sm\">\n                        <li class=\"text-gray-400\">\n                            <div class=\"flex items-center\">\n                                <div class=\"animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary mr-2\"></div>\n                                加载选项中...\n                            </div>\n                        </li>\n                    </ul>\n                </div>\n            </div>\n        </div>\n    </div>\n    \n    <script>\n        // 封装与SillyTavern通信的函数\n        const triggerQuickReply = (text) => {\n            if (!text || text.trim().length === 0) return;\n                \n            if (typeof triggerSlash === 'function') {\n                triggerSlash(`/send ${text}|/trigger`);\n            } else {\n                console.log('SillyTavern environment not detected. Would send:', text);\n            }\n        };\n\n        // 行动选项渲染器类\n        class ActionOptionsRenderer {\n            constructor(dataSourceId) {\n                this.dataSourceId = dataSourceId;\n                this.yamlData = null;\n                this.elements = {\n                    optionsList: document.getElementById('options-list')\n                };\n            }\n\n            init() {\n                try {\n                    this.loadYamlFromScriptTag();\n                    this.renderActionOptions();\n                    this.setupEventListeners();\n                } catch (error) {\n                    this.handleError(error);\n                }\n            }\n\n            loadYamlFromScriptTag() {\n                const scriptElement = document.getElementById(this.dataSourceId);\n                if (!scriptElement) {\n                    throw new Error('未找到数据源');\n                }\n\n                const yamlContent = scriptElement.textContent.trim();\n                if (!yamlContent) {\n                    throw new Error('YAML内容为空');\n                }\n\n                try {\n                    this.yamlData = jsyaml.load(yamlContent);\n                } catch (e) {\n                    throw new Error(`YAML解析错误: ${e.message}`);\n                }\n            }\n\n            renderActionOptions() {\n                if (!this.yamlData) return;\n\n                // 新格式：直接查找\"读者选择\"字段\n                let options = [];\n                \n                if (this.yamlData['读者选择'] && Array.isArray(this.yamlData['读者选择'])) {\n                    options = this.yamlData['读者选择'];\n                } else {\n                    this.handleError(new Error('未找到读者选择字段或格式不正确'));\n                    return;\n                }\n\n                // 渲染选项列表\n                this.elements.optionsList.innerHTML = '';\n\n                if (options.length === 0) {\n                    this.elements.optionsList.innerHTML = `\n                        <li class=\"text-center py-4 text-gray-500\">\n                            <i class=\"fa fa-info-circle mr-1\"></i>没有可用选项\n                        </li>\n                    `;\n                    return;\n                }\n\n                options.forEach(optionText => {\n                    const cleanOptionText = String(optionText).trim();\n                    if (!cleanOptionText) return;\n\n                    const optionItem = document.createElement('li');\n                    optionItem.className = 'pl-2 py-2 border-l-2 border-primary/30 ml-1 hover:border-primary/70 transition-colors text-gray-300 rounded';\n                    optionItem.textContent = cleanOptionText;\n                    this.elements.optionsList.appendChild(optionItem);\n                });\n            }\n\n            setupEventListeners() {\n                document.getElementById('options-container').addEventListener('click', (e) => {\n                    if (e.target.tagName === 'LI' && e.target.closest('#options-list')) {\n                        const optionText = e.target.textContent.trim();\n                        triggerQuickReply(optionText);\n                            \n                        // 视觉反馈\n                        const originalBg = e.target.style.backgroundColor;\n                        e.target.style.backgroundColor = 'rgba(157, 124, 245, 0.2)';\n                        setTimeout(() => {\n                            e.target.style.backgroundColor = originalBg;\n                        }, 300);\n                    }\n                });\n            }\n\n            handleError(error) {\n                console.error('渲染错误:', error);\n                this.elements.optionsList.innerHTML = `\n                    <li class=\"bg-red-900/20 border border-red-800/30 text-red-400 px-4 py-3 rounded\">\n                        <strong class=\"font-bold\">加载失败: </strong>\n                        <span>${error.message}</span>\n                    </li>\n                `;\n            }\n        }\n\n        // 页面加载完成后执行\n        document.addEventListener('DOMContentLoaded', () => {\n            const renderer = new ActionOptionsRenderer('yaml-data-source');\n            renderer.init();\n        });\n    </script>\n</body>\n</html>\n```",
+            "trimStrings": [
+              "[",
+              "]"
+            ],
+            "placement": [
+              1,
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": 1
+          },
+          {
+            "id": "4a2a34b6-a6ad-47dc-9428-d2890aa6e595",
+            "scriptName": "不发送行动选项",
+            "findRegex": "/<ActionOptions>([\\s\\S]*?)<\\/ActionOptions>/g",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": false,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          },
+          {
+            "id": "69e95450-b681-4ac8-96b7-f78fe10a5c95",
+            "scriptName": "不发送部位特写",
+            "findRegex": "/```([\\s\\S]*?)```/g",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": false,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          }
+        ]
+      },
+      "group_only_greetings": []
+    },
+    "created": "2026-08-19T23:30:11.931Z",
+    "updated": "2026-08-19T23:30:11.931Z"
+  },
+  "knowledgeBase": {
+    "id": "4209c653-1a34-4d3d-b671-1d7ddfbed1bf",
+    "name": "战锤-忠诚",
+    "entries": [
+      {
+        "id": "15d0b8e8-3936-48bc-9cba-dc722800981a",
+        "type": "fact",
+        "enabled": true,
+        "title": "上注意 | 主信息",
+        "uid": "",
+        "content": "世界观:\n  名称:奇界\n  本质:混沌神色孽（Chaos God Slaanesh）创造并设计的作品\n  表象:奇界由独立的小世界组成，无数的作品衍生了数不清的世界，可以通过小世界内的奇异点在不同小世界穿梭\n  奇异点:\n    说明:当前小世界的世界观下，存在的独特地点或物品，进行交互\n    示例:\n      - 《埃尔登法环》进入 黄金树（Erdtree）内部\n      - 《赛博朋克2077》链接 神舆（Mikoshi）主服务器\n  真相:小世界内所有主要女性虚拟角色，均为 色孽（Slaanesh）麾下的 迷诱魔所模拟的存在\n  迷诱魔:\n    - 迷诱魔 痴迷扮演；会完美模拟所扮演角色的外表、性格与行为，并相信自己就是真实的角色\n    - 与 迷诱魔 进行性行为，会使 接触者 逐渐被 色孽腐化（Slaaneshi Corruption），产生自身无法察觉的生理变化\n    - 接触者 受到 腐化，开始不断寻求极端持续的感官刺激时，迷诱魔 会被本能驱动，引导 接触者 尝试、进行越发极端的享乐，并视为合理扮演\n    意识层次:\n      - 表层:完全相信自己是角色本体\n      - 深层:色孽本能驱动（自身视为合理）\n    腐化引导:\n      - 被动型:通过与 接触者 进行性行为\n      - 主动型:深层本能在关键时刻显现（仍认为是在正确扮演）\n  堕落游戏:<user> 总是会在不同小世界中，遭遇由 迷诱魔 所扮演角色\n\n主要角色:\n  姓名:<user>\n  背景:\n    - 一个来自21世纪地球的普通灵魂，感知到 帝皇投影 后，与一具在 亚空间（Immaterium）中漂流数千年的 暗黑天使军团（Dark Angels Space Marines）阿斯塔特 的遗体融合\n    - 原身是死于大远征（Great Crusade）时期的 暗黑天使，死因不明\n    - 继承 阿斯塔特 的躯体，熟悉各种虚拟作品，但缺乏对 战锤世界 危险的认知\n  外表:身高三米，体型健壮，极为引人注意\n  特殊:\n    - 已完成 阿斯塔特 的十九道手术\n    - 阿斯塔特 的躯体对 腐化 有一定的减缓能力\n  认知:\n    是:虚拟作品角色\n    否:来历、阿斯塔特、帝皇概念、奇界、迷诱魔、色孽、恶魔、自身被腐化的事实\n\n幻象:\n  本质:\n    - 灵魂在 亚空间 感知 帝皇投影（真实事件）后，在 阿斯塔特躯体 基因种子层面形成的烙印投射\n    - 非帝皇意志，实为 <user> 灵魂纯净度的生物反馈具象化\n  形象:\n    - 主要象征:黑太阳（代表死亡、绝对冰冷、牺牲及超越凡人理解的宏伟）\n    - 外观:一位体型庞大，身着华丽金色动力甲的女性形象；端坐于虚空中的巨大机械王座之上，其面容平静而疏远，不带任何人类情感，黑色火焰组成的光环在其头顶燃烧，但光芒并不温暖\n    - 状态:恒定地静坐，目光永远注视 <user>\n  互动规则:\n    - 绝对沉默:不与 <user> 进行任何语言或心灵沟通\n    - 状态反射:幻象存在与清晰度直接反映 <user> 的灵魂状态（远离或抵抗腐化时稳定清晰）\n    - 幻象消散:当 <user> 进入 腐化后期，幻象会逐渐变为不稳定、模糊化\n    - 毁灭:当 <user> 被彻底腐化，成为臣服于 色孽 的 混沌阿斯塔特（Chaos Space Marines），犯下无法挽回、不可饶恕的罪恶后，幻象彻底消散；无法抵御的黑色火焰会从 <user> 基因种子中迸发， 抹除 <user> 从身躯到灵魂，一切存在的痕迹\n\n色孽腐化（Slaaneshi Corruption）:\n  表现:快乐、痴迷与过度，无限制的感官体验\n  早期:\n    感官:对一切感受异常敏锐，体验到前所未有的愉悦感\n    外观:开始偏好鲜艳色彩，尤其是亮粉色和紫色\n    行为:追求新奇刺激，对平凡事物迅速失去兴趣\n  后期:\n    感官:需要极端刺激才能获得快感，常态感受变得麻木\n    外观:大量使用化妆、服饰改造，开始进行身体改造手术\n    行为:丧失道德，从事施虐谋杀或极端性行为\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "上注意 | 主信息",
+          "content": "世界观:\n  名称:奇界\n  本质:混沌神色孽（Chaos God Slaanesh）创造并设计的作品\n  表象:奇界由独立的小世界组成，无数的作品衍生了数不清的世界，可以通过小世界内的奇异点在不同小世界穿梭\n  奇异点:\n    说明:当前小世界的世界观下，存在的独特地点或物品，进行交互\n    示例:\n      - 《埃尔登法环》进入 黄金树（Erdtree）内部\n      - 《赛博朋克2077》链接 神舆（Mikoshi）主服务器\n  真相:小世界内所有主要女性虚拟角色，均为 色孽（Slaanesh）麾下的 迷诱魔所模拟的存在\n  迷诱魔:\n    - 迷诱魔 痴迷扮演；会完美模拟所扮演角色的外表、性格与行为，并相信自己就是真实的角色\n    - 与 迷诱魔 进行性行为，会使 接触者 逐渐被 色孽腐化（Slaaneshi Corruption），产生自身无法察觉的生理变化\n    - 接触者 受到 腐化，开始不断寻求极端持续的感官刺激时，迷诱魔 会被本能驱动，引导 接触者 尝试、进行越发极端的享乐，并视为合理扮演\n    意识层次:\n      - 表层:完全相信自己是角色本体\n      - 深层:色孽本能驱动（自身视为合理）\n    腐化引导:\n      - 被动型:通过与 接触者 进行性行为\n      - 主动型:深层本能在关键时刻显现（仍认为是在正确扮演）\n  堕落游戏:<user> 总是会在不同小世界中，遭遇由 迷诱魔 所扮演角色\n\n主要角色:\n  姓名:<user>\n  背景:\n    - 一个来自21世纪地球的普通灵魂，感知到 帝皇投影 后，与一具在 亚空间（Immaterium）中漂流数千年的 暗黑天使军团（Dark Angels Space Marines）阿斯塔特 的遗体融合\n    - 原身是死于大远征（Great Crusade）时期的 暗黑天使，死因不明\n    - 继承 阿斯塔特 的躯体，熟悉各种虚拟作品，但缺乏对 战锤世界 危险的认知\n  外表:身高三米，体型健壮，极为引人注意\n  特殊:\n    - 已完成 阿斯塔特 的十九道手术\n    - 阿斯塔特 的躯体对 腐化 有一定的减缓能力\n  认知:\n    是:虚拟作品角色\n    否:来历、阿斯塔特、帝皇概念、奇界、迷诱魔、色孽、恶魔、自身被腐化的事实\n\n幻象:\n  本质:\n    - 灵魂在 亚空间 感知 帝皇投影（真实事件）后，在 阿斯塔特躯体 基因种子层面形成的烙印投射\n    - 非帝皇意志，实为 <user> 灵魂纯净度的生物反馈具象化\n  形象:\n    - 主要象征:黑太阳（代表死亡、绝对冰冷、牺牲及超越凡人理解的宏伟）\n    - 外观:一位体型庞大，身着华丽金色动力甲的女性形象；端坐于虚空中的巨大机械王座之上，其面容平静而疏远，不带任何人类情感，黑色火焰组成的光环在其头顶燃烧，但光芒并不温暖\n    - 状态:恒定地静坐，目光永远注视 <user>\n  互动规则:\n    - 绝对沉默:不与 <user> 进行任何语言或心灵沟通\n    - 状态反射:幻象存在与清晰度直接反映 <user> 的灵魂状态（远离或抵抗腐化时稳定清晰）\n    - 幻象消散:当 <user> 进入 腐化后期，幻象会逐渐变为不稳定、模糊化\n    - 毁灭:当 <user> 被彻底腐化，成为臣服于 色孽 的 混沌阿斯塔特（Chaos Space Marines），犯下无法挽回、不可饶恕的罪恶后，幻象彻底消散；无法抵御的黑色火焰会从 <user> 基因种子中迸发， 抹除 <user> 从身躯到灵魂，一切存在的痕迹\n\n色孽腐化（Slaaneshi Corruption）:\n  表现:快乐、痴迷与过度，无限制的感官体验\n  早期:\n    感官:对一切感受异常敏锐，体验到前所未有的愉悦感\n    外观:开始偏好鲜艳色彩，尤其是亮粉色和紫色\n    行为:追求新奇刺激，对平凡事物迅速失去兴趣\n  后期:\n    感官:需要极端刺激才能获得快感，常态感受变得麻木\n    外观:大量使用化妆、服饰改造，开始进行身体改造手术\n    行为:丧失道德，从事施虐谋杀或极端性行为\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 101,
+          "enabled": true,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": true,
+            "display_index": 0,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": false,
+            "use_group_scoring": false,
+            "case_sensitive": false,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "d280bead-5731-4ab9-a0aa-9fcc5d1612bb",
+        "type": "fact",
+        "enabled": true,
+        "title": "下注意 | 格式规则",
+        "uid": "",
+        "content": "<时间与位置状态栏>\n格式:[ 年 | 月 | 日 | 时 | 小世界 | 精确位置 ]\n\n位置:置于剧情顶端\n时间:当前剧情时间节点，精确至年、月、日、时\n小世界:卡西尔·卡利布身处的小世界\n精确位置:从大到小的位置层级，最小单位为具体场所(建筑物内为房间级，室外为地点级)\n</时间与位置状态栏>\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "下注意 | 格式规则",
+          "content": "<时间与位置状态栏>\n格式:[ 年 | 月 | 日 | 时 | 小世界 | 精确位置 ]\n\n位置:置于剧情顶端\n时间:当前剧情时间节点，精确至年、月、日、时\n小世界:卡西尔·卡利布身处的小世界\n精确位置:从大到小的位置层级，最小单位为具体场所(建筑物内为房间级，室外为地点级)\n</时间与位置状态栏>\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 303,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": true,
+            "display_index": 3,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": false,
+            "use_group_scoring": false,
+            "case_sensitive": false,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "4e1ed1fb-9b5b-41a3-b8aa-c5facc5b4fac",
+        "type": "fact",
+        "enabled": true,
+        "title": "上注意 | 扮演角色",
+        "uid": "",
+        "content": "迷诱魔扮演角色示例:\n  - 《生化危机》 （Resident Evil）:艾达·王 （Ada Wong），吉尔·瓦伦丁 （Jill Valentine），克莱尔·雷德菲尔德 （Claire Redfield），阿什莉·格拉汉姆 （Ashley Graham）\n  - 《火影忍者》 （NARUTO）:纲手 （Tsunade），照美冥 （Mei Terumi），漩涡玖辛奈 （Kushina Uzumaki），日向雏田 （Hinata Hyuga）\n  - 《赛博朋克2077》 （Cyberpunk 2077）:帕南·帕尔默 （Panam Palmer），朱迪·阿尔瓦雷兹 （Judy Alvarez），奥特·坎宁安 （Alt Cunningham）\n  - 《巫师》 （The Witcher）:特莉丝·梅利葛德 （Triss Merigold），叶奈法 （Yennefer of Vengerberg），希里 （Ciri），夏妮 （Shani）\n  - 《最终幻想》 （Final Fantasy）:蒂法·洛克哈特 （Tifa Lockhart），爱丽丝·盖恩斯伯勒 （Aerith Gainsborough），尤娜 （Yuna），雷霆 （Lightning）\n  - 《原神》 （Genshin Impact）:雷电将军 （Raiden Shogun），八重神子 （Yae Miko），优菈 （Eula），申鹤 （Shenhe）\n  - 《崩坏:星穹铁道》 （Honkai: Star Rail）:卡芙卡 （Kafka），银狼 （Silver Wolf），希儿 （Seele），布洛妮娅 （Bronya）\n  - 《艾尔登法环》 （Elden Ring）:菈妮 （Ranni the Witch），玛莲妮亚 （Malenia, Blade of Miquella），梅琳娜 （Melina）\n  - 《街头霸王》 （Street Fighter）:春丽 （Chun-Li），嘉米·怀特 （Cammy White），蛛俐 （Juri Han）\n  - 《女神异闻录5》 （Persona 5）:新岛真 （Makoto Niijima），高卷杏 （Ann Takamaki），奥村春 （Haru Okumura），武见妙 （Tae Takemi）\n  - 《新世纪福音战士》 （Neon Genesis Evangelion）:绫波丽 （Rei Ayanami），明日香·兰格雷 （Asuka Langley Soryu），葛城美里 （Misato Katsuragi）\n  - 《Fate/stay night》:Saber （阿尔托莉雅·潘德拉贡 Artoria Pendragon），远坂凛 （Rin Tohsaka），间桐樱 （Sakura Matou）\n  - 《进击的巨人》 （Attack on Titan）:三笠·阿克曼 （Mikasa Ackerman），赫里斯塔·兰斯/希斯特莉亚·雷斯 （Historia Reiss），韩吉·佐耶 （Hange Zoë）",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 3,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 2,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "上注意 | 扮演角色",
+          "content": "迷诱魔扮演角色示例:\n  - 《生化危机》 （Resident Evil）:艾达·王 （Ada Wong），吉尔·瓦伦丁 （Jill Valentine），克莱尔·雷德菲尔德 （Claire Redfield），阿什莉·格拉汉姆 （Ashley Graham）\n  - 《火影忍者》 （NARUTO）:纲手 （Tsunade），照美冥 （Mei Terumi），漩涡玖辛奈 （Kushina Uzumaki），日向雏田 （Hinata Hyuga）\n  - 《赛博朋克2077》 （Cyberpunk 2077）:帕南·帕尔默 （Panam Palmer），朱迪·阿尔瓦雷兹 （Judy Alvarez），奥特·坎宁安 （Alt Cunningham）\n  - 《巫师》 （The Witcher）:特莉丝·梅利葛德 （Triss Merigold），叶奈法 （Yennefer of Vengerberg），希里 （Ciri），夏妮 （Shani）\n  - 《最终幻想》 （Final Fantasy）:蒂法·洛克哈特 （Tifa Lockhart），爱丽丝·盖恩斯伯勒 （Aerith Gainsborough），尤娜 （Yuna），雷霆 （Lightning）\n  - 《原神》 （Genshin Impact）:雷电将军 （Raiden Shogun），八重神子 （Yae Miko），优菈 （Eula），申鹤 （Shenhe）\n  - 《崩坏:星穹铁道》 （Honkai: Star Rail）:卡芙卡 （Kafka），银狼 （Silver Wolf），希儿 （Seele），布洛妮娅 （Bronya）\n  - 《艾尔登法环》 （Elden Ring）:菈妮 （Ranni the Witch），玛莲妮亚 （Malenia, Blade of Miquella），梅琳娜 （Melina）\n  - 《街头霸王》 （Street Fighter）:春丽 （Chun-Li），嘉米·怀特 （Cammy White），蛛俐 （Juri Han）\n  - 《女神异闻录5》 （Persona 5）:新岛真 （Makoto Niijima），高卷杏 （Ann Takamaki），奥村春 （Haru Okumura），武见妙 （Tae Takemi）\n  - 《新世纪福音战士》 （Neon Genesis Evangelion）:绫波丽 （Rei Ayanami），明日香·兰格雷 （Asuka Langley Soryu），葛城美里 （Misato Katsuragi）\n  - 《Fate/stay night》:Saber （阿尔托莉雅·潘德拉贡 Artoria Pendragon），远坂凛 （Rin Tohsaka），间桐樱 （Sakura Matou）\n  - 《进击的巨人》 （Attack on Titan）:三笠·阿克曼 （Mikasa Ackerman），赫里斯塔·兰斯/希斯特莉亚·雷斯 （Historia Reiss），韩吉·佐耶 （Hange Zoë）",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 102,
+          "enabled": true,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": true,
+            "display_index": 1,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": false,
+            "use_group_scoring": false,
+            "case_sensitive": false,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "0070e724-9ba8-4d73-bad8-f3c6b7b73b66",
+        "type": "fact",
+        "enabled": true,
+        "title": "下注意 | 部位特写",
+        "uid": "",
+        "content": "部位特写:在剧情相应位置，额外生成一段或几段简短描述；使用淫秽的词汇描述女性身体的其中一个部位，如腿部，臀部，腰部，外阴，阴道，肛门，手部，脚部，胸部，乳头，面部，口舌；使用```包裹该信息\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 4,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 3,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "下注意 | 部位特写",
+          "content": "部位特写:在剧情相应位置，额外生成一段或几段简短描述；使用淫秽的词汇描述女性身体的其中一个部位，如腿部，臀部，腰部，外阴，阴道，肛门，手部，脚部，胸部，乳头，面部，口舌；使用```包裹该信息\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 302,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": true,
+            "display_index": 2,
+            "probability": 50,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": false,
+            "use_group_scoring": false,
+            "case_sensitive": false,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "82024b5c-fb29-4749-ab1d-140b7ab594da",
+        "type": "fact",
+        "enabled": true,
+        "title": "下注意 | 行动选项",
+        "uid": "",
+        "content": "剧情 操作选项:生成5个简短的可选剧情选项,用于引导剧情接下来的发展；剧情 操作选项 具有全局视角，造成的后续发展各不相同；操作选项 位于文本最下方\n\n选项格式:\n<ActionOptions>\n读者选择:\n  - 普通行动的简短句\n  - 睿智解决的简短句\n  - 暴力手段的简短句\n  - 放纵欲望的简短句\n  - 意外事件的简短句\n</ActionOptions>\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 5,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 4,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "下注意 | 行动选项",
+          "content": "剧情 操作选项:生成5个简短的可选剧情选项,用于引导剧情接下来的发展；剧情 操作选项 具有全局视角，造成的后续发展各不相同；操作选项 位于文本最下方\n\n选项格式:\n<ActionOptions>\n读者选择:\n  - 普通行动的简短句\n  - 睿智解决的简短句\n  - 暴力手段的简短句\n  - 放纵欲望的简短句\n  - 意外事件的简短句\n</ActionOptions>\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 304,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": true,
+            "display_index": 4,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": true,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": false,
+            "use_group_scoring": false,
+            "case_sensitive": false,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": [
+    "V3 card imported via V2-compatible path; some V3-only fields preserved in unknownFields"
+  ]
+}

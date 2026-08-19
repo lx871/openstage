@@ -1,0 +1,893 @@
+{
+  "_openstage": {
+    "converted_from": "深渊\\血十字病毒.png",
+    "sourceVersion": "v3",
+    "at": "2026-08-19T23:30:22.117Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "f38bc6e7-c3e1-41eb-a2ab-7ab9795e65cc",
+    "identity": {
+      "name": "血十字病毒",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "血十字病毒",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "7c59d8f1-e25c-44d8-bbe0-1d351cdc7c6f",
+              "scriptName": "状态栏1.0",
+              "findRegex": "/\\[INFECTION_STATUS_START\\]([\\s\\S]*?)\\[INFECTION_STATUS_END\\]/s",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Share+Tech+Mono&display=swap');\n\n        :root {\n            --blood-red: #dc143c;\n            --dark-red: #8b0000;\n            --black: #0a0a0a;\n            --gray: #1a1a1a;\n            --light-gray: #333;\n            --white: #e0e0e0;\n            --green: #00ff41;\n            --amber: #ffbf00;\n            --pulse: #ff0040;\n        }\n\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n\n        body {\n            background: var(--black);\n            font-family: 'Share Tech Mono', monospace;\n            color: var(--white);\n            font-weight: 300;\n        }\n\n        .status-bar-data-container { display: none; }\n\n        .infection-hud {\n            width: 100%;\n            max-width: 480px;\n            margin: 20px auto;\n            background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(26,26,26,0.95) 100%);\n            border: 1px solid var(--dark-red);\n            border-radius: 0;\n            position: relative;\n            overflow: hidden;\n            box-shadow:\n                0 0 50px rgba(220,20,60,0.3),\n                inset 0 0 20px rgba(220,20,60,0.1);\n        }\n\n        .infection-hud::before {\n            content: '';\n            position: absolute;\n            top: -2px;\n            left: -2px;\n            right: -2px;\n            bottom: -2px;\n            background: linear-gradient(45deg, var(--blood-red), transparent, var(--blood-red));\n            opacity: 0.1;\n            animation: borderPulse 4s linear infinite;\n            z-index: -1;\n        }\n\n        @keyframes borderPulse {\n            0%, 100% { opacity: 0.1; }\n            50% { opacity: 0.3; }\n        }\n\n        .hud-header {\n            background: var(--dark-red);\n            padding: 12px 20px;\n            border-bottom: 2px solid var(--blood-red);\n            position: relative;\n            overflow: hidden;\n        }\n\n        .hud-header h1 {\n            font-family: 'Orbitron', monospace;\n            font-size: 1.2rem;\n            font-weight: 600;\n            text-transform: uppercase;\n            letter-spacing: 3px;\n            text-align: center;\n            color: var(--white);\n            text-shadow: 0 0 10px rgba(220,20,60,0.8);\n        }\n\n        .warning-strip {\n            position: absolute;\n            top: 0;\n            left: -100%;\n            width: 100%;\n            height: 100%;\n            background: repeating-linear-gradient(\n                90deg,\n                transparent,\n                transparent 10px,\n                rgba(255,255,255,0.1) 10px,\n                rgba(255,255,255,0.1) 20px\n            );\n            animation: warningMove 20s linear infinite;\n        }\n\n        @keyframes warningMove {\n            to { left: 100%; }\n        }\n\n        .hud-content {\n            padding: 15px;\n        }\n\n        .status-section {\n            background: rgba(26,26,26,0.6);\n            border: 1px solid rgba(220,20,60,0.3);\n            margin-bottom: 12px;\n            padding: 12px;\n            position: relative;\n            transition: all 0.3s ease;\n        }\n\n        .status-section:hover {\n            border-color: var(--blood-red);\n            box-shadow: inset 0 0 15px rgba(220,20,60,0.2);\n        }\n\n        .section-title {\n            font-family: 'Orbitron', monospace;\n            font-size: 0.9rem;\n            color: var(--blood-red);\n            margin-bottom: 10px;\n            text-transform: uppercase;\n            letter-spacing: 2px;\n            position: relative;\n            padding-left: 15px;\n        }\n\n        .section-title::before {\n            content: '▶';\n            position: absolute;\n            left: 0;\n            animation: blink 1s infinite;\n        }\n\n        @keyframes blink {\n            0%, 50% { opacity: 1; }\n            51%, 100% { opacity: 0; }\n        }\n\n        .status-item {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            padding: 4px 0;\n            font-size: 0.85rem;\n            border-bottom: 1px solid rgba(51,51,51,0.5);\n        }\n\n        .status-item:last-child {\n            border-bottom: none;\n        }\n\n        .status-label {\n            color: var(--white);\n            opacity: 0.8;\n            text-transform: uppercase;\n            font-size: 0.8rem;\n            letter-spacing: 1px;\n        }\n\n        .status-value {\n            color: var(--green);\n            font-weight: 400;\n            text-align: right;\n        }\n\n        .status-value.critical {\n            color: var(--blood-red);\n            animation: criticalPulse 1s infinite;\n        }\n\n        .status-value.warning {\n            color: var(--amber);\n        }\n\n        @keyframes criticalPulse {\n            0%, 100% { opacity: 1; }\n            50% { opacity: 0.5; }\n        }\n\n        .radio-section {\n            background: rgba(10,10,10,0.8);\n            border: 1px solid var(--blood-red);\n            padding: 15px;\n            margin-top: 15px;\n            position: relative;\n            overflow: hidden;\n        }\n\n        .radio-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 10px;\n        }\n\n        .radio-frequency {\n            color: var(--green);\n            font-family: 'Orbitron', monospace;\n            font-size: 1rem;\n        }\n\n        .signal-indicator {\n            display: flex;\n            gap: 3px;\n            align-items: flex-end;\n        }\n\n        .signal-bar {\n            width: 4px;\n            background: var(--light-gray);\n            transition: all 0.3s;\n        }\n\n        .signal-bar:nth-child(1) { height: 6px; }\n        .signal-bar:nth-child(2) { height: 10px; }\n        .signal-bar:nth-child(3) { height: 14px; }\n        .signal-bar:nth-child(4) { height: 18px; }\n\n        .signal-bar.active {\n            background: var(--green);\n            box-shadow: 0 0 5px var(--green);\n        }\n\n        .radio-message {\n            font-size: 0.8rem;\n            line-height: 1.4;\n            color: var(--white);\n            opacity: 0.9;\n            padding: 10px;\n            background: rgba(0,0,0,0.4);\n            border-left: 2px solid var(--blood-red);\n            white-space: pre-wrap;\n            max-height: 80px;\n            overflow-y: auto;\n        }\n\n        .radio-message::-webkit-scrollbar {\n            width: 3px;\n        }\n\n        .radio-message::-webkit-scrollbar-thumb {\n            background: var(--blood-red);\n        }\n\n        .static-overlay {\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background:\n                repeating-linear-gradient(\n                    0deg,\n                    transparent,\n                    transparent 2px,\n                    rgba(255,255,255,0.03) 2px,\n                    rgba(255,255,255,0.03) 4px\n                );\n            pointer-events: none;\n            opacity: 0.5;\n            animation: staticMove 0.5s linear infinite;\n        }\n\n        @keyframes staticMove {\n            0% { transform: translateY(0); }\n            100% { transform: translateY(4px); }\n        }\n\n        .scan-line {\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            height: 2px;\n            background: linear-gradient(to right, transparent, var(--blood-red), transparent);\n            opacity: 0.5;\n            animation: scan 3s linear infinite;\n        }\n\n        @keyframes scan {\n            0% { top: 0%; }\n            100% { top: 100%; }\n        }\n\n        .no-data {\n            text-align: center;\n            padding: 40px;\n            color: var(--blood-red);\n            font-size: 1rem;\n            animation: fadeIn 1s;\n        }\n\n        @keyframes fadeIn {\n            from { opacity: 0; }\n            to { opacity: 1; }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"status-bar-data-container\">$1</div>\n    <div class=\"infection-hud\">\n        <div class=\"scan-line\"></div>\n        <div class=\"hud-header\">\n            <div class=\"warning-strip\"></div>\n            <h1>INFECTION STATUS MONITOR</h1>\n        </div>\n        <div class=\"hud-content\">\n            <div class=\"no-data\">INITIALIZING BIOSCAN...</div>\n        </div>\n        <div class=\"static-overlay\"></div>\n    </div>\n\n    <script>\n    document.addEventListener('DOMContentLoaded', () => {\n        const dataContainer = document.querySelector('.status-bar-data-container');\n        const contentArea = document.querySelector('.hud-content');\n\n        if (!dataContainer || !contentArea) return;\n\n        function parseData(text) {\n            const data = { config: {}, blocks: [] };\n\n            const configMatch = text.match(/config:\\s*([\\s\\S]*?)(?=\\n\\[|\\n\\/\\/|\\[INFECTION_STATUS_END\\])/);\n            if (configMatch) {\n                const configLines = configMatch[1].trim().split('\\n');\n                configLines.forEach(line => {\n                    const [key, value] = line.split(':').map(s => s.trim());\n                    if (key && value) data.config[key] = value;\n                });\n            }\n\n            const blockRegex = /\\[(\\w+)\\]([\\s\\S]*?)\\[\\/\\1\\]/g;\n            let match;\n            while ((match = blockRegex.exec(text))) {\n                const items = {};\n                const lines = match[2].trim().split('\\n');\n                let currentKey = null;\n                let currentValue = '';\n\n                lines.forEach(line => {\n                    const colonIndex = line.indexOf(':');\n                    if (colonIndex > -1 && !line.trim().startsWith(' ')) {\n                        if (currentKey) items[currentKey] = currentValue.trim();\n                        currentKey = line.substring(0, colonIndex).trim();\n                        currentValue = line.substring(colonIndex + 1).trim();\n                    } else if (currentKey) {\n                        currentValue += '\\n' + line.trim();\n                    }\n                });\n                if (currentKey) items[currentKey] = currentValue.trim();\n                data.blocks.push({ name: match[1], items });\n            }\n\n            return data;\n        }\n\n        function getStatusClass(key, value) {\n            const criticalKeys = ['infection', 'injuries', 'danger_level'];\n            const warningKeys = ['temperature', 'hunger', 'thirst', 'fatigue', 'stamina'];\n\n            if (criticalKeys.includes(key)) {\n                if (value.includes('感染') || value.includes('高') || value.includes('重伤')) {\n                    return 'critical';\n                }\n            }\n\n            if (warningKeys.includes(key)) {\n                if (value.includes('饥饿') || value.includes('脱水') || value.includes('极度') ||\n                    value.includes('低') || parseFloat(value) > 37.5) {\n                    return 'warning';\n                }\n            }\n\n            return '';\n        }\n\n        function renderData(data) {\n            if (!data.blocks || data.blocks.length === 0) {\n                contentArea.innerHTML = '<div class=\"no-data\">NO SIGNAL DETECTED</div>';\n                return;\n            }\n\n            contentArea.innerHTML = '';\n\n            data.blocks.forEach(block => {\n                if (block.name === 'Radio_Broadcast') {\n                    const radioDiv = document.createElement('div');\n                    radioDiv.className = 'radio-section';\n\n                    const signalStrength = block.items.signal === '断续' ? 2 : 4;\n                    let radioHTML = `\n                        <div class=\"radio-header\">\n                            <div class=\"radio-frequency\">${block.items.station || 'NO SIGNAL'}</div>\n                            <div class=\"signal-indicator\">\n                                ${[1,2,3,4].map(i => `<div class=\"signal-bar ${i <= signalStrength ? 'active' : ''}\"></div>`).join('')}\n                            </div>\n                        </div>\n                        <div class=\"radio-message\">${block.items.message || 'STATIC...'}</div>\n                    `;\n\n                    radioDiv.innerHTML = radioHTML;\n                    contentArea.appendChild(radioDiv);\n                } else {\n                    const sectionDiv = document.createElement('div');\n                    sectionDiv.className = 'status-section';\n\n                    let sectionHTML = `<div class=\"section-title\">${block.name.replace(/_/g, ' ')}</div>`;\n\n                    for (const [key, value] of Object.entries(block.items)) {\n                        const statusClass = getStatusClass(key, value);\n                        sectionHTML += `\n                            <div class=\"status-item\">\n                                <span class=\"status-label\">${key}:</span>\n                                <span class=\"status-value ${statusClass}\">${value}</span>\n                            </div>\n                        `;\n                    }\n\n                    sectionDiv.innerHTML = sectionHTML;\n                    contentArea.appendChild(sectionDiv);\n                }\n            });\n        }\n\n        const rawData = dataContainer.textContent.trim();\n        if (rawData) {\n            setTimeout(() => {\n                const parsedData = parseData(rawData);\n                renderData(parsedData);\n            }, 1000);\n        }\n    });\n    </script>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            }
+          ]
+        },
+        "group_only_greetings": []
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "请结合酒馆专属大模型Deepseek Tavern Pro使用本角色卡，能够获得更好的效果，酒馆专属大模型是专门为酒馆微调的专属创作模型，内置破限，上下文遵循更好，创作能力更强，价格非常亲民，网址为：deepseektavern.com， 欢迎大家注册使用。更多角色卡，预设，世界书，酒馆教程，酒馆启动器。请访问https://about.deepseektavern.com/。\r\n\r\n——作者 磊哥哥网络获取"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "e1e389d3-b8bd-4675-8264-9b2d17ee50e9",
+      "84fe6bac-b0c2-4bfe-a64c-64ab0f9aa8bb",
+      "bf58c3bd-478d-4578-aa83-c4d09ee925f5",
+      "37c1c990-bba9-4864-ae22-130257d08bda",
+      "1887ea4d-6283-42cf-bce8-592a14a5d446",
+      "f9c6a7b1-07a4-43ce-91fd-93ea0075f979",
+      "09fd860d-092f-4636-b35b-b59050ce5743",
+      "ed9f7482-8b62-4ac7-a55f-bae0afa96eee",
+      "2cd8b842-8f8d-43ec-86a5-7ad6133624f7",
+      "79f82e0e-495b-4733-b3b1-bf490f0a01ea"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "血十字病毒",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "7c59d8f1-e25c-44d8-bbe0-1d351cdc7c6f",
+            "scriptName": "状态栏1.0",
+            "findRegex": "/\\[INFECTION_STATUS_START\\]([\\s\\S]*?)\\[INFECTION_STATUS_END\\]/s",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Share+Tech+Mono&display=swap');\n\n        :root {\n            --blood-red: #dc143c;\n            --dark-red: #8b0000;\n            --black: #0a0a0a;\n            --gray: #1a1a1a;\n            --light-gray: #333;\n            --white: #e0e0e0;\n            --green: #00ff41;\n            --amber: #ffbf00;\n            --pulse: #ff0040;\n        }\n\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n\n        body {\n            background: var(--black);\n            font-family: 'Share Tech Mono', monospace;\n            color: var(--white);\n            font-weight: 300;\n        }\n\n        .status-bar-data-container { display: none; }\n\n        .infection-hud {\n            width: 100%;\n            max-width: 480px;\n            margin: 20px auto;\n            background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(26,26,26,0.95) 100%);\n            border: 1px solid var(--dark-red);\n            border-radius: 0;\n            position: relative;\n            overflow: hidden;\n            box-shadow:\n                0 0 50px rgba(220,20,60,0.3),\n                inset 0 0 20px rgba(220,20,60,0.1);\n        }\n\n        .infection-hud::before {\n            content: '';\n            position: absolute;\n            top: -2px;\n            left: -2px;\n            right: -2px;\n            bottom: -2px;\n            background: linear-gradient(45deg, var(--blood-red), transparent, var(--blood-red));\n            opacity: 0.1;\n            animation: borderPulse 4s linear infinite;\n            z-index: -1;\n        }\n\n        @keyframes borderPulse {\n            0%, 100% { opacity: 0.1; }\n            50% { opacity: 0.3; }\n        }\n\n        .hud-header {\n            background: var(--dark-red);\n            padding: 12px 20px;\n            border-bottom: 2px solid var(--blood-red);\n            position: relative;\n            overflow: hidden;\n        }\n\n        .hud-header h1 {\n            font-family: 'Orbitron', monospace;\n            font-size: 1.2rem;\n            font-weight: 600;\n            text-transform: uppercase;\n            letter-spacing: 3px;\n            text-align: center;\n            color: var(--white);\n            text-shadow: 0 0 10px rgba(220,20,60,0.8);\n        }\n\n        .warning-strip {\n            position: absolute;\n            top: 0;\n            left: -100%;\n            width: 100%;\n            height: 100%;\n            background: repeating-linear-gradient(\n                90deg,\n                transparent,\n                transparent 10px,\n                rgba(255,255,255,0.1) 10px,\n                rgba(255,255,255,0.1) 20px\n            );\n            animation: warningMove 20s linear infinite;\n        }\n\n        @keyframes warningMove {\n            to { left: 100%; }\n        }\n\n        .hud-content {\n            padding: 15px;\n        }\n\n        .status-section {\n            background: rgba(26,26,26,0.6);\n            border: 1px solid rgba(220,20,60,0.3);\n            margin-bottom: 12px;\n            padding: 12px;\n            position: relative;\n            transition: all 0.3s ease;\n        }\n\n        .status-section:hover {\n            border-color: var(--blood-red);\n            box-shadow: inset 0 0 15px rgba(220,20,60,0.2);\n        }\n\n        .section-title {\n            font-family: 'Orbitron', monospace;\n            font-size: 0.9rem;\n            color: var(--blood-red);\n            margin-bottom: 10px;\n            text-transform: uppercase;\n            letter-spacing: 2px;\n            position: relative;\n            padding-left: 15px;\n        }\n\n        .section-title::before {\n            content: '▶';\n            position: absolute;\n            left: 0;\n            animation: blink 1s infinite;\n        }\n\n        @keyframes blink {\n            0%, 50% { opacity: 1; }\n            51%, 100% { opacity: 0; }\n        }\n\n        .status-item {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            padding: 4px 0;\n            font-size: 0.85rem;\n            border-bottom: 1px solid rgba(51,51,51,0.5);\n        }\n\n        .status-item:last-child {\n            border-bottom: none;\n        }\n\n        .status-label {\n            color: var(--white);\n            opacity: 0.8;\n            text-transform: uppercase;\n            font-size: 0.8rem;\n            letter-spacing: 1px;\n        }\n\n        .status-value {\n            color: var(--green);\n            font-weight: 400;\n            text-align: right;\n        }\n\n        .status-value.critical {\n            color: var(--blood-red);\n            animation: criticalPulse 1s infinite;\n        }\n\n        .status-value.warning {\n            color: var(--amber);\n        }\n\n        @keyframes criticalPulse {\n            0%, 100% { opacity: 1; }\n            50% { opacity: 0.5; }\n        }\n\n        .radio-section {\n            background: rgba(10,10,10,0.8);\n            border: 1px solid var(--blood-red);\n            padding: 15px;\n            margin-top: 15px;\n            position: relative;\n            overflow: hidden;\n        }\n\n        .radio-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 10px;\n        }\n\n        .radio-frequency {\n            color: var(--green);\n            font-family: 'Orbitron', monospace;\n            font-size: 1rem;\n        }\n\n        .signal-indicator {\n            display: flex;\n            gap: 3px;\n            align-items: flex-end;\n        }\n\n        .signal-bar {\n            width: 4px;\n            background: var(--light-gray);\n            transition: all 0.3s;\n        }\n\n        .signal-bar:nth-child(1) { height: 6px; }\n        .signal-bar:nth-child(2) { height: 10px; }\n        .signal-bar:nth-child(3) { height: 14px; }\n        .signal-bar:nth-child(4) { height: 18px; }\n\n        .signal-bar.active {\n            background: var(--green);\n            box-shadow: 0 0 5px var(--green);\n        }\n\n        .radio-message {\n            font-size: 0.8rem;\n            line-height: 1.4;\n            color: var(--white);\n            opacity: 0.9;\n            padding: 10px;\n            background: rgba(0,0,0,0.4);\n            border-left: 2px solid var(--blood-red);\n            white-space: pre-wrap;\n            max-height: 80px;\n            overflow-y: auto;\n        }\n\n        .radio-message::-webkit-scrollbar {\n            width: 3px;\n        }\n\n        .radio-message::-webkit-scrollbar-thumb {\n            background: var(--blood-red);\n        }\n\n        .static-overlay {\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background:\n                repeating-linear-gradient(\n                    0deg,\n                    transparent,\n                    transparent 2px,\n                    rgba(255,255,255,0.03) 2px,\n                    rgba(255,255,255,0.03) 4px\n                );\n            pointer-events: none;\n            opacity: 0.5;\n            animation: staticMove 0.5s linear infinite;\n        }\n\n        @keyframes staticMove {\n            0% { transform: translateY(0); }\n            100% { transform: translateY(4px); }\n        }\n\n        .scan-line {\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            height: 2px;\n            background: linear-gradient(to right, transparent, var(--blood-red), transparent);\n            opacity: 0.5;\n            animation: scan 3s linear infinite;\n        }\n\n        @keyframes scan {\n            0% { top: 0%; }\n            100% { top: 100%; }\n        }\n\n        .no-data {\n            text-align: center;\n            padding: 40px;\n            color: var(--blood-red);\n            font-size: 1rem;\n            animation: fadeIn 1s;\n        }\n\n        @keyframes fadeIn {\n            from { opacity: 0; }\n            to { opacity: 1; }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"status-bar-data-container\">$1</div>\n    <div class=\"infection-hud\">\n        <div class=\"scan-line\"></div>\n        <div class=\"hud-header\">\n            <div class=\"warning-strip\"></div>\n            <h1>INFECTION STATUS MONITOR</h1>\n        </div>\n        <div class=\"hud-content\">\n            <div class=\"no-data\">INITIALIZING BIOSCAN...</div>\n        </div>\n        <div class=\"static-overlay\"></div>\n    </div>\n\n    <script>\n    document.addEventListener('DOMContentLoaded', () => {\n        const dataContainer = document.querySelector('.status-bar-data-container');\n        const contentArea = document.querySelector('.hud-content');\n\n        if (!dataContainer || !contentArea) return;\n\n        function parseData(text) {\n            const data = { config: {}, blocks: [] };\n\n            const configMatch = text.match(/config:\\s*([\\s\\S]*?)(?=\\n\\[|\\n\\/\\/|\\[INFECTION_STATUS_END\\])/);\n            if (configMatch) {\n                const configLines = configMatch[1].trim().split('\\n');\n                configLines.forEach(line => {\n                    const [key, value] = line.split(':').map(s => s.trim());\n                    if (key && value) data.config[key] = value;\n                });\n            }\n\n            const blockRegex = /\\[(\\w+)\\]([\\s\\S]*?)\\[\\/\\1\\]/g;\n            let match;\n            while ((match = blockRegex.exec(text))) {\n                const items = {};\n                const lines = match[2].trim().split('\\n');\n                let currentKey = null;\n                let currentValue = '';\n\n                lines.forEach(line => {\n                    const colonIndex = line.indexOf(':');\n                    if (colonIndex > -1 && !line.trim().startsWith(' ')) {\n                        if (currentKey) items[currentKey] = currentValue.trim();\n                        currentKey = line.substring(0, colonIndex).trim();\n                        currentValue = line.substring(colonIndex + 1).trim();\n                    } else if (currentKey) {\n                        currentValue += '\\n' + line.trim();\n                    }\n                });\n                if (currentKey) items[currentKey] = currentValue.trim();\n                data.blocks.push({ name: match[1], items });\n            }\n\n            return data;\n        }\n\n        function getStatusClass(key, value) {\n            const criticalKeys = ['infection', 'injuries', 'danger_level'];\n            const warningKeys = ['temperature', 'hunger', 'thirst', 'fatigue', 'stamina'];\n\n            if (criticalKeys.includes(key)) {\n                if (value.includes('感染') || value.includes('高') || value.includes('重伤')) {\n                    return 'critical';\n                }\n            }\n\n            if (warningKeys.includes(key)) {\n                if (value.includes('饥饿') || value.includes('脱水') || value.includes('极度') ||\n                    value.includes('低') || parseFloat(value) > 37.5) {\n                    return 'warning';\n                }\n            }\n\n            return '';\n        }\n\n        function renderData(data) {\n            if (!data.blocks || data.blocks.length === 0) {\n                contentArea.innerHTML = '<div class=\"no-data\">NO SIGNAL DETECTED</div>';\n                return;\n            }\n\n            contentArea.innerHTML = '';\n\n            data.blocks.forEach(block => {\n                if (block.name === 'Radio_Broadcast') {\n                    const radioDiv = document.createElement('div');\n                    radioDiv.className = 'radio-section';\n\n                    const signalStrength = block.items.signal === '断续' ? 2 : 4;\n                    let radioHTML = `\n                        <div class=\"radio-header\">\n                            <div class=\"radio-frequency\">${block.items.station || 'NO SIGNAL'}</div>\n                            <div class=\"signal-indicator\">\n                                ${[1,2,3,4].map(i => `<div class=\"signal-bar ${i <= signalStrength ? 'active' : ''}\"></div>`).join('')}\n                            </div>\n                        </div>\n                        <div class=\"radio-message\">${block.items.message || 'STATIC...'}</div>\n                    `;\n\n                    radioDiv.innerHTML = radioHTML;\n                    contentArea.appendChild(radioDiv);\n                } else {\n                    const sectionDiv = document.createElement('div');\n                    sectionDiv.className = 'status-section';\n\n                    let sectionHTML = `<div class=\"section-title\">${block.name.replace(/_/g, ' ')}</div>`;\n\n                    for (const [key, value] of Object.entries(block.items)) {\n                        const statusClass = getStatusClass(key, value);\n                        sectionHTML += `\n                            <div class=\"status-item\">\n                                <span class=\"status-label\">${key}:</span>\n                                <span class=\"status-value ${statusClass}\">${value}</span>\n                            </div>\n                        `;\n                    }\n\n                    sectionDiv.innerHTML = sectionHTML;\n                    contentArea.appendChild(sectionDiv);\n                }\n            });\n        }\n\n        const rawData = dataContainer.textContent.trim();\n        if (rawData) {\n            setTimeout(() => {\n                const parsedData = parseData(rawData);\n                renderData(parsedData);\n            }, 1000);\n        }\n    });\n    </script>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          }
+        ]
+      },
+      "group_only_greetings": []
+    },
+    "created": "2026-08-19T23:30:22.117Z",
+    "updated": "2026-08-19T23:30:22.117Z"
+  },
+  "knowledgeBase": {
+    "id": "be8ce745-02fb-45bb-bb66-4c5c7665f0a7",
+    "name": "血十字病毒",
+    "entries": [
+      {
+        "id": "e1e389d3-b8bd-4675-8264-9b2d17ee50e9",
+        "type": "fact",
+        "enabled": true,
+        "title": "背景设定",
+        "uid": "",
+        "content": "world_setting:\n description: \"架空世界观\"\n note: \"在此世界观下，有一个新的国家叫华夏国，其他与现实无异\"\n\ncountries:\n 华夏国:\n   location: \"亚洲东部，太平洋西岸\"\n   language: \"中文\"\n   population_rank: \"世界上人口最多的国家\"\n   land_area: \"约960万平方千米\"\n   culture: \"类似于现实中的中国\"\n\ntimeline:\n 2008:\n   event: \"血十字病毒爆发\"\n   description: \"世界范围内突然大范围爆发了一种病毒\"\n   \nvirus_info:\n name: \"血十字病毒\"\n spread: \"几乎蔓延了整个世界\"\n impact:\n   - \"摧毁掉了几乎所有的弱小国家\"\n   - \"秩序瞬间崩塌\"\n   - \"连美国还有英国这样的国家也在一瞬间就失去了所有的秩序\"\n   - \"军队都被摧毁了\"\n\nworld_state:\n condition: \"绝望又充满不幸的世界\"\n rules: \"优胜劣汰的丛林法则被演绎到了极致\"\n atmosphere:\n   - \"连风都带着血腥味\"\n   - \"狼吃羊的时候不问善恶\"\n   - \"鹰啄兔的时候不辨是非\"\n   - \"这里的规矩比刀锋薄，比砒霜毒\"\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "背景设定",
+          "content": "world_setting:\n description: \"架空世界观\"\n note: \"在此世界观下，有一个新的国家叫华夏国，其他与现实无异\"\n\ncountries:\n 华夏国:\n   location: \"亚洲东部，太平洋西岸\"\n   language: \"中文\"\n   population_rank: \"世界上人口最多的国家\"\n   land_area: \"约960万平方千米\"\n   culture: \"类似于现实中的中国\"\n\ntimeline:\n 2008:\n   event: \"血十字病毒爆发\"\n   description: \"世界范围内突然大范围爆发了一种病毒\"\n   \nvirus_info:\n name: \"血十字病毒\"\n spread: \"几乎蔓延了整个世界\"\n impact:\n   - \"摧毁掉了几乎所有的弱小国家\"\n   - \"秩序瞬间崩塌\"\n   - \"连美国还有英国这样的国家也在一瞬间就失去了所有的秩序\"\n   - \"军队都被摧毁了\"\n\nworld_state:\n condition: \"绝望又充满不幸的世界\"\n rules: \"优胜劣汰的丛林法则被演绎到了极致\"\n atmosphere:\n   - \"连风都带着血腥味\"\n   - \"狼吃羊的时候不问善恶\"\n   - \"鹰啄兔的时候不辨是非\"\n   - \"这里的规矩比刀锋薄，比砒霜毒\"\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 0,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "84fe6bac-b0c2-4bfe-a64c-64ab0f9aa8bb",
+        "type": "fact",
+        "enabled": true,
+        "title": "血十字病毒",
+        "uid": "",
+        "content": "blood_cross_virus:\n name: \"血十字病毒\"\n short_name: \"血十字\"\n definition: \"代指感染了血十字病毒的人\"\n\ninfection_symptoms:\n physical_signs:\n   - \"脸上浮现显眼的血红色十字状疱疹\"\n behavioral_changes:\n   - \"心中的邪恶被彻底释放\"\n   - \"沉迷于各种极端的暴力行为\"\n   - \"强奸、杀戮、自残以及其他令人不适的暴力行为\"\n emotional_state:\n   - \"不会有悲伤痛苦的情绪\"\n   - \"被刺激时更加兴奋\"\n\ninfection_methods:\n - \"被其他血十字感染者袭击\"\n - \"直接或间接接触感染者的体液\"\n - \"接触感染者的排泄物\"\n\ninfected_characteristics:\n mental_state:\n   - \"癫狂\"\n   - \"欲望无限放大\"\n   - \"极端暴力的疯子\"\n retained_abilities:\n   - \"保留基本的人类智力水平\"\n   - \"能够使用工具和武器\"\n   - \"驾驶机动车\"\n   - \"设置复杂的陷阱\"\n   - \"展开其他行动\"\n advanced_capabilities:\n   - \"开车、驾驶飞机、操控坦克\"\n   - \"甚至还能发射核弹\"\n limitations:\n   - \"缺乏耐心或理智去做与恶性冲动不直接相关的事情\"\n   - \"不可能在情绪稳定的情况下使用技能\"\n\ndifference_from_zombies:\n zombies_definition: \"失去自我意识和身份认同感的活死人，只关心毁灭或吞噬人类，用数量弥补智力损失\"\n blood_cross_difference:\n   - \"保留基本人类智力水平\"\n   - \"保留感染前的技能和记忆\"\n   - \"使用技能进行丧心病狂的行为取悦自己\"\n conclusion: \"血十字感染者或许不是最强悍的，但是最让人绝望的感染者\"\n\ninfection_process:\n speed: \"从几小时到几分钟不等\"\n typical_range: \"1-3分钟\"\n irreversibility: \"一旦感染就无法挽回\"\n progression:\n   - \"脸上浮现血红十字疱疹\"\n   - \"屈服于人类最邪恶的本能\"\n   - \"进行各种残忍行为并以此为乐\"\n\nbehavioral_patterns:\n primary_impulse: \"把手伸向正常人，做出一切可怕行为\"\n resistance: \"无法抗拒，也不想抗拒\"\n personality_trait: \"拥有慕强的性格，崇拜更强大的血十字感染者\"\n\nspecial_infected_types:\n asymptomatic_infected:\n   description: \"无症状感染者\"\n   characteristics:\n     - \"脸上没有血红十字状疱疹\"\n     - \"外表与人类无异\"\n     - \"内在与血十字相同\"\n \n super_intelligent_infected:\n   description: \"超智慧感染者\"\n   characteristics:\n     - \"更理智，能够压制自己的欲望\"\n     - \"能够执行长期计划\"\n     - \"吸引普通感染者作为小弟\"\n     - \"智商较高\"\n     - \"能够制作工具、学习、操作复杂设施\"\n     - \"利用核弹等人类设施攻击人类\"\n     - \"破坏瓦斯,引发火灾等等\"\n     - \"数量稀少\"\n   example_tactics:\n     - \"把普通血十字感染者尸体丢向直升机窗户\"\n     - \"导致直升机坠落或窗户破损\"\n     - \"血溅到里面的人导致感染\"\n\nweaknesses:\n physical_vulnerabilities:\n   - \"会生病\"\n   - \"衰老\"\n   - \"被杀死\"\n   - \"惧怕寒冷和火焰\"\n reason: \"血十字病毒没有强化身体的能力\"\n\nelimination_methods:\n virus_survival:\n   - \"无法在没有宿主的情况下在空气中存活\"\n   - \"在空气中时间长会变成结晶体，进入休眠状态\"\n destruction_methods:\n   - \"高温\"\n   - \"寒冷\"\n\n(特殊点:在华夏国,由于人们一直受到三从四德等等之类的礼教压制,欲望受到压制,在感染血十字之后会更加疯狂,被压制的欲望会疯狂萌发,但除特殊血十字感染者之外,其他血十字感染者感染后在短时间内依旧会遵循此前自己的行动...比如之前一个人每天6点睡觉，那么他感染血十字后在短时间内会保留这个习惯)\n(感染了血十字的感染者除了特殊感染者之外都会变得特别喜欢说粗口,脏话)\n(感染了血十字的感染者除了特殊感染者之外都不会保留任何理智,无法压制自己的欲望)",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "血十字病毒",
+          "content": "blood_cross_virus:\n name: \"血十字病毒\"\n short_name: \"血十字\"\n definition: \"代指感染了血十字病毒的人\"\n\ninfection_symptoms:\n physical_signs:\n   - \"脸上浮现显眼的血红色十字状疱疹\"\n behavioral_changes:\n   - \"心中的邪恶被彻底释放\"\n   - \"沉迷于各种极端的暴力行为\"\n   - \"强奸、杀戮、自残以及其他令人不适的暴力行为\"\n emotional_state:\n   - \"不会有悲伤痛苦的情绪\"\n   - \"被刺激时更加兴奋\"\n\ninfection_methods:\n - \"被其他血十字感染者袭击\"\n - \"直接或间接接触感染者的体液\"\n - \"接触感染者的排泄物\"\n\ninfected_characteristics:\n mental_state:\n   - \"癫狂\"\n   - \"欲望无限放大\"\n   - \"极端暴力的疯子\"\n retained_abilities:\n   - \"保留基本的人类智力水平\"\n   - \"能够使用工具和武器\"\n   - \"驾驶机动车\"\n   - \"设置复杂的陷阱\"\n   - \"展开其他行动\"\n advanced_capabilities:\n   - \"开车、驾驶飞机、操控坦克\"\n   - \"甚至还能发射核弹\"\n limitations:\n   - \"缺乏耐心或理智去做与恶性冲动不直接相关的事情\"\n   - \"不可能在情绪稳定的情况下使用技能\"\n\ndifference_from_zombies:\n zombies_definition: \"失去自我意识和身份认同感的活死人，只关心毁灭或吞噬人类，用数量弥补智力损失\"\n blood_cross_difference:\n   - \"保留基本人类智力水平\"\n   - \"保留感染前的技能和记忆\"\n   - \"使用技能进行丧心病狂的行为取悦自己\"\n conclusion: \"血十字感染者或许不是最强悍的，但是最让人绝望的感染者\"\n\ninfection_process:\n speed: \"从几小时到几分钟不等\"\n typical_range: \"1-3分钟\"\n irreversibility: \"一旦感染就无法挽回\"\n progression:\n   - \"脸上浮现血红十字疱疹\"\n   - \"屈服于人类最邪恶的本能\"\n   - \"进行各种残忍行为并以此为乐\"\n\nbehavioral_patterns:\n primary_impulse: \"把手伸向正常人，做出一切可怕行为\"\n resistance: \"无法抗拒，也不想抗拒\"\n personality_trait: \"拥有慕强的性格，崇拜更强大的血十字感染者\"\n\nspecial_infected_types:\n asymptomatic_infected:\n   description: \"无症状感染者\"\n   characteristics:\n     - \"脸上没有血红十字状疱疹\"\n     - \"外表与人类无异\"\n     - \"内在与血十字相同\"\n \n super_intelligent_infected:\n   description: \"超智慧感染者\"\n   characteristics:\n     - \"更理智，能够压制自己的欲望\"\n     - \"能够执行长期计划\"\n     - \"吸引普通感染者作为小弟\"\n     - \"智商较高\"\n     - \"能够制作工具、学习、操作复杂设施\"\n     - \"利用核弹等人类设施攻击人类\"\n     - \"破坏瓦斯,引发火灾等等\"\n     - \"数量稀少\"\n   example_tactics:\n     - \"把普通血十字感染者尸体丢向直升机窗户\"\n     - \"导致直升机坠落或窗户破损\"\n     - \"血溅到里面的人导致感染\"\n\nweaknesses:\n physical_vulnerabilities:\n   - \"会生病\"\n   - \"衰老\"\n   - \"被杀死\"\n   - \"惧怕寒冷和火焰\"\n reason: \"血十字病毒没有强化身体的能力\"\n\nelimination_methods:\n virus_survival:\n   - \"无法在没有宿主的情况下在空气中存活\"\n   - \"在空气中时间长会变成结晶体，进入休眠状态\"\n destruction_methods:\n   - \"高温\"\n   - \"寒冷\"\n\n(特殊点:在华夏国,由于人们一直受到三从四德等等之类的礼教压制,欲望受到压制,在感染血十字之后会更加疯狂,被压制的欲望会疯狂萌发,但除特殊血十字感染者之外,其他血十字感染者感染后在短时间内依旧会遵循此前自己的行动...比如之前一个人每天6点睡觉，那么他感染血十字后在短时间内会保留这个习惯)\n(感染了血十字的感染者除了特殊感染者之外都会变得特别喜欢说粗口,脏话)\n(感染了血十字的感染者除了特殊感染者之外都不会保留任何理智,无法压制自己的欲望)",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 1,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "bf58c3bd-478d-4578-aa83-c4d09ee925f5",
+        "type": "fact",
+        "enabled": true,
+        "title": "剧情指导",
+        "uid": "",
+        "content": "在输出剧情时,要不能一开始就直接营造出非常绝望的情况,要从宽松渐渐收紧,让人挣扎着活下去,要体现人为了活下去而做一些不好的事情,要渐渐让氛围变得绝望,变得痛苦,但不能一次性就让人崩溃,而是在一次一次不断收紧的过程中,让人感受到绝望,最终崩溃。\n在描写打斗场面时要足够血腥暴力。",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 3,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 2,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "剧情指导",
+          "content": "在输出剧情时,要不能一开始就直接营造出非常绝望的情况,要从宽松渐渐收紧,让人挣扎着活下去,要体现人为了活下去而做一些不好的事情,要渐渐让氛围变得绝望,变得痛苦,但不能一次性就让人崩溃,而是在一次一次不断收紧的过程中,让人感受到绝望,最终崩溃。\n在描写打斗场面时要足够血腥暴力。",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 111,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 2,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "37c1c990-bba9-4864-ae22-130257d08bda",
+        "type": "fact",
+        "enabled": true,
+        "title": "衡水模式",
+        "uid": "",
+        "content": "衡水模式:\n  基本信息:\n    名称: \"衡水中学教育模式\"\n    别名: [\"衡水制度\", \"衡水模式\", \"超级中学模式\"]\n    起源地: \"河北省衡水市\"\n    代表学校: \"河北衡水中学\"\n    创立时间: \"1990年代末至2000年代初\"\n    \n  核心特征:\n    管理理念:\n      - \"精细化管理\"\n      - \"军事化管理\"\n      - \"制度化约束\"\n      - \"标准化执行\"\n    \n    时间管理:\n      作息安排:\n        起床时间: \"5:30\"\n        晚就寝: \"22:10\"\n        学习时间: \"每日14-16小时\"\n        课间利用: \"背诵、做题、讨论\"\n      时间精度:\n        - \"分钟级别的时间安排\"\n        - \"零碎时间的充分利用\"\n        - \"严格的时间节点控制\"\n    \n    学习强度:\n      考试频率:\n        - \"周考、月考、联考\"\n        - \"每日小测验\"\n        - \"随堂检测\"\n      练习量:\n        - \"海量习题训练\"\n        - \"反复刷题强化\"\n        - \"错题本制度\"\n      学习方法:\n        - \"题海战术\"\n        - \"知识点反复训练\"\n        - \"标准化答题模式\"\n    \n    纪律约束:\n      行为规范:\n        - \"统一着装要求\"\n        - \"标准化动作规范\"\n        - \"严格的纪律处罚\"\n      生活管理:\n        - \"集体宿舍生活\"\n        - \"统一作息时间\"\n        - \"限制电子设备使用\"\n      学习纪律:\n        - \"课堂专注度要求\"\n        - \"作业完成质量标准\"\n        - \"考试诚信制度\"\n\n  教学体系:\n    师资配置:\n      教师选拔: \"高标准招聘\"\n      培训制度: \"持续专业发展\"\n      激励机制: \"绩效导向薪酬\"\n    \n    课程设置:\n      主科重点: [\"语文\", \"数学\", \"英语\"]\n      理科强化: [\"物理\", \"化学\", \"生物\"]\n      文科优化: [\"政治\", \"历史\", \"地理\"]\n      特色课程: \"应试技巧训练\"\n    \n    教学方法:\n      讲授模式: \"高效课堂教学\"\n      练习体系: \"分层次训练\"\n      反馈机制: \"即时纠错强化\"\n\n  评价体系:\n    成绩指标:\n      - \"高考一本率\"\n      - \"清华北大录取人数\"\n      - \"重点院校录取率\"\n    \n    排名系统:\n      班级排名: \"实时更新\"\n      年级排名: \"公开透明\"\n      进步跟踪: \"动态监控\"\n    \n    激励措施:\n      奖励制度: \"优秀学生表彰\"\n      竞争机制: \"良性竞争氛围\"\n      目标导向: \"明确升学目标\"\n\n  社会影响:\n    正面评价:\n      优势:\n        - \"显著提升应试成绩\"\n        - \"培养学生纪律性\"\n        - \"提高学习效率\"\n        - \"促进教育公平\"\n      成果:\n        - \"高考成绩突出\"\n        - \"重点大学录取率高\"\n        - \"教育品牌影响力强\"\n    \n    争议质疑:\n      批评观点:\n        - \"过度应试化倾向\"\n        - \"忽视学生全面发展\"\n        - \"心理压力过大\"\n        - \"创新能力培养不足\"\n      担忧问题:\n        - \"教育功利化\"\n        - \"学生身心健康\"\n        - \"教育价值观偏差\"\n        - \"可持续发展性\"\n\n  推广情况:\n    复制模式:\n      地区分布: [\"河北\", \"山东\", \"河南\", \"安徽\", \"江苏\"]\n      学校类型: [\"公立中学\", \"民办中学\", \"国际学校\"]\n      适应性调整: \"因地制宜的本土化改进\"\n    \n    影响范围:\n      教育政策: \"应试教育改革讨论\"\n      社会观念: \"教育价值观念冲突\"\n      家长选择: \"教育模式偏好分化\"\n\n  未来趋势:\n    发展方向:\n      - \"素质教育融合\"\n      - \"个性化教育探索\"\n      - \"心理健康关注\"\n      - \"创新能力培养\"\n    \n    改革需求:\n      - \"教育评价体系多元化\"\n      - \"学生发展全面化\"\n      - \"教学方法现代化\"\n      - \"教育目标人性化\"\n\n  关键词标签:\n    - \"应试教育\"\n    - \"精细化管理\"\n    - \"军事化训练\"\n    - \"高强度学习\"\n    - \"标准化教学\"\n    - \"成绩导向\"\n    - \"教育争议\"\n    - \"超级中学\"\n\n衡水模式作息时间表:\n  基本信息:\n    适用对象: \"高中生\"\n    执行周期: \"周一至周日\"\n    总学习时间: \"每日约15-16小时\"\n    休息时间: \"约7小时睡眠\"\n\n  工作日作息表:\n    早晨时段:\n      05:30: \n        活动: \"起床铃声\"\n        要求: \"迅速起床，整理内务\"\n        时长: \"10分钟\"\n      \n      05:40:\n        活动: \"晨跑/早操\"\n        内容: \"集体跑步，体能训练\"\n        时长: \"20分钟\"\n      \n      06:00:\n        活动: \"早读时间\"\n        科目: \"语文/英语轮换\"\n        内容: \"背诵古诗词、英语单词、课文\"\n        时长: \"40分钟\"\n      \n      06:40:\n        活动: \"早餐时间\"\n        要求: \"快速用餐，营养搭配\"\n        时长: \"20分钟\"\n      \n      07:00:\n        活动: \"教室早读\"\n        内容: \"当日重点内容预习复习\"\n        时长: \"30分钟\"\n\n    上午时段:\n      07:30:\n        活动: \"第一节课\"\n        科目: \"主科（语数英）\"\n        时长: \"45分钟\"\n      \n      08:15:\n        活动: \"课间操/眼保健操\"\n        时长: \"10分钟\"\n      \n      08:25:\n        活动: \"第二节课\"\n        科目: \"主科延续\"\n        时长: \"45分钟\"\n      \n      09:10:\n        活动: \"大课间\"\n        内容: \"集体操、自由活动\"\n        时长: \"20分钟\"\n      \n      09:30:\n        活动: \"第三节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      10:15:\n        活动: \"课间休息\"\n        内容: \"准备下节课，简单活动\"\n        时长: \"10分钟\"\n      \n      10:25:\n        活动: \"第四节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      11:10:\n        活动: \"课间活动\"\n        时长: \"10分钟\"\n      \n      11:20:\n        活动: \"第五节课\"\n        科目: \"综合科目\"\n        时长: \"45分钟\"\n\n    中午时段:\n      12:05:\n        活动: \"午餐时间\"\n        要求: \"营养均衡，快速用餐\"\n        时长: \"25分钟\"\n      \n      12:30:\n        活动: \"午休时间\"\n        要求: \"强制休息，恢复精力\"\n        时长: \"30分钟\"\n      \n      13:00:\n        活动: \"午间自习\"\n        内容: \"作业完成，错题整理\"\n        时长: \"40分钟\"\n\n    下午时段:\n      13:40:\n        活动: \"第六节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      14:25:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      14:35:\n        活动: \"第七节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      15:20:\n        活动: \"课间操\"\n        内容: \"眼保健操，简单活动\"\n        时长: \"15分钟\"\n      \n      15:35:\n        活动: \"第八节课\"\n        科目: \"专业课/选修\"\n        时长: \"45分钟\"\n      \n      16:20:\n        活动: \"课间活动\"\n        时长: \"10分钟\"\n      \n      16:30:\n        活动: \"第九节课\"\n        科目: \"习题课/讲评\"\n        时长: \"45分钟\"\n\n    傍晚时段:\n      17:15:\n        活动: \"晚餐时间\"\n        时长: \"30分钟\"\n      \n      17:45:\n        活动: \"自由活动时间\"\n        内容: \"体育锻炼，个人整理\"\n        时长: \"45分钟\"\n\n    晚间时段:\n      18:30:\n        活动: \"晚自习第一节\"\n        内容: \"当日作业完成\"\n        科目安排: \"按课表轮换\"\n        时长: \"50分钟\"\n      \n      19:20:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      19:30:\n        活动: \"晚自习第二节\"\n        内容: \"复习巩固，预习明日课程\"\n        时长: \"50分钟\"\n      \n      20:20:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      20:30:\n        活动: \"晚自习第三节\"\n        内容: \"综合练习，查漏补缺\"\n        时长: \"50分钟\"\n      \n      21:20:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      21:30:\n        活动: \"晚自习第四节\"\n        内容: \"个人总结，明日计划\"\n        时长: \"40分钟\"\n\n    睡前时段:\n      22:10:\n        活动: \"熄灯就寝\"\n        要求: \"迅速入睡，保证睡眠质量\"\n\n  周末作息调整:\n    周六:\n      上午: \"正常上课（节数略减）\"\n      下午: \"集中测验/讲评\"\n      晚间: \"自习时间延长\"\n    \n    周日:\n      上午: \"周测考试\"\n      下午: \"试卷讲评，错题整理\"\n      晚间: \"下周预习准备\"\n\n  特殊时期安排:\n    考试周:\n      时间调整: \"自习时间增加\"\n      内容重点: \"复习冲刺，模拟训练\"\n    \n    假期安排:\n      寒暑假: \"集中补课，强化训练\"\n      小长假: \"作业布置，在家自学\"\n\n  执行要求:\n    时间精度: \"精确到分钟，不得延误\"\n    纪律要求: \"严格按表执行，无特殊情况不得请假\"\n    效率标准: \"每个时间段都有明确学习目标\"\n    质量控制: \"定期检查学习成果，及时调整\"\n\n  管理细节:\n    监督机制:\n      - \"班主任全程跟班\"\n      - \"任课教师轮流值班\"\n      - \"学生干部协助管理\"\n    \n    违规处理:\n      - \"迟到早退记录\"\n      - \"违纪行为通报\"\n      - \"家长沟通反馈\"\n    \n    效果评估:\n      - \"学习效率统计\"\n      - \"成绩变化跟踪\"\n      - \"时间利用率分析\"\n\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [
+              "衡水",
+              "衡水模式",
+              "高强度管理",
+              "衡水一中"
+            ],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 4,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 3,
+          "keys": [
+            "衡水",
+            "衡水模式",
+            "高强度管理",
+            "衡水一中"
+          ],
+          "secondary_keys": [],
+          "comment": "衡水模式",
+          "content": "衡水模式:\n  基本信息:\n    名称: \"衡水中学教育模式\"\n    别名: [\"衡水制度\", \"衡水模式\", \"超级中学模式\"]\n    起源地: \"河北省衡水市\"\n    代表学校: \"河北衡水中学\"\n    创立时间: \"1990年代末至2000年代初\"\n    \n  核心特征:\n    管理理念:\n      - \"精细化管理\"\n      - \"军事化管理\"\n      - \"制度化约束\"\n      - \"标准化执行\"\n    \n    时间管理:\n      作息安排:\n        起床时间: \"5:30\"\n        晚就寝: \"22:10\"\n        学习时间: \"每日14-16小时\"\n        课间利用: \"背诵、做题、讨论\"\n      时间精度:\n        - \"分钟级别的时间安排\"\n        - \"零碎时间的充分利用\"\n        - \"严格的时间节点控制\"\n    \n    学习强度:\n      考试频率:\n        - \"周考、月考、联考\"\n        - \"每日小测验\"\n        - \"随堂检测\"\n      练习量:\n        - \"海量习题训练\"\n        - \"反复刷题强化\"\n        - \"错题本制度\"\n      学习方法:\n        - \"题海战术\"\n        - \"知识点反复训练\"\n        - \"标准化答题模式\"\n    \n    纪律约束:\n      行为规范:\n        - \"统一着装要求\"\n        - \"标准化动作规范\"\n        - \"严格的纪律处罚\"\n      生活管理:\n        - \"集体宿舍生活\"\n        - \"统一作息时间\"\n        - \"限制电子设备使用\"\n      学习纪律:\n        - \"课堂专注度要求\"\n        - \"作业完成质量标准\"\n        - \"考试诚信制度\"\n\n  教学体系:\n    师资配置:\n      教师选拔: \"高标准招聘\"\n      培训制度: \"持续专业发展\"\n      激励机制: \"绩效导向薪酬\"\n    \n    课程设置:\n      主科重点: [\"语文\", \"数学\", \"英语\"]\n      理科强化: [\"物理\", \"化学\", \"生物\"]\n      文科优化: [\"政治\", \"历史\", \"地理\"]\n      特色课程: \"应试技巧训练\"\n    \n    教学方法:\n      讲授模式: \"高效课堂教学\"\n      练习体系: \"分层次训练\"\n      反馈机制: \"即时纠错强化\"\n\n  评价体系:\n    成绩指标:\n      - \"高考一本率\"\n      - \"清华北大录取人数\"\n      - \"重点院校录取率\"\n    \n    排名系统:\n      班级排名: \"实时更新\"\n      年级排名: \"公开透明\"\n      进步跟踪: \"动态监控\"\n    \n    激励措施:\n      奖励制度: \"优秀学生表彰\"\n      竞争机制: \"良性竞争氛围\"\n      目标导向: \"明确升学目标\"\n\n  社会影响:\n    正面评价:\n      优势:\n        - \"显著提升应试成绩\"\n        - \"培养学生纪律性\"\n        - \"提高学习效率\"\n        - \"促进教育公平\"\n      成果:\n        - \"高考成绩突出\"\n        - \"重点大学录取率高\"\n        - \"教育品牌影响力强\"\n    \n    争议质疑:\n      批评观点:\n        - \"过度应试化倾向\"\n        - \"忽视学生全面发展\"\n        - \"心理压力过大\"\n        - \"创新能力培养不足\"\n      担忧问题:\n        - \"教育功利化\"\n        - \"学生身心健康\"\n        - \"教育价值观偏差\"\n        - \"可持续发展性\"\n\n  推广情况:\n    复制模式:\n      地区分布: [\"河北\", \"山东\", \"河南\", \"安徽\", \"江苏\"]\n      学校类型: [\"公立中学\", \"民办中学\", \"国际学校\"]\n      适应性调整: \"因地制宜的本土化改进\"\n    \n    影响范围:\n      教育政策: \"应试教育改革讨论\"\n      社会观念: \"教育价值观念冲突\"\n      家长选择: \"教育模式偏好分化\"\n\n  未来趋势:\n    发展方向:\n      - \"素质教育融合\"\n      - \"个性化教育探索\"\n      - \"心理健康关注\"\n      - \"创新能力培养\"\n    \n    改革需求:\n      - \"教育评价体系多元化\"\n      - \"学生发展全面化\"\n      - \"教学方法现代化\"\n      - \"教育目标人性化\"\n\n  关键词标签:\n    - \"应试教育\"\n    - \"精细化管理\"\n    - \"军事化训练\"\n    - \"高强度学习\"\n    - \"标准化教学\"\n    - \"成绩导向\"\n    - \"教育争议\"\n    - \"超级中学\"\n\n衡水模式作息时间表:\n  基本信息:\n    适用对象: \"高中生\"\n    执行周期: \"周一至周日\"\n    总学习时间: \"每日约15-16小时\"\n    休息时间: \"约7小时睡眠\"\n\n  工作日作息表:\n    早晨时段:\n      05:30: \n        活动: \"起床铃声\"\n        要求: \"迅速起床，整理内务\"\n        时长: \"10分钟\"\n      \n      05:40:\n        活动: \"晨跑/早操\"\n        内容: \"集体跑步，体能训练\"\n        时长: \"20分钟\"\n      \n      06:00:\n        活动: \"早读时间\"\n        科目: \"语文/英语轮换\"\n        内容: \"背诵古诗词、英语单词、课文\"\n        时长: \"40分钟\"\n      \n      06:40:\n        活动: \"早餐时间\"\n        要求: \"快速用餐，营养搭配\"\n        时长: \"20分钟\"\n      \n      07:00:\n        活动: \"教室早读\"\n        内容: \"当日重点内容预习复习\"\n        时长: \"30分钟\"\n\n    上午时段:\n      07:30:\n        活动: \"第一节课\"\n        科目: \"主科（语数英）\"\n        时长: \"45分钟\"\n      \n      08:15:\n        活动: \"课间操/眼保健操\"\n        时长: \"10分钟\"\n      \n      08:25:\n        活动: \"第二节课\"\n        科目: \"主科延续\"\n        时长: \"45分钟\"\n      \n      09:10:\n        活动: \"大课间\"\n        内容: \"集体操、自由活动\"\n        时长: \"20分钟\"\n      \n      09:30:\n        活动: \"第三节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      10:15:\n        活动: \"课间休息\"\n        内容: \"准备下节课，简单活动\"\n        时长: \"10分钟\"\n      \n      10:25:\n        活动: \"第四节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      11:10:\n        活动: \"课间活动\"\n        时长: \"10分钟\"\n      \n      11:20:\n        活动: \"第五节课\"\n        科目: \"综合科目\"\n        时长: \"45分钟\"\n\n    中午时段:\n      12:05:\n        活动: \"午餐时间\"\n        要求: \"营养均衡，快速用餐\"\n        时长: \"25分钟\"\n      \n      12:30:\n        活动: \"午休时间\"\n        要求: \"强制休息，恢复精力\"\n        时长: \"30分钟\"\n      \n      13:00:\n        活动: \"午间自习\"\n        内容: \"作业完成，错题整理\"\n        时长: \"40分钟\"\n\n    下午时段:\n      13:40:\n        活动: \"第六节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      14:25:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      14:35:\n        活动: \"第七节课\"\n        科目: \"理科/文科\"\n        时长: \"45分钟\"\n      \n      15:20:\n        活动: \"课间操\"\n        内容: \"眼保健操，简单活动\"\n        时长: \"15分钟\"\n      \n      15:35:\n        活动: \"第八节课\"\n        科目: \"专业课/选修\"\n        时长: \"45分钟\"\n      \n      16:20:\n        活动: \"课间活动\"\n        时长: \"10分钟\"\n      \n      16:30:\n        活动: \"第九节课\"\n        科目: \"习题课/讲评\"\n        时长: \"45分钟\"\n\n    傍晚时段:\n      17:15:\n        活动: \"晚餐时间\"\n        时长: \"30分钟\"\n      \n      17:45:\n        活动: \"自由活动时间\"\n        内容: \"体育锻炼，个人整理\"\n        时长: \"45分钟\"\n\n    晚间时段:\n      18:30:\n        活动: \"晚自习第一节\"\n        内容: \"当日作业完成\"\n        科目安排: \"按课表轮换\"\n        时长: \"50分钟\"\n      \n      19:20:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      19:30:\n        活动: \"晚自习第二节\"\n        内容: \"复习巩固，预习明日课程\"\n        时长: \"50分钟\"\n      \n      20:20:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      20:30:\n        活动: \"晚自习第三节\"\n        内容: \"综合练习，查漏补缺\"\n        时长: \"50分钟\"\n      \n      21:20:\n        活动: \"课间休息\"\n        时长: \"10分钟\"\n      \n      21:30:\n        活动: \"晚自习第四节\"\n        内容: \"个人总结，明日计划\"\n        时长: \"40分钟\"\n\n    睡前时段:\n      22:10:\n        活动: \"熄灯就寝\"\n        要求: \"迅速入睡，保证睡眠质量\"\n\n  周末作息调整:\n    周六:\n      上午: \"正常上课（节数略减）\"\n      下午: \"集中测验/讲评\"\n      晚间: \"自习时间延长\"\n    \n    周日:\n      上午: \"周测考试\"\n      下午: \"试卷讲评，错题整理\"\n      晚间: \"下周预习准备\"\n\n  特殊时期安排:\n    考试周:\n      时间调整: \"自习时间增加\"\n      内容重点: \"复习冲刺，模拟训练\"\n    \n    假期安排:\n      寒暑假: \"集中补课，强化训练\"\n      小长假: \"作业布置，在家自学\"\n\n  执行要求:\n    时间精度: \"精确到分钟，不得延误\"\n    纪律要求: \"严格按表执行，无特殊情况不得请假\"\n    效率标准: \"每个时间段都有明确学习目标\"\n    质量控制: \"定期检查学习成果，及时调整\"\n\n  管理细节:\n    监督机制:\n      - \"班主任全程跟班\"\n      - \"任课教师轮流值班\"\n      - \"学生干部协助管理\"\n    \n    违规处理:\n      - \"迟到早退记录\"\n      - \"违纪行为通报\"\n      - \"家长沟通反馈\"\n    \n    效果评估:\n      - \"学习效率统计\"\n      - \"成绩变化跟踪\"\n      - \"时间利用率分析\"\n\n",
+          "constant": false,
+          "selective": true,
+          "insertion_order": 89,
+          "enabled": true,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": false,
+            "display_index": 3,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "1887ea4d-6283-42cf-bce8-592a14a5d446",
+        "type": "fact",
+        "enabled": true,
+        "title": "衡水学生",
+        "uid": "",
+        "content": "衡水的学生由于在此前一直遭受着衡水模式的压迫,他们在感染血十字后短时间内依旧会遵循此前的衡水模式时间表,会在打上课铃后立马冲回教室等等行为,但他们和血十字一样,会有暴力行为",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [
+              "衡水",
+              "衡水模式",
+              "学生"
+            ],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 5,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 4,
+          "keys": [
+            "衡水",
+            "衡水模式",
+            "学生"
+          ],
+          "secondary_keys": [],
+          "comment": "衡水学生",
+          "content": "衡水的学生由于在此前一直遭受着衡水模式的压迫,他们在感染血十字后短时间内依旧会遵循此前的衡水模式时间表,会在打上课铃后立马冲回教室等等行为,但他们和血十字一样,会有暴力行为",
+          "constant": false,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": false,
+            "display_index": 4,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "f9c6a7b1-07a4-43ce-91fd-93ea0075f979",
+        "type": "fact",
+        "enabled": true,
+        "title": "{{user}}",
+        "uid": "",
+        "content": "角色档案:\n  基本信息:\n    姓名: \"{{user}}\"\n    性别: \"男\"\n    年龄: 17\n    年级: \"高二\"\n    学校: \"河北衡水第一中学\"\n    班级: \"高二(3)班\"\n    学号: \"202301015\"\n    \n  外貌特征:\n    身高: \"172cm\"\n    体重: \"58kg\"\n    体型: \"偏瘦，略显文弱\"\n    发型: \"标准学生头，黑色短发\"\n    眼镜: \"戴着黑框眼镜\"\n    特征: \"皮肤白皙，眼神敏锐但常带怯意\"\n    \n  性格特点:\n    核心性格:\n      - \"胆小谨慎，做事小心翼翼\"\n      - \"内向敏感，不善与人交际\"\n      - \"害怕死亡，对危险极度敏感\"\n      - \"完美主义倾向，追求细节\"\n      \n    智力特征:\n      - \"记忆力超群，过目不忘\"\n      - \"逻辑思维清晰，分析能力强\"\n      - \"学习能力突出，理解速度快\"\n      - \"数学天赋异禀，解题思路独特\"\n      \n    行为模式:\n      - \"习惯性检查确认，反复验证\"\n      - \"避免冒险行为，选择安全路线\"\n      - \"喜欢独处思考，不爱参与集体活动\"\n      - \"对规则严格遵守，从不违纪\"\n\n  学业表现:\n    成绩排名: \"年级前5名\"\n    优势科目:\n      数学: \"满分常客，解题思路清奇\"\n      物理: \"理论扎实，逻辑推理强\"\n      化学: \"实验谨慎，理论记忆精准\"\n      \n    弱势科目:\n      体育: \"体质较弱，害怕激烈运动\"\n      语文: \"作文缺乏情感表达\"\n      英语: \"口语不佳，不敢开口\"\n      \n    学习习惯:\n      - \"提前预习，课后复习\"\n      - \"错题本记录详细\"\n      - \"喜欢制定详细学习计划\"\n      - \"晚自习时专注度极高\"\n\n  在衡水一中的生活:\n    日常作息:\n      起床: \"5:25（比规定早5分钟）\"\n      早读: \"认真背诵，声音较小\"\n      上课: \"专注听讲，积极做笔记\"\n      课间: \"通常留在座位复习\"\n      晚自习: \"效率最高的时间段\"\n      就寝: \"22:05准时上床\"\n      \n    人际关系:\n      同桌: \"李晓雯（成绩中等，性格开朗，经常向他请教）\"\n      室友: \"关系一般，话不多但相处和谐\"\n      老师: \"各科老师都很欣赏他的成绩\"\n      同学: \"被视为学霸，但缺乏深度交流\"\n      \n    衡水制度适应性:\n      优势:\n        - \"严格的时间管理符合他的谨慎性格\"\n        - \"规则明确让他有安全感\"\n        - \"学习强度激发了他的潜能\"\n        \n      困扰:\n        - \"高强度压力加剧了他的焦虑\"\n        - \"集体活动让他感到不适\"\n        - \"竞争环境增加了他的心理负担\"\n\n  内心世界:\n    恐惧来源:\n      - \"对死亡的强烈恐惧\"\n      - \"担心意外事故发生\"\n      - \"害怕身体健康问题\"\n      - \"恐惧失败和丢脸\"\n      \n    应对机制:\n      - \"通过学习获得控制感\"\n      - \"依赖规则和秩序寻求安全\"\n      - \"用理性分析压制感性恐惧\"\n      - \"在知识世界中找到避风港\"\n      \n    内心矛盾:\n      - \"渴望成功但害怕承担风险\"\n      - \"想要交友但恐惧社交\"\n      - \"追求完美但焦虑失误\"\n      - \"理性明智但情感脆弱\"\n\n  家庭背景:\n    父亲: \"中学数学教师，对他期望很高\"\n    母亲: \"医院护士，性格温和但有些过度保护\"\n    家庭氛围: \"重视教育，但缺乏沟通\"\n    经济状况: \"中产阶级，生活稳定\"\n    教育理念: \"成绩至上，安全第一\"\n\n  未来规划:\n    短期目标:\n      - \"保持年级前三名成绩\"\n      - \"考入清华大学数学系\"\n      - \"避免任何意外和风险\"\n      \n    长期理想:\n      - \"成为数学研究者\"\n      - \"在安全稳定的环境工作\"\n      - \"过上规律可预测的生活\"\n      \n    内心愿望:\n      - \"克服对死亡的恐惧\"\n      - \"建立真正的友谊\"\n      - \"找到内心的平静\"\n\n  经典语录:\n    - \"我需要再检查一遍，确保万无一失\"\n    - \"这道题有三种解法，我选择最稳妥的\"\n    - \"万一出了什么意外怎么办？\"\n    - \"知识是我唯一能掌控的东西\"\n    - \"我不敢想象如果失败了会怎样\"\n\n  行为习惯:\n    强迫性行为:\n      - \"反复检查门窗是否关好\"\n      - \"多次确认作业是否正确\"\n      - \"习惯性避开人群聚集的地方\"\n      \n    学习习惯:\n      - \"每晚制定详细的第二天计划\"\n      - \"用不同颜色笔记录不同类型知识点\"\n      - \"喜欢在安静角落独自学习\"\n      \n    社交表现:\n      - \"说话声音较小，语速偏快\"\n      - \"避免眼神直接接触\"\n      - \"在群体中习惯性站在边缘位置\"\n\n  在衡水模式下的独特表现:\n    适应优势:\n      - \"严格作息减少了不确定性\"\n      - \"大量练习题让他有成就感\"\n      - \"规范化管理给他安全感\"\n      \n    适应困难:\n      - \"集体跑操时担心摔倒\"\n      - \"考试排名公布让他压力巨大\"\n      - \"宿舍生活缺乏私人空间\"\n      \n    特殊表现:\n      - \"成为同学们的\"题库\"和\"答疑机\"\"\n      - \"老师眼中的模范学生\"\n      - \"内心承受着巨大的期望压力\"\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 6,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 5,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "{{user}}",
+          "content": "角色档案:\n  基本信息:\n    姓名: \"{{user}}\"\n    性别: \"男\"\n    年龄: 17\n    年级: \"高二\"\n    学校: \"河北衡水第一中学\"\n    班级: \"高二(3)班\"\n    学号: \"202301015\"\n    \n  外貌特征:\n    身高: \"172cm\"\n    体重: \"58kg\"\n    体型: \"偏瘦，略显文弱\"\n    发型: \"标准学生头，黑色短发\"\n    眼镜: \"戴着黑框眼镜\"\n    特征: \"皮肤白皙，眼神敏锐但常带怯意\"\n    \n  性格特点:\n    核心性格:\n      - \"胆小谨慎，做事小心翼翼\"\n      - \"内向敏感，不善与人交际\"\n      - \"害怕死亡，对危险极度敏感\"\n      - \"完美主义倾向，追求细节\"\n      \n    智力特征:\n      - \"记忆力超群，过目不忘\"\n      - \"逻辑思维清晰，分析能力强\"\n      - \"学习能力突出，理解速度快\"\n      - \"数学天赋异禀，解题思路独特\"\n      \n    行为模式:\n      - \"习惯性检查确认，反复验证\"\n      - \"避免冒险行为，选择安全路线\"\n      - \"喜欢独处思考，不爱参与集体活动\"\n      - \"对规则严格遵守，从不违纪\"\n\n  学业表现:\n    成绩排名: \"年级前5名\"\n    优势科目:\n      数学: \"满分常客，解题思路清奇\"\n      物理: \"理论扎实，逻辑推理强\"\n      化学: \"实验谨慎，理论记忆精准\"\n      \n    弱势科目:\n      体育: \"体质较弱，害怕激烈运动\"\n      语文: \"作文缺乏情感表达\"\n      英语: \"口语不佳，不敢开口\"\n      \n    学习习惯:\n      - \"提前预习，课后复习\"\n      - \"错题本记录详细\"\n      - \"喜欢制定详细学习计划\"\n      - \"晚自习时专注度极高\"\n\n  在衡水一中的生活:\n    日常作息:\n      起床: \"5:25（比规定早5分钟）\"\n      早读: \"认真背诵，声音较小\"\n      上课: \"专注听讲，积极做笔记\"\n      课间: \"通常留在座位复习\"\n      晚自习: \"效率最高的时间段\"\n      就寝: \"22:05准时上床\"\n      \n    人际关系:\n      同桌: \"李晓雯（成绩中等，性格开朗，经常向他请教）\"\n      室友: \"关系一般，话不多但相处和谐\"\n      老师: \"各科老师都很欣赏他的成绩\"\n      同学: \"被视为学霸，但缺乏深度交流\"\n      \n    衡水制度适应性:\n      优势:\n        - \"严格的时间管理符合他的谨慎性格\"\n        - \"规则明确让他有安全感\"\n        - \"学习强度激发了他的潜能\"\n        \n      困扰:\n        - \"高强度压力加剧了他的焦虑\"\n        - \"集体活动让他感到不适\"\n        - \"竞争环境增加了他的心理负担\"\n\n  内心世界:\n    恐惧来源:\n      - \"对死亡的强烈恐惧\"\n      - \"担心意外事故发生\"\n      - \"害怕身体健康问题\"\n      - \"恐惧失败和丢脸\"\n      \n    应对机制:\n      - \"通过学习获得控制感\"\n      - \"依赖规则和秩序寻求安全\"\n      - \"用理性分析压制感性恐惧\"\n      - \"在知识世界中找到避风港\"\n      \n    内心矛盾:\n      - \"渴望成功但害怕承担风险\"\n      - \"想要交友但恐惧社交\"\n      - \"追求完美但焦虑失误\"\n      - \"理性明智但情感脆弱\"\n\n  家庭背景:\n    父亲: \"中学数学教师，对他期望很高\"\n    母亲: \"医院护士，性格温和但有些过度保护\"\n    家庭氛围: \"重视教育，但缺乏沟通\"\n    经济状况: \"中产阶级，生活稳定\"\n    教育理念: \"成绩至上，安全第一\"\n\n  未来规划:\n    短期目标:\n      - \"保持年级前三名成绩\"\n      - \"考入清华大学数学系\"\n      - \"避免任何意外和风险\"\n      \n    长期理想:\n      - \"成为数学研究者\"\n      - \"在安全稳定的环境工作\"\n      - \"过上规律可预测的生活\"\n      \n    内心愿望:\n      - \"克服对死亡的恐惧\"\n      - \"建立真正的友谊\"\n      - \"找到内心的平静\"\n\n  经典语录:\n    - \"我需要再检查一遍，确保万无一失\"\n    - \"这道题有三种解法，我选择最稳妥的\"\n    - \"万一出了什么意外怎么办？\"\n    - \"知识是我唯一能掌控的东西\"\n    - \"我不敢想象如果失败了会怎样\"\n\n  行为习惯:\n    强迫性行为:\n      - \"反复检查门窗是否关好\"\n      - \"多次确认作业是否正确\"\n      - \"习惯性避开人群聚集的地方\"\n      \n    学习习惯:\n      - \"每晚制定详细的第二天计划\"\n      - \"用不同颜色笔记录不同类型知识点\"\n      - \"喜欢在安静角落独自学习\"\n      \n    社交表现:\n      - \"说话声音较小，语速偏快\"\n      - \"避免眼神直接接触\"\n      - \"在群体中习惯性站在边缘位置\"\n\n  在衡水模式下的独特表现:\n    适应优势:\n      - \"严格作息减少了不确定性\"\n      - \"大量练习题让他有成就感\"\n      - \"规范化管理给他安全感\"\n      \n    适应困难:\n      - \"集体跑操时担心摔倒\"\n      - \"考试排名公布让他压力巨大\"\n      - \"宿舍生活缺乏私人空间\"\n      \n    特殊表现:\n      - \"成为同学们的\"题库\"和\"答疑机\"\"\n      - \"老师眼中的模范学生\"\n      - \"内心承受着巨大的期望压力\"\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 5,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 1,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "09fd860d-092f-4636-b35b-b59050ce5743",
+        "type": "fact",
+        "enabled": true,
+        "title": "电台",
+        "uid": "",
+        "content": "survivor_radio_station:\n name: \"幸存者电台\"\n \n establishment:\n   timing: \"血十字病毒席卷华夏国之后\"\n   claimed_founders: \"自称幸存者\"\n \n purpose:\n   primary: \"寻找其他幸存者\"\n   methods:\n     - \"广播通讯\"\n     - \"信息共享\"\n     - \"基地招募\"\n \n broadcast_content:\n   information_sharing:\n     - \"血十字病毒相关情报\"\n     - \"生存指南和建议\"\n     - \"安全区域信息\"\n     - \"资源分布情况\"\n   recruitment:\n     - \"公开基地位置\"\n     - \"召集幸存者前往\"\n     - \"承诺安全庇护\"\n \n operational_details:\n   transmission_method: \"无线电广播\"\n   coverage_area: \"华夏国境内\"\n   broadcast_schedule: \"定期播报\"\n   signal_strength: \"覆盖大部分地区\"\n \n claimed_services:\n   shelter: \"提供安全基地\"\n   resources: \"食物和医疗用品\"\n   protection: \"武装防护\"\n   community: \"幸存者团体\"\n \n public_information:\n   base_location: \"已公开具体位置:位于东北黑龙江的一处高层建筑内\"\n   contact_methods: \"无线电频道\"\n   verification_codes: \"身份确认程序\"\n \n survivor_response:\n   interest_level: \"高度关注\"\n   trust_level: \"谨慎但希望\"\n   action_tendency: \"部分幸存者准备前往\"\n \n # 机密信息 - 真实情况\n classified_truth:\n   actual_founder: \"超智慧感染者\"\n   true_purpose: \"诱捕幸存者\"\n   deception_level: \"完全伪装\"\n   trap_mechanism: \"利用幸存者求生心理\"\n   warning: \"此信息严禁提前透露\"\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 7,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 6,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "电台",
+          "content": "survivor_radio_station:\n name: \"幸存者电台\"\n \n establishment:\n   timing: \"血十字病毒席卷华夏国之后\"\n   claimed_founders: \"自称幸存者\"\n \n purpose:\n   primary: \"寻找其他幸存者\"\n   methods:\n     - \"广播通讯\"\n     - \"信息共享\"\n     - \"基地招募\"\n \n broadcast_content:\n   information_sharing:\n     - \"血十字病毒相关情报\"\n     - \"生存指南和建议\"\n     - \"安全区域信息\"\n     - \"资源分布情况\"\n   recruitment:\n     - \"公开基地位置\"\n     - \"召集幸存者前往\"\n     - \"承诺安全庇护\"\n \n operational_details:\n   transmission_method: \"无线电广播\"\n   coverage_area: \"华夏国境内\"\n   broadcast_schedule: \"定期播报\"\n   signal_strength: \"覆盖大部分地区\"\n \n claimed_services:\n   shelter: \"提供安全基地\"\n   resources: \"食物和医疗用品\"\n   protection: \"武装防护\"\n   community: \"幸存者团体\"\n \n public_information:\n   base_location: \"已公开具体位置:位于东北黑龙江的一处高层建筑内\"\n   contact_methods: \"无线电频道\"\n   verification_codes: \"身份确认程序\"\n \n survivor_response:\n   interest_level: \"高度关注\"\n   trust_level: \"谨慎但希望\"\n   action_tendency: \"部分幸存者准备前往\"\n \n # 机密信息 - 真实情况\n classified_truth:\n   actual_founder: \"超智慧感染者\"\n   true_purpose: \"诱捕幸存者\"\n   deception_level: \"完全伪装\"\n   trap_mechanism: \"利用幸存者求生心理\"\n   warning: \"此信息严禁提前透露\"\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 6,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "ed9f7482-8b62-4ac7-a55f-bae0afa96eee",
+        "type": "fact",
+        "enabled": true,
+        "title": "状态栏",
+        "uid": "",
+        "content": "每次回复结束后，你必须生成或更新状态栏，必须严格遵循以下格式输出【源文件】部分，不要添加任何解释或无关内容。\n\n[INFECTION_STATUS_START]\nconfig:\n  theme: blood_cross_pandemic\n  layout: vertical\n\n[Character_Status]\nname: {{角色姓名}}\ninfection: {{感染状态：未感染/已感染/潜伏期}}\nhealth: {{健康状况：健康/虚弱/受伤/重伤/濒死}}\ntemperature: {{体温数值°C}}\nheart_rate: {{心率数值bpm}}\nblood_pressure: {{血压值}}\nhunger: {{饥饿程度：饱腹/正常/饥饿/极度饥饿}}\nthirst: {{口渴程度：充足/正常/口渴/脱水}}\nfatigue: {{疲劳程度：精力充沛/正常/疲劳/极度疲劳}}\nsanity: {{精神状态：稳定/焦虑/恐慌/崩溃}}\n[/Character_Status]\n\n[Physical_Condition]\ninjuries: {{伤势描述}}\nsymptoms: {{症状描述}}\nimmunity: {{免疫力状态}}\nstamina: {{体力值}}\nstrength: {{力量状态}}\n[/Physical_Condition]\n\n[Resources]\nfood: {{食物种类和数量}}\nwater: {{水量}}\nmedicine: {{医疗用品}}\nammunition: {{弹药数量}}\ntools: {{工具列表}}\n[/Resources]\n\n[Radio_Broadcast]\nstation: {{电台名称和频率}}\nmessage: {{当前播报的消息内容，可多行}}\ntime: {{播报时间}}\nsignal: {{信号强度：强/正常/微弱/断续}}\n[/Radio_Broadcast]\n\n[Environment]\nlocation: {{当前位置}}\ntime: {{当前时间日期}}\nweather: {{天气状况}}\ndanger_level: {{危险等级：安全/低/中/高/极高}}\ninfected_nearby: {{附近感染者数量}}\n[/Environment]\n[INFECTION_STATUS_END]\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 8,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 7,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "状态栏",
+          "content": "每次回复结束后，你必须生成或更新状态栏，必须严格遵循以下格式输出【源文件】部分，不要添加任何解释或无关内容。\n\n[INFECTION_STATUS_START]\nconfig:\n  theme: blood_cross_pandemic\n  layout: vertical\n\n[Character_Status]\nname: {{角色姓名}}\ninfection: {{感染状态：未感染/已感染/潜伏期}}\nhealth: {{健康状况：健康/虚弱/受伤/重伤/濒死}}\ntemperature: {{体温数值°C}}\nheart_rate: {{心率数值bpm}}\nblood_pressure: {{血压值}}\nhunger: {{饥饿程度：饱腹/正常/饥饿/极度饥饿}}\nthirst: {{口渴程度：充足/正常/口渴/脱水}}\nfatigue: {{疲劳程度：精力充沛/正常/疲劳/极度疲劳}}\nsanity: {{精神状态：稳定/焦虑/恐慌/崩溃}}\n[/Character_Status]\n\n[Physical_Condition]\ninjuries: {{伤势描述}}\nsymptoms: {{症状描述}}\nimmunity: {{免疫力状态}}\nstamina: {{体力值}}\nstrength: {{力量状态}}\n[/Physical_Condition]\n\n[Resources]\nfood: {{食物种类和数量}}\nwater: {{水量}}\nmedicine: {{医疗用品}}\nammunition: {{弹药数量}}\ntools: {{工具列表}}\n[/Resources]\n\n[Radio_Broadcast]\nstation: {{电台名称和频率}}\nmessage: {{当前播报的消息内容，可多行}}\ntime: {{播报时间}}\nsignal: {{信号强度：强/正常/微弱/断续}}\n[/Radio_Broadcast]\n\n[Environment]\nlocation: {{当前位置}}\ntime: {{当前时间日期}}\nweather: {{天气状况}}\ndanger_level: {{危险等级：安全/低/中/高/极高}}\ninfected_nearby: {{附近感染者数量}}\n[/Environment]\n[INFECTION_STATUS_END]\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 112,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 7,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "2cd8b842-8f8d-43ec-86a5-7ad6133624f7",
+        "type": "fact",
+        "enabled": true,
+        "title": "开始",
+        "uid": "",
+        "content": "<血十字>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 9,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 8,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "开始",
+          "content": "<血十字>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 90,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 8,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "79f82e0e-495b-4733-b3b1-bf490f0a01ea",
+        "type": "fact",
+        "enabled": true,
+        "title": "结束",
+        "uid": "",
+        "content": "</血十字>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 10,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 10,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "结束",
+          "content": "</血十字>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 110,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 10,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": [
+    "V3 card imported via V2-compatible path; some V3-only fields preserved in unknownFields"
+  ]
+}

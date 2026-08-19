@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from 'react'
+
 type Listener<T> = (s: T) => void
 
 export function create<T>(initial: T) {
@@ -15,7 +17,14 @@ export function create<T>(initial: T) {
       return () => listeners.delete(fn)
     },
     use(): T {
-      return state
+      return useSyncExternalStore(
+        (cb) => {
+          listeners.add(cb)
+          return () => listeners.delete(cb)
+        },
+        () => state,
+        () => state,
+      )
     },
   }
 }

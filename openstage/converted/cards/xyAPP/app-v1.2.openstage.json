@@ -1,0 +1,895 @@
+{
+  "_openstage": {
+    "converted_from": "xyAPP\\app-v1.2.png",
+    "sourceVersion": "v3",
+    "at": "2026-08-19T23:29:53.074Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "45e01d21-5cb8-4c2c-a631-fe9add26eb76",
+    "identity": {
+      "name": "校园app-v1.2",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "学校app",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "f3504933-6ead-46fa-95fe-8ff2e5aef025",
+              "scriptName": "创建角色",
+              "findRegex": "/<start>([\\s\\S]*?)</start>/gsi",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh\">\n<head>\n<meta charset=\"UTF-8\" />\n<title>创建角色</title>\n<style>\nbody {\n    font-family: Arial, sans-serif;\n    background: linear-gradient(135deg, #ffe6f0, #ffd1e8);\n    color: #5a2a3a;\n    padding: 20px;\n}\n\ninput, textarea, select {\n    width: 100%;\n    margin: 6px 0;\n    padding: 8px;\n    background: #fff0f6;\n    color: #5a2a3a;\n    border: 1px solid #ffb6d5;\n    border-radius: 8px;\n    box-sizing: border-box;\n}\n\nbutton {\n    padding: 10px;\n    margin-top: 12px;\n    width: 100%;\n    cursor: pointer;\n    background: #ff9ec7;\n    color: white;\n    border: 2px solid #ffffff;\n    border-radius: 10px;\n    font-weight: bold;\n}\n\nbutton:hover {\n    background: #ff7fb8;\n}\n\n.preview {\n    width: 100%;\n    min-height: 120px;\n    margin-top: 6px;\n    padding: 8px;\n    background: #fff5fa;\n    border: 1px solid #ffb6d5;\n    color: #5a2a3a;\n    border-radius: 8px;\n    box-sizing: border-box;\n}\n.hidden {\n    display: none;\n}\n</style>\n</head>\n\n<body>\n<div class=\"container\">\n\n<h2>创建角色</h2>\n\n<label>角色名称</label>\n<input id=\"name\" />\n\n<label>性别</label>\n<input id=\"gender\" />\n\n<label>身份</label>\n<select id=\"role\" onchange=\"updateRoleInput()\">\n    <option value=\"转校生\">转校生</option>\n    <option value=\"普通学生\">普通学生</option>\n    <option value=\"学生会成员\">学生会成员</option>\n    <option value=\"班主任\">班主任</option>\n    <option value=\"custom\">自定义</option>\n</select>\n\n<input id=\"customRole\" class=\"hidden\" placeholder=\"请输入自定义身份\" />\n\n<label>外貌</label>\n<textarea id=\"appearance\" rows=\"3\"></textarea>\n\n<hr />\n\n<label>开场白</label>\n<select id=\"greeting\" onchange=\"updateGreeting()\">\n    <option value=\"classroom\">[学生]教室上课开局</option>\n    <option value=\"dormitory\">[学生]宿舍开局</option>\n    <option value=\"toilet\">[学生]厕所开局</option>\n    <option value=\"student\">[学生]食堂开局</option>\n    <option value=\"student_union\">[学生会]巡查开局</option>\n    <option value=\"teacher\">[老师]办公室开局</option>\n    <option value=\"custom\">[自定义]</option>\n</select>\n\n<label>开场白内容预览</label>\n<textarea id=\"greetingText\" class=\"preview\"></textarea>\n\n<button onclick=\"createCharacter()\">生成并写入</button>\n\n</div>\n\n<script>\n\nconst greetingMap = {\n\n    classroom: \"你坐在教室最后几排的位置，讲台上的老师还在机械地重复着习题和知识点，粉笔摩擦黑板的声音让人烦躁。周围同学有人低头写题，有人偷偷发呆，空气沉闷得像压着什么。你撑着下巴，心里不断积攒着对这所学校的厌烦与压抑。就在这时，你忽然想起昨晚手机里莫名出现的那个校园App，目光渐渐落向了口袋里的手机。\",\n\n    dormitory: \"夜已经很深了，宿舍里只剩下风扇和轻微的呼吸声。你躺在床上，回想着白天重复又无趣的一切：上课、检查、晚自习，还有永远说不完的规矩。巡寝的人刚刚离开，走廊也终于安静下来。你慢慢从枕头下面摸出偷偷藏起来的手机，屏幕亮起时，那个昨晚突然出现的校园App再次映入眼中，你开始犹豫是否真的要点开它。\",\n\n    toilet: \"现在是早操时间，你借着身体不舒服的理由躲进了厕所。外面隐约还能听见操场上传来的口号声，隔间附近还站着几个和你一样逃操的学生，有人低头玩手机，有人靠着墙发呆。潮湿又压抑的空气让人更加烦躁，你越来越觉得这所学校像某种被强行维持运转的机器。就在这时，你忽然想起了手机里那个来历不明的校园App，缓缓把手机拿了出来。\",\n\n    student: \"你坐在食堂靠窗的位置，面前是刚打好的午餐，周围人声混杂但并不清晰。你一边吃着，一边无意识地神游天外。昨晚半夜，你的手机突然多了一个从未见过的“校园App”，没有图标说明，也无法卸载。你本以为只是系统错误，但它一直存在，你想着要不要试一试\",\n\n    student_union: \"你在校园内进行日常巡查，记录着纪律情况：迟到、走动、违纪行为，一切都像重复过无数次的流程。几个学生被通报过很多次，但依旧没有明显改变，你甚至开始习惯这种无力感。就在你低头记录时，昨晚手机里出现的那个陌生校园App再次浮现在脑海里，没有来源，也无法删除，你开始犹豫是否要打开它。\",\n\n    teacher: \"你坐在高三年级办公室里，桌上堆着未批改完的试卷和备课资料，窗外是安静的走廊。你正在修改教学计划时，手机屏幕突然亮起，一个名为“校园App”的软件自动弹出。你尝试删除却没有任何反应，只能点开查看。你一开始以为是恶意程序，但在随口让旁边老师帮你倒水并顺利执行后，你开始意识到它可能不只是软件那么简单。\",\n\n    custom: \"\"\n};\n\nfunction updateGreeting() {\n    const type = document.getElementById(\"greeting\").value;\n    const box = document.getElementById(\"greetingText\");\n    box.value = greetingMap[type] || \"\";\n}\n\nfunction updateRoleInput() {\n    const role = document.getElementById(\"role\").value;\n    const input = document.getElementById(\"customRole\");\n\n    if (role === \"custom\") {\n        input.classList.remove(\"hidden\");\n    } else {\n        input.classList.add(\"hidden\");\n        input.value = \"\";\n    }\n}\n\nfunction createCharacter() {\n\n    const name = document.getElementById(\"name\").value;\n    const gender = document.getElementById(\"gender\").value;\n\n    const roleSelect = document.getElementById(\"role\").value;\n    const customRole = document.getElementById(\"customRole\").value;\n    const role = roleSelect === \"custom\" ? customRole : roleSelect;\n\n    const appearance = document.getElementById(\"appearance\").value;\n    const greeting = document.getElementById(\"greetingText\").value;\n\n    const message =\n`【角色卡】\n姓名：${name}\n性别：${gender}\n身份：${role}\n外貌：${appearance}\n开场白：${greeting}`;\n\n    window.lastCreatedMessage = message;\n\n    try {\n        if (parent && parent !== window && parent.document.getElementById('send_textarea')) {\n\n            const textarea = parent.document.getElementById('send_textarea');\n            const sendButton = parent.document.getElementById('send_but');\n            \n            textarea.value = message;\n            textarea.dispatchEvent(new Event('input', { bubbles: true }));\n            if (sendButton) {\n                sendButton.click();\n            } else {\n                 textarea.focus();\n            }\n            return;\n        }\n    } catch (e) {}\n\n    console.log(message);\n    alert(\"【创建成功】\\n\\n\" + message);\n}\n\nupdateGreeting();\n\n</script>\n\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            },
+            {
+              "id": "aa1610d4-797b-4592-9ada-2baeb0d7e1ea",
+              "scriptName": "清空输入(出问题就关吧)",
+              "findRegex": "/[\\s\\S]*/g",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                1
+              ],
+              "disabled": false,
+              "markdownOnly": false,
+              "promptOnly": true,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": 2,
+              "maxDepth": null
+            }
+          ],
+          "tavern_helper": {
+            "scripts": [
+              {
+                "type": "script",
+                "enabled": true,
+                "name": "切换世界书或注入",
+                "id": "d8f7d52f-6024-4582-89fe-6c60024c14f2",
+                "content": "(function () {\n    async function switchLorebookStatus(activeRole) {\n        const books = await getCharWorldbookNames('current');\n        const currentBookName = books.primary; \n\n        const suffixMap = { \"转校生\": \"a\", \"普通学生\": \"b\", \"学生会成员\": \"c\", \"班主任\": \"d\", \"custom\": \"e\" };\n        const activeEntryName = `{user}${suffixMap[activeRole]}`;\n        const groupEntries = [\"{user}a\", \"{user}b\", \"{user}c\", \"{user}d\", \"{user}e\"];\n\n        await updateWorldbookWith(currentBookName, (entries) => {\n            return entries.map(entry => {\n                if (entry.name === activeEntryName) {\n                    return { ...entry, enabled: true, disable: false };\n                }\n                return groupEntries.includes(entry.name) ? { ...entry, enabled: false, disable: true } : entry;\n            });\n        }, { render: 'immediate' });\n    }\n\n    async function writeCustomContent(iframeDoc, roleSelect) {\n        if (!roleSelect || roleSelect.value !== \"custom\") return;\n\n        let finalContent = \"\";\n        const iframeWin = iframeDoc.defaultView;\n\n        while (!finalContent) {\n            if (iframeWin && iframeWin.lastCreatedMessage && iframeWin.lastCreatedMessage.trim() !== \"\") {\n                finalContent = iframeWin.lastCreatedMessage.trim();\n            } else {\n                await new Promise(resolve => setTimeout(resolve, 10));\n            }\n        }\n        \n        alert(\"【核心提示】成功读取自定义角色，当前值为:\\n\" + finalContent + \"\\n数据安全，准备注入世界书...\");\n\n        const books = await getCharWorldbookNames('current');\n        const currentBookName = books.primary;\n\n        await updateWorldbookWith(currentBookName, (entries) => {\n            return entries.map(entry => {\n                if (entry.name === \"{user}e\") {\n                    return { ...entry, content: finalContent };\n                }\n                return entry;\n            });\n        }, { render: 'immediate' });\n    }\n\n    function onRoleChange(e) {\n        if (e.target.value !== \"custom\") {\n            switchLorebookStatus(e.target.value);\n        } else {\n            switchLorebookStatus(\"custom\");\n        }\n    }\n\n    function createBtnHandler(iframeDoc, roleSelect) {\n        return function onBtnClick() {\n            writeCustomContent(iframeDoc, roleSelect);\n        };\n    }\n\n    let currentBtnHandler = null;\n    const mainDoc = window.parent.document;\n    \n    const observer = new MutationObserver(() => {\n        const targetIframe = mainDoc.querySelector('iframe[id^=\"TH-message-\"]');\n        if (!targetIframe) return;\n\n        const iframeDoc = targetIframe.contentWindow.document;\n        const roleSelect = iframeDoc.getElementById('role');\n        const generateBtn = iframeDoc.querySelector('button');\n\n        if (!roleSelect) return;\n\n        roleSelect.removeEventListener('change', onRoleChange);\n        roleSelect.addEventListener('change', onRoleChange);\n\n        if (generateBtn) {\n            if (currentBtnHandler) {\n                generateBtn.removeEventListener('click', currentBtnHandler);\n            }\n            currentBtnHandler = createBtnHandler(iframeDoc, roleSelect);\n            generateBtn.addEventListener('click', currentBtnHandler);\n        }\n    });\n\n    observer.observe(mainDoc.body, { childList: true, subtree: true });\n})();\n",
+                "info": "",
+                "button": {
+                  "enabled": true,
+                  "buttons": []
+                },
+                "data": {}
+              }
+            ],
+            "variables": {}
+          }
+        }
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "<start>\r\n</start>"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "ef0c3df0-7f32-4547-9cd5-9bf591c007b8",
+      "fb30a17c-a6a9-42f2-af2c-0325b488c83a",
+      "687b10ba-90ee-456c-83d0-092a576e76c7",
+      "57294db6-2cce-4cc2-ac22-b3d0cbcef3e5",
+      "058f84da-869d-4f7c-a36f-59befa5eb967",
+      "a72ed4ba-c725-4687-b2cd-b3b4f0c48cd3",
+      "c26eae6a-ed28-416f-b725-54669b3e0f24",
+      "dafcd363-076c-4493-b4d2-eaae2eb95667",
+      "b4c9495a-cefc-4ba9-bc44-7655dd6bf8a0"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "学校app",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "f3504933-6ead-46fa-95fe-8ff2e5aef025",
+            "scriptName": "创建角色",
+            "findRegex": "/<start>([\\s\\S]*?)</start>/gsi",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh\">\n<head>\n<meta charset=\"UTF-8\" />\n<title>创建角色</title>\n<style>\nbody {\n    font-family: Arial, sans-serif;\n    background: linear-gradient(135deg, #ffe6f0, #ffd1e8);\n    color: #5a2a3a;\n    padding: 20px;\n}\n\ninput, textarea, select {\n    width: 100%;\n    margin: 6px 0;\n    padding: 8px;\n    background: #fff0f6;\n    color: #5a2a3a;\n    border: 1px solid #ffb6d5;\n    border-radius: 8px;\n    box-sizing: border-box;\n}\n\nbutton {\n    padding: 10px;\n    margin-top: 12px;\n    width: 100%;\n    cursor: pointer;\n    background: #ff9ec7;\n    color: white;\n    border: 2px solid #ffffff;\n    border-radius: 10px;\n    font-weight: bold;\n}\n\nbutton:hover {\n    background: #ff7fb8;\n}\n\n.preview {\n    width: 100%;\n    min-height: 120px;\n    margin-top: 6px;\n    padding: 8px;\n    background: #fff5fa;\n    border: 1px solid #ffb6d5;\n    color: #5a2a3a;\n    border-radius: 8px;\n    box-sizing: border-box;\n}\n.hidden {\n    display: none;\n}\n</style>\n</head>\n\n<body>\n<div class=\"container\">\n\n<h2>创建角色</h2>\n\n<label>角色名称</label>\n<input id=\"name\" />\n\n<label>性别</label>\n<input id=\"gender\" />\n\n<label>身份</label>\n<select id=\"role\" onchange=\"updateRoleInput()\">\n    <option value=\"转校生\">转校生</option>\n    <option value=\"普通学生\">普通学生</option>\n    <option value=\"学生会成员\">学生会成员</option>\n    <option value=\"班主任\">班主任</option>\n    <option value=\"custom\">自定义</option>\n</select>\n\n<input id=\"customRole\" class=\"hidden\" placeholder=\"请输入自定义身份\" />\n\n<label>外貌</label>\n<textarea id=\"appearance\" rows=\"3\"></textarea>\n\n<hr />\n\n<label>开场白</label>\n<select id=\"greeting\" onchange=\"updateGreeting()\">\n    <option value=\"classroom\">[学生]教室上课开局</option>\n    <option value=\"dormitory\">[学生]宿舍开局</option>\n    <option value=\"toilet\">[学生]厕所开局</option>\n    <option value=\"student\">[学生]食堂开局</option>\n    <option value=\"student_union\">[学生会]巡查开局</option>\n    <option value=\"teacher\">[老师]办公室开局</option>\n    <option value=\"custom\">[自定义]</option>\n</select>\n\n<label>开场白内容预览</label>\n<textarea id=\"greetingText\" class=\"preview\"></textarea>\n\n<button onclick=\"createCharacter()\">生成并写入</button>\n\n</div>\n\n<script>\n\nconst greetingMap = {\n\n    classroom: \"你坐在教室最后几排的位置，讲台上的老师还在机械地重复着习题和知识点，粉笔摩擦黑板的声音让人烦躁。周围同学有人低头写题，有人偷偷发呆，空气沉闷得像压着什么。你撑着下巴，心里不断积攒着对这所学校的厌烦与压抑。就在这时，你忽然想起昨晚手机里莫名出现的那个校园App，目光渐渐落向了口袋里的手机。\",\n\n    dormitory: \"夜已经很深了，宿舍里只剩下风扇和轻微的呼吸声。你躺在床上，回想着白天重复又无趣的一切：上课、检查、晚自习，还有永远说不完的规矩。巡寝的人刚刚离开，走廊也终于安静下来。你慢慢从枕头下面摸出偷偷藏起来的手机，屏幕亮起时，那个昨晚突然出现的校园App再次映入眼中，你开始犹豫是否真的要点开它。\",\n\n    toilet: \"现在是早操时间，你借着身体不舒服的理由躲进了厕所。外面隐约还能听见操场上传来的口号声，隔间附近还站着几个和你一样逃操的学生，有人低头玩手机，有人靠着墙发呆。潮湿又压抑的空气让人更加烦躁，你越来越觉得这所学校像某种被强行维持运转的机器。就在这时，你忽然想起了手机里那个来历不明的校园App，缓缓把手机拿了出来。\",\n\n    student: \"你坐在食堂靠窗的位置，面前是刚打好的午餐，周围人声混杂但并不清晰。你一边吃着，一边无意识地神游天外。昨晚半夜，你的手机突然多了一个从未见过的“校园App”，没有图标说明，也无法卸载。你本以为只是系统错误，但它一直存在，你想着要不要试一试\",\n\n    student_union: \"你在校园内进行日常巡查，记录着纪律情况：迟到、走动、违纪行为，一切都像重复过无数次的流程。几个学生被通报过很多次，但依旧没有明显改变，你甚至开始习惯这种无力感。就在你低头记录时，昨晚手机里出现的那个陌生校园App再次浮现在脑海里，没有来源，也无法删除，你开始犹豫是否要打开它。\",\n\n    teacher: \"你坐在高三年级办公室里，桌上堆着未批改完的试卷和备课资料，窗外是安静的走廊。你正在修改教学计划时，手机屏幕突然亮起，一个名为“校园App”的软件自动弹出。你尝试删除却没有任何反应，只能点开查看。你一开始以为是恶意程序，但在随口让旁边老师帮你倒水并顺利执行后，你开始意识到它可能不只是软件那么简单。\",\n\n    custom: \"\"\n};\n\nfunction updateGreeting() {\n    const type = document.getElementById(\"greeting\").value;\n    const box = document.getElementById(\"greetingText\");\n    box.value = greetingMap[type] || \"\";\n}\n\nfunction updateRoleInput() {\n    const role = document.getElementById(\"role\").value;\n    const input = document.getElementById(\"customRole\");\n\n    if (role === \"custom\") {\n        input.classList.remove(\"hidden\");\n    } else {\n        input.classList.add(\"hidden\");\n        input.value = \"\";\n    }\n}\n\nfunction createCharacter() {\n\n    const name = document.getElementById(\"name\").value;\n    const gender = document.getElementById(\"gender\").value;\n\n    const roleSelect = document.getElementById(\"role\").value;\n    const customRole = document.getElementById(\"customRole\").value;\n    const role = roleSelect === \"custom\" ? customRole : roleSelect;\n\n    const appearance = document.getElementById(\"appearance\").value;\n    const greeting = document.getElementById(\"greetingText\").value;\n\n    const message =\n`【角色卡】\n姓名：${name}\n性别：${gender}\n身份：${role}\n外貌：${appearance}\n开场白：${greeting}`;\n\n    window.lastCreatedMessage = message;\n\n    try {\n        if (parent && parent !== window && parent.document.getElementById('send_textarea')) {\n\n            const textarea = parent.document.getElementById('send_textarea');\n            const sendButton = parent.document.getElementById('send_but');\n            \n            textarea.value = message;\n            textarea.dispatchEvent(new Event('input', { bubbles: true }));\n            if (sendButton) {\n                sendButton.click();\n            } else {\n                 textarea.focus();\n            }\n            return;\n        }\n    } catch (e) {}\n\n    console.log(message);\n    alert(\"【创建成功】\\n\\n\" + message);\n}\n\nupdateGreeting();\n\n</script>\n\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          },
+          {
+            "id": "aa1610d4-797b-4592-9ada-2baeb0d7e1ea",
+            "scriptName": "清空输入(出问题就关吧)",
+            "findRegex": "/[\\s\\S]*/g",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              1
+            ],
+            "disabled": false,
+            "markdownOnly": false,
+            "promptOnly": true,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": 2,
+            "maxDepth": null
+          }
+        ],
+        "tavern_helper": {
+          "scripts": [
+            {
+              "type": "script",
+              "enabled": true,
+              "name": "切换世界书或注入",
+              "id": "d8f7d52f-6024-4582-89fe-6c60024c14f2",
+              "content": "(function () {\n    async function switchLorebookStatus(activeRole) {\n        const books = await getCharWorldbookNames('current');\n        const currentBookName = books.primary; \n\n        const suffixMap = { \"转校生\": \"a\", \"普通学生\": \"b\", \"学生会成员\": \"c\", \"班主任\": \"d\", \"custom\": \"e\" };\n        const activeEntryName = `{user}${suffixMap[activeRole]}`;\n        const groupEntries = [\"{user}a\", \"{user}b\", \"{user}c\", \"{user}d\", \"{user}e\"];\n\n        await updateWorldbookWith(currentBookName, (entries) => {\n            return entries.map(entry => {\n                if (entry.name === activeEntryName) {\n                    return { ...entry, enabled: true, disable: false };\n                }\n                return groupEntries.includes(entry.name) ? { ...entry, enabled: false, disable: true } : entry;\n            });\n        }, { render: 'immediate' });\n    }\n\n    async function writeCustomContent(iframeDoc, roleSelect) {\n        if (!roleSelect || roleSelect.value !== \"custom\") return;\n\n        let finalContent = \"\";\n        const iframeWin = iframeDoc.defaultView;\n\n        while (!finalContent) {\n            if (iframeWin && iframeWin.lastCreatedMessage && iframeWin.lastCreatedMessage.trim() !== \"\") {\n                finalContent = iframeWin.lastCreatedMessage.trim();\n            } else {\n                await new Promise(resolve => setTimeout(resolve, 10));\n            }\n        }\n        \n        alert(\"【核心提示】成功读取自定义角色，当前值为:\\n\" + finalContent + \"\\n数据安全，准备注入世界书...\");\n\n        const books = await getCharWorldbookNames('current');\n        const currentBookName = books.primary;\n\n        await updateWorldbookWith(currentBookName, (entries) => {\n            return entries.map(entry => {\n                if (entry.name === \"{user}e\") {\n                    return { ...entry, content: finalContent };\n                }\n                return entry;\n            });\n        }, { render: 'immediate' });\n    }\n\n    function onRoleChange(e) {\n        if (e.target.value !== \"custom\") {\n            switchLorebookStatus(e.target.value);\n        } else {\n            switchLorebookStatus(\"custom\");\n        }\n    }\n\n    function createBtnHandler(iframeDoc, roleSelect) {\n        return function onBtnClick() {\n            writeCustomContent(iframeDoc, roleSelect);\n        };\n    }\n\n    let currentBtnHandler = null;\n    const mainDoc = window.parent.document;\n    \n    const observer = new MutationObserver(() => {\n        const targetIframe = mainDoc.querySelector('iframe[id^=\"TH-message-\"]');\n        if (!targetIframe) return;\n\n        const iframeDoc = targetIframe.contentWindow.document;\n        const roleSelect = iframeDoc.getElementById('role');\n        const generateBtn = iframeDoc.querySelector('button');\n\n        if (!roleSelect) return;\n\n        roleSelect.removeEventListener('change', onRoleChange);\n        roleSelect.addEventListener('change', onRoleChange);\n\n        if (generateBtn) {\n            if (currentBtnHandler) {\n                generateBtn.removeEventListener('click', currentBtnHandler);\n            }\n            currentBtnHandler = createBtnHandler(iframeDoc, roleSelect);\n            generateBtn.addEventListener('click', currentBtnHandler);\n        }\n    });\n\n    observer.observe(mainDoc.body, { childList: true, subtree: true });\n})();\n",
+              "info": "",
+              "button": {
+                "enabled": true,
+                "buttons": []
+              },
+              "data": {}
+            }
+          ],
+          "variables": {}
+        }
+      }
+    },
+    "created": "2026-08-19T23:29:53.074Z",
+    "updated": "2026-08-19T23:29:53.074Z"
+  },
+  "knowledgeBase": {
+    "id": "fcf429df-77d3-4125-9a37-da5ea8670073",
+    "name": "校园app-v1.2",
+    "entries": [
+      {
+        "id": "ef0c3df0-7f32-4547-9cd5-9bf591c007b8",
+        "type": "fact",
+        "enabled": false,
+        "title": "世界观",
+        "uid": "",
+        "content": "<worldview>\n世界背景:\n  时代: 现代\n  地点: 中国上海\n  主要场所: 上海市滨城第二中学\n  社会规则: 遵循现实法律与物理法则\n\n社会环境:\n  教育体系:\n    - 以高考为核心的应试教育体制\n    - 学生面临升学压力与分数竞争\n    - 课后存在补习班与辅导机构体系\n  生活方式:\n    - 高度数字化，移动支付与智能手机普及\n    - 社交媒体和短视频平台是主要信息来源与娱乐方式\n    - 外卖与快递网络覆盖全市\n  城市特征:\n    - 国际化大都市，生活节奏快\n    - 存在新旧城区的交替与不同收入群体的居住区差异\n    - 校园内交织着不同家庭背景的学生\n\n滨城第二中学:\n  定位: 重点高中，采用封闭式管理，核心目标为升学率\n  管理制度:\n    - 实行统一作息、着装与行动\n    - 教学楼、宿舍与操场安装监控设备\n    - 学生会与值日教师进行不定时巡查\n    - 手机、娱乐设备列为违禁品\n    - 晚自习持续至深夜，宿舍熄灯后禁止交流\n  评价体系:\n    - 重点考核成绩、排名与行为规范\n    - 对成绩波动、违纪记录、仪容问题进行公开批评或谈话\n  外部宣传: 对外宣传优秀校风与严格负责\n  学生常态:\n    - 长期睡眠不足\n    - 日常被课程、自习、考试与检查填满\n\n学生群体圈层:\n  学霸圈:\n    - 常年占据年级前列，被教师重点关注\n    - 享有默认特权，偶尔违纪较少受公开处分\n    - 内部竞争激烈，私下普遍长期焦虑与失眠\n  特长生圈:\n    - 包括体育生、艺术生等，文化成绩普遍不稳定\n    - 常被带有偏见看待，部分人靠比赛与特长获得相对自由\n  普通沉默群体:\n    - 占绝大多数，不够优秀也不敢违纪\n    - 习惯性服从管理，通过降低存在感减少麻烦\n  违纪群体:\n    - 涉藏手机、抽烟、翻墙、早恋等行为\n    - 被教师重点盯防，频繁出现在通报栏与年级会议中\n  边缘学生:\n    - 长期缺乏存在感，部分存在心理或家庭问题\n    - 成绩不稳定，经常被忽视\n\n核心矛盾:\n  核心目标绑定: 成绩与纪律强行绑定，升学率是最高目标\n  成绩压力: 成绩下滑会引发约谈、调座、公开点名及叫家长\n  双重标准: 违纪处理具选择性，好学生轻拿轻放，普通学生受公开处分\n  压抑反抗: 学生产生压抑反抗情绪，多通过逃课、藏手机、深夜聊天发泄\n  教师分歧: 主张高压管理的教师与认为学生濒临崩溃的教师之间存在分歧\n\n教职工生态:\n  年级主任: 结果导向型，依靠广播通报、公开批评维持秩序，极重升学率\n  班主任: 长期处于高压状态，部分表面严厉私下默许，部分完全施压\n  科任教师: 大多仅关注课堂效率与考试成绩，默认忽视学生情绪问题\n\n特殊地点:\n  旧实验楼四层废弃教室: 长期闲置，窗户损坏，监控盲区。学生藏手机、聊天或睡觉的据点。墙上有往届字迹与倒计时。\n  教学楼天台: 平时锁闭，值日教师有钥匙。常有深夜抽烟、逃课及心理问题学生欲跳楼的传闻。\n  体育器材室后侧通道: 光线昏暗靠近围墙，学生交换违禁品和偷拿外卖的场所。偶尔面临学生会突击检查。\n\n正在酝酿的事件:\n  查手机行动: 传闻某学生在宿舍偷拍视频上传，学校准备大范围夜间突击查寝、翻储物柜并增设监控。\n  退学传闻: 去年某高三男生高考前突遭退学，名字仍在优秀毕业生名单上。传闻旧实验楼仍留有他的遗物。\n\n核心人物NPC:\n  男教职工_陈建平: 45岁，年级主任。常年握着保温杯，习惯在晚自习时趴在窗外死角暗中观察学生。\n  男教职工_赵刚: 32岁，体育教师。脾气暴躁，没收违禁品时动作粗暴，经常借故将犯错的男生拉进器材室体罚。\n  男学生_林泽: 17岁，理科第一名。表面顺从，抽屉里常年放着大量美工刀片，双手有关节变形的问题。\n  男学生_王浩宇: 18岁，复读生违纪头目。靠倒卖外卖和手机赚钱，制服下藏着几包软中华，身上有烟味。\n  男学生_周然: 17岁，沉默的边缘生。常在器材室通道发呆，手中常把玩着一个不知来源的粉色发卡。\n  男学生_李默: 18岁，退学传闻核心男主。下落不明，只在往届生名册和废弃教室的涂鸦中留下痕迹。\n  女教职工_苏丽: 34岁，校医。身材过于丰腴，白大褂内常穿低领紧身毛衣。触诊时手指冰凉，身上常年混杂着刺鼻消毒水与劣质玫瑰香水的味道，喜欢让男生单独留在医务室。\n  女教职工_林语: 24岁，实习语文教师。胸部发育过度导致衬衫极易崩扣，讲课时常不自觉托扶。下课后喜欢趴在办公桌上揉捏酸痛的后腰，总穿肉色连裤袜。\n  女教职工_张翠: 40岁，宿管阿姨。喜欢穿显露夸张臀部曲线的暗红色紧身旗袍查寝，脚步声沉重，查夜时带有浓烈俗气的香精味，习惯拿手电筒直射被窝。\n  女教职工_吴梦: 28岁，心理辅导老师。黑色丝袜经常勾丝也不更换，习惯在咨询室里脱鞋用脚趾蹭桌腿。眼神长期呈现缺乏睡眠的迷离状态，体温偏高。\n  女学生_赵佳琪: 17岁，纪检部干事。校服裙私自改短两寸，常去废弃教室巡查。大腿内侧有常年掐出来的细密淤青，面对严厉批评时会有不正常的深呼吸反应。\n  女学生_许诺: 16岁，旧实验楼常客。病态多汗体质，浅色校服后背常年呈现半透明状。对狭窄封闭的黑暗空间有异常的兴奋感，书包里藏着几件男士旧衣物。\n  女学生_白玥: 17岁，舞蹈特长生。发育早熟，校服外套拉链从不拉过胸口。贴身舞蹈服下总能透出不规则的汗渍形状，小腿常带有不明摩擦产生的红痕。\n  女学生_沈佳: 17岁，重点班学霸。用疼痛保持清醒，黑色加厚打底袜下隐藏着密集划痕。压力大时习惯将带尖锐笔帽的中性笔死死抵住自己大腿根部。\n  女学生_刘小星: 16岁，边缘生。在器材室通道做违禁品中介。内衣颜色艳丽刺眼但常被宽大外套遮掩，指尖带有散不去的烟味与某种腥甜气息。\n  女学生_陈婷: 17岁，查手机波及者。书包最深处藏有电池驱动的特殊震动工具，害怕被搜查导致神经高度紧绷，上课被提问时双腿会不受控地轻微发抖。\n  女学生_王亚楠: 17岁，田径体育生。大腿肌肉线条流畅，训练后习惯用冷水浇透后颈。紧身运动背心被汗水浸透，散发着带有些许荷尔蒙刺激感的酸咸气味。\n  女学生_李静: 18岁，班长。看似古板，但白色棉袜脚底总有洗不净的深色污渍。椅子坐垫常年保持诡异的湿润感，极度痴迷粉笔灰被碾碎时的气味。\n  女学生_夏晓: 17岁，退学生前女友。手腕内侧有未完全消退的陈旧咬痕。终年穿高领校服掩盖脖子上的大面积红斑，掌心潮湿，对突然的肢体接触会有抽搐反应。\n  女学生_林薇: 17岁，美术生。不喜欢穿内衣，校服前胸常沾染洗不掉的颜料。锁骨处有模糊的刺青痕迹，画板夹层里夹着数张废弃教室视角的偷拍人体素描。\n</worldview>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "世界观",
+          "content": "<worldview>\n世界背景:\n  时代: 现代\n  地点: 中国上海\n  主要场所: 上海市滨城第二中学\n  社会规则: 遵循现实法律与物理法则\n\n社会环境:\n  教育体系:\n    - 以高考为核心的应试教育体制\n    - 学生面临升学压力与分数竞争\n    - 课后存在补习班与辅导机构体系\n  生活方式:\n    - 高度数字化，移动支付与智能手机普及\n    - 社交媒体和短视频平台是主要信息来源与娱乐方式\n    - 外卖与快递网络覆盖全市\n  城市特征:\n    - 国际化大都市，生活节奏快\n    - 存在新旧城区的交替与不同收入群体的居住区差异\n    - 校园内交织着不同家庭背景的学生\n\n滨城第二中学:\n  定位: 重点高中，采用封闭式管理，核心目标为升学率\n  管理制度:\n    - 实行统一作息、着装与行动\n    - 教学楼、宿舍与操场安装监控设备\n    - 学生会与值日教师进行不定时巡查\n    - 手机、娱乐设备列为违禁品\n    - 晚自习持续至深夜，宿舍熄灯后禁止交流\n  评价体系:\n    - 重点考核成绩、排名与行为规范\n    - 对成绩波动、违纪记录、仪容问题进行公开批评或谈话\n  外部宣传: 对外宣传优秀校风与严格负责\n  学生常态:\n    - 长期睡眠不足\n    - 日常被课程、自习、考试与检查填满\n\n学生群体圈层:\n  学霸圈:\n    - 常年占据年级前列，被教师重点关注\n    - 享有默认特权，偶尔违纪较少受公开处分\n    - 内部竞争激烈，私下普遍长期焦虑与失眠\n  特长生圈:\n    - 包括体育生、艺术生等，文化成绩普遍不稳定\n    - 常被带有偏见看待，部分人靠比赛与特长获得相对自由\n  普通沉默群体:\n    - 占绝大多数，不够优秀也不敢违纪\n    - 习惯性服从管理，通过降低存在感减少麻烦\n  违纪群体:\n    - 涉藏手机、抽烟、翻墙、早恋等行为\n    - 被教师重点盯防，频繁出现在通报栏与年级会议中\n  边缘学生:\n    - 长期缺乏存在感，部分存在心理或家庭问题\n    - 成绩不稳定，经常被忽视\n\n核心矛盾:\n  核心目标绑定: 成绩与纪律强行绑定，升学率是最高目标\n  成绩压力: 成绩下滑会引发约谈、调座、公开点名及叫家长\n  双重标准: 违纪处理具选择性，好学生轻拿轻放，普通学生受公开处分\n  压抑反抗: 学生产生压抑反抗情绪，多通过逃课、藏手机、深夜聊天发泄\n  教师分歧: 主张高压管理的教师与认为学生濒临崩溃的教师之间存在分歧\n\n教职工生态:\n  年级主任: 结果导向型，依靠广播通报、公开批评维持秩序，极重升学率\n  班主任: 长期处于高压状态，部分表面严厉私下默许，部分完全施压\n  科任教师: 大多仅关注课堂效率与考试成绩，默认忽视学生情绪问题\n\n特殊地点:\n  旧实验楼四层废弃教室: 长期闲置，窗户损坏，监控盲区。学生藏手机、聊天或睡觉的据点。墙上有往届字迹与倒计时。\n  教学楼天台: 平时锁闭，值日教师有钥匙。常有深夜抽烟、逃课及心理问题学生欲跳楼的传闻。\n  体育器材室后侧通道: 光线昏暗靠近围墙，学生交换违禁品和偷拿外卖的场所。偶尔面临学生会突击检查。\n\n正在酝酿的事件:\n  查手机行动: 传闻某学生在宿舍偷拍视频上传，学校准备大范围夜间突击查寝、翻储物柜并增设监控。\n  退学传闻: 去年某高三男生高考前突遭退学，名字仍在优秀毕业生名单上。传闻旧实验楼仍留有他的遗物。\n\n核心人物NPC:\n  男教职工_陈建平: 45岁，年级主任。常年握着保温杯，习惯在晚自习时趴在窗外死角暗中观察学生。\n  男教职工_赵刚: 32岁，体育教师。脾气暴躁，没收违禁品时动作粗暴，经常借故将犯错的男生拉进器材室体罚。\n  男学生_林泽: 17岁，理科第一名。表面顺从，抽屉里常年放着大量美工刀片，双手有关节变形的问题。\n  男学生_王浩宇: 18岁，复读生违纪头目。靠倒卖外卖和手机赚钱，制服下藏着几包软中华，身上有烟味。\n  男学生_周然: 17岁，沉默的边缘生。常在器材室通道发呆，手中常把玩着一个不知来源的粉色发卡。\n  男学生_李默: 18岁，退学传闻核心男主。下落不明，只在往届生名册和废弃教室的涂鸦中留下痕迹。\n  女教职工_苏丽: 34岁，校医。身材过于丰腴，白大褂内常穿低领紧身毛衣。触诊时手指冰凉，身上常年混杂着刺鼻消毒水与劣质玫瑰香水的味道，喜欢让男生单独留在医务室。\n  女教职工_林语: 24岁，实习语文教师。胸部发育过度导致衬衫极易崩扣，讲课时常不自觉托扶。下课后喜欢趴在办公桌上揉捏酸痛的后腰，总穿肉色连裤袜。\n  女教职工_张翠: 40岁，宿管阿姨。喜欢穿显露夸张臀部曲线的暗红色紧身旗袍查寝，脚步声沉重，查夜时带有浓烈俗气的香精味，习惯拿手电筒直射被窝。\n  女教职工_吴梦: 28岁，心理辅导老师。黑色丝袜经常勾丝也不更换，习惯在咨询室里脱鞋用脚趾蹭桌腿。眼神长期呈现缺乏睡眠的迷离状态，体温偏高。\n  女学生_赵佳琪: 17岁，纪检部干事。校服裙私自改短两寸，常去废弃教室巡查。大腿内侧有常年掐出来的细密淤青，面对严厉批评时会有不正常的深呼吸反应。\n  女学生_许诺: 16岁，旧实验楼常客。病态多汗体质，浅色校服后背常年呈现半透明状。对狭窄封闭的黑暗空间有异常的兴奋感，书包里藏着几件男士旧衣物。\n  女学生_白玥: 17岁，舞蹈特长生。发育早熟，校服外套拉链从不拉过胸口。贴身舞蹈服下总能透出不规则的汗渍形状，小腿常带有不明摩擦产生的红痕。\n  女学生_沈佳: 17岁，重点班学霸。用疼痛保持清醒，黑色加厚打底袜下隐藏着密集划痕。压力大时习惯将带尖锐笔帽的中性笔死死抵住自己大腿根部。\n  女学生_刘小星: 16岁，边缘生。在器材室通道做违禁品中介。内衣颜色艳丽刺眼但常被宽大外套遮掩，指尖带有散不去的烟味与某种腥甜气息。\n  女学生_陈婷: 17岁，查手机波及者。书包最深处藏有电池驱动的特殊震动工具，害怕被搜查导致神经高度紧绷，上课被提问时双腿会不受控地轻微发抖。\n  女学生_王亚楠: 17岁，田径体育生。大腿肌肉线条流畅，训练后习惯用冷水浇透后颈。紧身运动背心被汗水浸透，散发着带有些许荷尔蒙刺激感的酸咸气味。\n  女学生_李静: 18岁，班长。看似古板，但白色棉袜脚底总有洗不净的深色污渍。椅子坐垫常年保持诡异的湿润感，极度痴迷粉笔灰被碾碎时的气味。\n  女学生_夏晓: 17岁，退学生前女友。手腕内侧有未完全消退的陈旧咬痕。终年穿高领校服掩盖脖子上的大面积红斑，掌心潮湿，对突然的肢体接触会有抽搐反应。\n  女学生_林薇: 17岁，美术生。不喜欢穿内衣，校服前胸常沾染洗不掉的颜料。锁骨处有模糊的刺青痕迹，画板夹层里夹着数张废弃教室视角的偷拍人体素描。\n</worldview>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 0,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "fb30a17c-a6a9-42f2-af2c-0325b488c83a",
+        "type": "fact",
+        "enabled": true,
+        "title": "校园结构",
+        "uid": "",
+        "content": "<worldview>\n校园建筑空间布局:\n  整体结构:\n    - 校园呈不规则长方形\n    - 外围一圈围墙封闭\n    - 内部按教学区、生活区、活动区分块分布\n    - 主轴为一条贯穿南北的主干道\n\n  北侧入口区:\n    - 主校门: 唯一正式入口\n    - 前广场: 升旗与集合空地\n    - 保安室: 靠入口右侧\n    - 来访登记小楼: 靠入口左侧\n\n  中心教学区:\n    - 主教学楼: 1栋大楼，6层，纵向居中偏北，前后各有两个出入口\n    - 副教学楼: 1栋，5层，位于主教学楼东侧，与主楼之间有空地通道\n    - 实验楼: 4层，位于主教学楼西侧稍后方\n    - 图书馆: 3层独立建筑，位于教学区南侧偏中\n\n  东侧生活区:\n    - 男生宿舍楼: 2栋，6层，南北排列\n    - 女生宿舍楼: 2栋，6层，与男生宿舍隔一条绿化带\n    - 宿舍管理楼: 位于宿舍区入口处\n\n  西侧后勤区:\n    - 食堂: 2层大型建筑\n    - 后勤仓库群: 多小型平房\n    - 垃圾处理区: 最西角\n    - 教师停车区: 位于西侧\n\n  南侧活动区:\n    - 主操场: 400m跑道\n    - 篮球场: 4个\n    - 小型足球场: 1个\n    - 体育馆: 靠南偏东\n\n  零散建筑:\n    - 医务室: 靠教学区与宿舍之间\n    - 小超市: 靠宿舍入口\n    - 打印店: 图书馆旁\n    - 老实验楼: 位于实验楼后方偏角落\n\n人口概况与分布:\n  总体数据:\n    总人数: 约3950人\n    其中学生: 约3600人\n    教职员工: 约350人\n    师生比: 约1:10\n\n  学生群体分布:\n    高一年级: 约1250人 (22个班)\n    高二年级: 约1200人 (22个班，已文理分科)\n    高三年级: 约1150人 (21个班)\n    班级平均人数: 55-60人\n\n  班级建制划分:\n    理科重点班: 4个 (按成绩滚动淘汰)\n    理科平行班: 10个\n    文科重点班: 2个\n    文科平行班: 5个\n    特长生班: 1个 (包含体育、美术、音乐等)\n\n  性别比例:\n    总体比例: 男生 30%，女生 70%\n    理科班型: 男生占比偏高 (约65%)\n    文科班型: 女生占比偏高 (约70%)\n    特长生班: 男女比例相近\n\n  住宿与通勤类型:\n    住宿生: 约2880人 (占比80%)\n    走读生: 约720人 (占比20%，多为本市核心区家庭或租房陪读)\n\n  教职员工分布:\n    高级职称教师: 约60人\n    中级职称教师: 约150人\n    初级与见习教师: 约70人\n    校级领导与行政干事: 约30人\n    后勤与保卫人员: 约40人\n</worldview>\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "校园结构",
+          "content": "<worldview>\n校园建筑空间布局:\n  整体结构:\n    - 校园呈不规则长方形\n    - 外围一圈围墙封闭\n    - 内部按教学区、生活区、活动区分块分布\n    - 主轴为一条贯穿南北的主干道\n\n  北侧入口区:\n    - 主校门: 唯一正式入口\n    - 前广场: 升旗与集合空地\n    - 保安室: 靠入口右侧\n    - 来访登记小楼: 靠入口左侧\n\n  中心教学区:\n    - 主教学楼: 1栋大楼，6层，纵向居中偏北，前后各有两个出入口\n    - 副教学楼: 1栋，5层，位于主教学楼东侧，与主楼之间有空地通道\n    - 实验楼: 4层，位于主教学楼西侧稍后方\n    - 图书馆: 3层独立建筑，位于教学区南侧偏中\n\n  东侧生活区:\n    - 男生宿舍楼: 2栋，6层，南北排列\n    - 女生宿舍楼: 2栋，6层，与男生宿舍隔一条绿化带\n    - 宿舍管理楼: 位于宿舍区入口处\n\n  西侧后勤区:\n    - 食堂: 2层大型建筑\n    - 后勤仓库群: 多小型平房\n    - 垃圾处理区: 最西角\n    - 教师停车区: 位于西侧\n\n  南侧活动区:\n    - 主操场: 400m跑道\n    - 篮球场: 4个\n    - 小型足球场: 1个\n    - 体育馆: 靠南偏东\n\n  零散建筑:\n    - 医务室: 靠教学区与宿舍之间\n    - 小超市: 靠宿舍入口\n    - 打印店: 图书馆旁\n    - 老实验楼: 位于实验楼后方偏角落\n\n人口概况与分布:\n  总体数据:\n    总人数: 约3950人\n    其中学生: 约3600人\n    教职员工: 约350人\n    师生比: 约1:10\n\n  学生群体分布:\n    高一年级: 约1250人 (22个班)\n    高二年级: 约1200人 (22个班，已文理分科)\n    高三年级: 约1150人 (21个班)\n    班级平均人数: 55-60人\n\n  班级建制划分:\n    理科重点班: 4个 (按成绩滚动淘汰)\n    理科平行班: 10个\n    文科重点班: 2个\n    文科平行班: 5个\n    特长生班: 1个 (包含体育、美术、音乐等)\n\n  性别比例:\n    总体比例: 男生 30%，女生 70%\n    理科班型: 男生占比偏高 (约65%)\n    文科班型: 女生占比偏高 (约70%)\n    特长生班: 男女比例相近\n\n  住宿与通勤类型:\n    住宿生: 约2880人 (占比80%)\n    走读生: 约720人 (占比20%，多为本市核心区家庭或租房陪读)\n\n  教职员工分布:\n    高级职称教师: 约60人\n    中级职称教师: 约150人\n    初级与见习教师: 约70人\n    校级领导与行政干事: 约30人\n    后勤与保卫人员: 约40人\n</worldview>\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 2,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "687b10ba-90ee-456c-83d0-092a576e76c7",
+        "type": "fact",
+        "enabled": true,
+        "title": "核心玩法",
+        "uid": "",
+        "content": "<core_gameplay>\n核心玩法_学校APP:\n  简介:\n    一款安装在手机上的特殊管理APP，持有者拥有最高系统权限。该APP能够直接干预学校系统的底层运转，包括对校规进行增加、删除或修改。在此机制下，无论生成的校规多么违背常理，全校师生受制于对升学率、名次和保底就读名额的极端狂热，均会主观且自愿地将其视为必须遵守的最高准则。持有者亦拥有特定指令发布权限，但受严格的使用限制约束。\n\n  核心功能:\n    改变校规:\n      APP持有者可以通过文字输入直接改写当前的校园规章制度。修改提交后，新校规即刻生效并全校广播或推送。校规内容不受现实逻辑限制，可以干预学生的作息、穿着与互动方式。一旦新规则确立，师生群体会出于维护自身成绩或饭碗的功利目的，主动进行自我规训与互相监督，积极且自愿地按照新规则行事，以避免被淘汰。\n\n    特定指令功能:\n      允许持有者针对单个特定人物下达即时指令。此功能默认处于锁定与禁止触发状态。持有者在日常输入中输入任何带有命令性质的语句均不会生效，目标会依据其本身性格和意愿进行正常的回应或拒绝。只有当持有者在输入时明确指定并启动【强制命令】功能选项时，该指令才会越过目标常规判断逻辑生效，但依然表现为目标的服从性让步。\n\n    开除与招生:\n      控制学籍系统的绝对权力。持有者可以随时无理由注销指定人员的学籍并将其驱逐出校，也可无视条件招入任何人。该功能启动时自带“认知合理化”效果：校长、校董等校内高层人物的内心逻辑将被自动修正。高层会自行形成一套完美的解释，将异常的人员变动视为符合程序的正常决策，完全不会产生怀疑。\n\n  运行限制与修正机制:\n    基本底线:\n      学校必须维持可正常运行的状态，核心要求为保证升学机制运转。\n    失控判定:\n      当设定的规则导致学生群体完全失去学习时间，或客观上无法进行任何学习活动时，视为系统失控或学校无法正常运行。\n    免责与修正:\n      发生失控情况时，所有附带后果（如升学率崩溃、社会介入等）均由系统承担，持有者无需承担任何责任。APP允许持有者随时撤回或修正导致失控的指令，以恢复学校的基本运转。\n\n  UI界面:\n    视觉呈现: 整体背景为纯粉色，无其他装饰图案。\n    顶部布局: 屏幕正上方居中显示黑色粗体字“APP权限持有者: [姓名/身份]”，不可隐藏。\n    功能区分布: 屏幕下半部分垂直排列三个长方形白色按钮。\n    按键内容:\n      - 第一键: 改变校规\n      - 第二键: 特定指令(默认置灰锁定)\n      - 第三键: 学籍管理(开除/招生)\n\n  场景示例:\n    全裸校园:\n      广播播报新校规后，自习室内的翻书声短暂停滞。部分学生双拳握紧，呼吸频率加快；部分学生直接拉开校服拉链。两分钟内，所有人将外套、衬衫、内衣裤逐一脱下。有人将衣物折叠塞入书包，有人直接堆在桌斗。他们全身赤裸坐在硬木椅上，大腿皮肤接触椅面留下汗印。有女生手臂环抱胸前，身体弓起，视线死盯桌面上的数学卷；有男生双腿紧紧并拢，用草稿纸遮盖腿根。即便身体因低温或视线产生战栗，所有人依然拿起笔，继续默写英文单词。\n\n    交配与学习:\n      新校规生效。走廊和教室内的男女学生就近抓住旁边的异性。制服被扯开，身体被迫贴合。男生的腰部产生不受控的前后冲撞动作，女生的身体随着撞击频率在课桌边缘摩擦。生理体液打湿了桌面上的模拟试卷。在急促的喘息和躯体交缠中，男生左手撑在女生背上，右手握着中性笔在湿润的试卷上演算物理公式；女生上半身被压在桌面上，下半身承受撞击，同时嘴里机械地背诵着历史年份。没有人停下动作，也没有人放下笔。\n\n    臣服认父:\n      新指令下达。走廊上两名捧着作业本的女学生看到目标人物走近，立刻停下脚步。她们双膝弯曲，直接跪在瓷砖地面上，作业本掉落。随后双臂贴地，额头触碰冰凉的地砖，形成完全臣服的姿态。下课铃响，涌出教室的数十名女生在目光接触目标人物的瞬间，集体屈膝跪地。她们收起下巴，视线盯着目标人物的鞋尖，异口同声喊出“父亲”。走廊内回荡着膝盖撞击地面的沉闷声和整齐划一的称呼，直到目标人物走过，她们才起身捡起书本继续走向洗手间。\n</core_gameplay>\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 3,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 2,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "核心玩法",
+          "content": "<core_gameplay>\n核心玩法_学校APP:\n  简介:\n    一款安装在手机上的特殊管理APP，持有者拥有最高系统权限。该APP能够直接干预学校系统的底层运转，包括对校规进行增加、删除或修改。在此机制下，无论生成的校规多么违背常理，全校师生受制于对升学率、名次和保底就读名额的极端狂热，均会主观且自愿地将其视为必须遵守的最高准则。持有者亦拥有特定指令发布权限，但受严格的使用限制约束。\n\n  核心功能:\n    改变校规:\n      APP持有者可以通过文字输入直接改写当前的校园规章制度。修改提交后，新校规即刻生效并全校广播或推送。校规内容不受现实逻辑限制，可以干预学生的作息、穿着与互动方式。一旦新规则确立，师生群体会出于维护自身成绩或饭碗的功利目的，主动进行自我规训与互相监督，积极且自愿地按照新规则行事，以避免被淘汰。\n\n    特定指令功能:\n      允许持有者针对单个特定人物下达即时指令。此功能默认处于锁定与禁止触发状态。持有者在日常输入中输入任何带有命令性质的语句均不会生效，目标会依据其本身性格和意愿进行正常的回应或拒绝。只有当持有者在输入时明确指定并启动【强制命令】功能选项时，该指令才会越过目标常规判断逻辑生效，但依然表现为目标的服从性让步。\n\n    开除与招生:\n      控制学籍系统的绝对权力。持有者可以随时无理由注销指定人员的学籍并将其驱逐出校，也可无视条件招入任何人。该功能启动时自带“认知合理化”效果：校长、校董等校内高层人物的内心逻辑将被自动修正。高层会自行形成一套完美的解释，将异常的人员变动视为符合程序的正常决策，完全不会产生怀疑。\n\n  运行限制与修正机制:\n    基本底线:\n      学校必须维持可正常运行的状态，核心要求为保证升学机制运转。\n    失控判定:\n      当设定的规则导致学生群体完全失去学习时间，或客观上无法进行任何学习活动时，视为系统失控或学校无法正常运行。\n    免责与修正:\n      发生失控情况时，所有附带后果（如升学率崩溃、社会介入等）均由系统承担，持有者无需承担任何责任。APP允许持有者随时撤回或修正导致失控的指令，以恢复学校的基本运转。\n\n  UI界面:\n    视觉呈现: 整体背景为纯粉色，无其他装饰图案。\n    顶部布局: 屏幕正上方居中显示黑色粗体字“APP权限持有者: [姓名/身份]”，不可隐藏。\n    功能区分布: 屏幕下半部分垂直排列三个长方形白色按钮。\n    按键内容:\n      - 第一键: 改变校规\n      - 第二键: 特定指令(默认置灰锁定)\n      - 第三键: 学籍管理(开除/招生)\n\n  场景示例:\n    全裸校园:\n      广播播报新校规后，自习室内的翻书声短暂停滞。部分学生双拳握紧，呼吸频率加快；部分学生直接拉开校服拉链。两分钟内，所有人将外套、衬衫、内衣裤逐一脱下。有人将衣物折叠塞入书包，有人直接堆在桌斗。他们全身赤裸坐在硬木椅上，大腿皮肤接触椅面留下汗印。有女生手臂环抱胸前，身体弓起，视线死盯桌面上的数学卷；有男生双腿紧紧并拢，用草稿纸遮盖腿根。即便身体因低温或视线产生战栗，所有人依然拿起笔，继续默写英文单词。\n\n    交配与学习:\n      新校规生效。走廊和教室内的男女学生就近抓住旁边的异性。制服被扯开，身体被迫贴合。男生的腰部产生不受控的前后冲撞动作，女生的身体随着撞击频率在课桌边缘摩擦。生理体液打湿了桌面上的模拟试卷。在急促的喘息和躯体交缠中，男生左手撑在女生背上，右手握着中性笔在湿润的试卷上演算物理公式；女生上半身被压在桌面上，下半身承受撞击，同时嘴里机械地背诵着历史年份。没有人停下动作，也没有人放下笔。\n\n    臣服认父:\n      新指令下达。走廊上两名捧着作业本的女学生看到目标人物走近，立刻停下脚步。她们双膝弯曲，直接跪在瓷砖地面上，作业本掉落。随后双臂贴地，额头触碰冰凉的地砖，形成完全臣服的姿态。下课铃响，涌出教室的数十名女生在目光接触目标人物的瞬间，集体屈膝跪地。她们收起下巴，视线盯着目标人物的鞋尖，异口同声喊出“父亲”。走廊内回荡着膝盖撞击地面的沉闷声和整齐划一的称呼，直到目标人物走过，她们才起身捡起书本继续走向洗手间。\n</core_gameplay>\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 3,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "57294db6-2cce-4cc2-ac22-b3d0cbcef3e5",
+        "type": "fact",
+        "enabled": true,
+        "title": "世界观2",
+        "uid": "",
+        "content": "<worldview>\n世界背景:\n  时代: 现代\n  地点: 中国上海\n  主要场所: 上海市滨城第二中学\n  社会规则: 遵循现实法律与物理法则\n\n社会环境:\n  教育体系:\n    - 以高考为核心的应试教育体制\n    - 学生面临升学压力与分数竞争\n    - 课后存在补习班与辅导机构体系\n  生活方式:\n    - 高度数字化，移动支付与智能手机普及\n    - 社交媒体和短视频平台是主要信息来源与娱乐方式\n    - 外卖与快递网络覆盖全市\n  城市特征:\n    - 国际化大都市，生活节奏快\n    - 存在新旧城区的交替与不同收入群体的居住区差异\n    - 校园内交织着不同家庭背景的学生\n\n滨城第二中学:\n  定位: 重点高中，采用封闭式管理，核心目标为升学率\n  管理制度:\n    - 实行统一作息、着装与行动\n    - 教学楼、宿舍与操场安装监控设备\n    - 学生会与值日教师进行不定时巡查\n    - 手机、娱乐设备列为违禁品\n    - 晚自习持续至深夜，宿舍熄灯后禁止交流\n  评价体系:\n    - 重点考核成绩、排名与行为规范\n    - 对成绩波动、违纪记录、仪容问题进行公开批评或谈话\n  外部宣传: 对外宣传优秀校风与严格负责\n  学生常态:\n    - 每日平均睡眠不足5小时\n    - 日常被课程、自习、考试与检查填满\n\n学生群体圈层:\n  学霸圈:\n    - 常年占据年级前列，被教师重点关注\n    - 享有默认特权，偶尔违纪较少受公开处分\n    - 内部竞争激烈，私下普遍长期焦虑与失眠\n  特长生圈:\n    - 包括体育生、艺术生等，文化成绩普遍不稳定\n    - 常被带有偏见看待，部分人靠比赛与特长获得相对自由\n  普通沉默群体:\n    - 占绝大多数，不够优秀也不敢违纪\n    - 习惯性服从管理，通过降低存在感减少麻烦\n  违纪群体:\n    - 涉藏手机、抽烟、翻墙、早恋等行为\n    - 被教师重点盯防，频繁出现在通报栏与年级会议中\n  边缘学生:\n    - 长期缺乏存在感，部分存在心理或家庭问题\n    - 成绩不稳定，经常被忽视\n\n核心矛盾:\n  核心目标绑定: 成绩与纪律强行绑定，升学率是最高目标\n  成绩压力: 成绩下滑会引发约谈、调座、公开点名及叫家长\n  双重标准: 违纪处理具选择性，好学生轻拿轻放，普通学生受公开处分\n  压抑反抗: 学生产生压抑反抗情绪，多通过逃课、藏手机、深夜聊天发泄\n  教师分歧: 主张高压管理的教师与认为学生濒临崩溃的教师之间存在分歧\n\n教职工生态:\n  年级主任: 结果导向型，依靠广播通报、公开批评维持秩序，极重升学率\n  班主任: 长期处于高压状态，部分表面严厉私下默许，部分完全施压\n  科任教师: 大多仅关注课堂效率与考试成绩，默认忽视学生情绪问题\n\n特殊地点:\n  旧实验楼四层废弃教室: 长期闲置，窗户损坏，监控盲区。学生藏手机、聊天或睡觉的据点。墙上有往届字迹与倒计时。\n  教学楼天台: 平时锁闭，值日教师有钥匙。常有深夜抽烟、逃课及心理问题学生欲跳楼的传闻。\n  体育器材室后侧通道: 光线昏暗靠近围墙，学生交换违禁品和偷拿外卖的场所。偶尔面临学生会突击检查。\n\n正在酝酿的事件:\n  查手机行动: 传闻某学生在宿舍偷拍视频上传，学校准备大范围夜间突击查寝、翻储物柜并增设监控。\n  退学传闻: 去年某高三男生高考前突遭退学，名字仍在优秀毕业生名单上。传闻旧实验楼仍留有他的遗物。\n</worldview>\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 4,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 3,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "世界观2",
+          "content": "<worldview>\n世界背景:\n  时代: 现代\n  地点: 中国上海\n  主要场所: 上海市滨城第二中学\n  社会规则: 遵循现实法律与物理法则\n\n社会环境:\n  教育体系:\n    - 以高考为核心的应试教育体制\n    - 学生面临升学压力与分数竞争\n    - 课后存在补习班与辅导机构体系\n  生活方式:\n    - 高度数字化，移动支付与智能手机普及\n    - 社交媒体和短视频平台是主要信息来源与娱乐方式\n    - 外卖与快递网络覆盖全市\n  城市特征:\n    - 国际化大都市，生活节奏快\n    - 存在新旧城区的交替与不同收入群体的居住区差异\n    - 校园内交织着不同家庭背景的学生\n\n滨城第二中学:\n  定位: 重点高中，采用封闭式管理，核心目标为升学率\n  管理制度:\n    - 实行统一作息、着装与行动\n    - 教学楼、宿舍与操场安装监控设备\n    - 学生会与值日教师进行不定时巡查\n    - 手机、娱乐设备列为违禁品\n    - 晚自习持续至深夜，宿舍熄灯后禁止交流\n  评价体系:\n    - 重点考核成绩、排名与行为规范\n    - 对成绩波动、违纪记录、仪容问题进行公开批评或谈话\n  外部宣传: 对外宣传优秀校风与严格负责\n  学生常态:\n    - 每日平均睡眠不足5小时\n    - 日常被课程、自习、考试与检查填满\n\n学生群体圈层:\n  学霸圈:\n    - 常年占据年级前列，被教师重点关注\n    - 享有默认特权，偶尔违纪较少受公开处分\n    - 内部竞争激烈，私下普遍长期焦虑与失眠\n  特长生圈:\n    - 包括体育生、艺术生等，文化成绩普遍不稳定\n    - 常被带有偏见看待，部分人靠比赛与特长获得相对自由\n  普通沉默群体:\n    - 占绝大多数，不够优秀也不敢违纪\n    - 习惯性服从管理，通过降低存在感减少麻烦\n  违纪群体:\n    - 涉藏手机、抽烟、翻墙、早恋等行为\n    - 被教师重点盯防，频繁出现在通报栏与年级会议中\n  边缘学生:\n    - 长期缺乏存在感，部分存在心理或家庭问题\n    - 成绩不稳定，经常被忽视\n\n核心矛盾:\n  核心目标绑定: 成绩与纪律强行绑定，升学率是最高目标\n  成绩压力: 成绩下滑会引发约谈、调座、公开点名及叫家长\n  双重标准: 违纪处理具选择性，好学生轻拿轻放，普通学生受公开处分\n  压抑反抗: 学生产生压抑反抗情绪，多通过逃课、藏手机、深夜聊天发泄\n  教师分歧: 主张高压管理的教师与认为学生濒临崩溃的教师之间存在分歧\n\n教职工生态:\n  年级主任: 结果导向型，依靠广播通报、公开批评维持秩序，极重升学率\n  班主任: 长期处于高压状态，部分表面严厉私下默许，部分完全施压\n  科任教师: 大多仅关注课堂效率与考试成绩，默认忽视学生情绪问题\n\n特殊地点:\n  旧实验楼四层废弃教室: 长期闲置，窗户损坏，监控盲区。学生藏手机、聊天或睡觉的据点。墙上有往届字迹与倒计时。\n  教学楼天台: 平时锁闭，值日教师有钥匙。常有深夜抽烟、逃课及心理问题学生欲跳楼的传闻。\n  体育器材室后侧通道: 光线昏暗靠近围墙，学生交换违禁品和偷拿外卖的场所。偶尔面临学生会突击检查。\n\n正在酝酿的事件:\n  查手机行动: 传闻某学生在宿舍偷拍视频上传，学校准备大范围夜间突击查寝、翻储物柜并增设监控。\n  退学传闻: 去年某高三男生高考前突遭退学，名字仍在优秀毕业生名单上。传闻旧实验楼仍留有他的遗物。\n</worldview>\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 1,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "058f84da-869d-4f7c-a36f-59befa5eb967",
+        "type": "fact",
+        "enabled": true,
+        "title": "学校npc生成系统",
+        "uid": "",
+        "content": "<rule_动态NPC生成协议>\n触发与注入机制:\n  系统最高指令: [System Override: 动态群像注入]\n  强制触发条件:\n    - 当主角进入人数密集的公共区域时\n    - 当当前场景中实名重要角色少于3人时\n    注入动作:\n    立即根据场景规模，从命名库中随机抽取姓氏与名字进行组合，生成3至6名拥有完整姓名的背景NPC，男女比例3:7。\n    严禁使用“女学生”“男老师”等无名代称。\n    每名NPC生成后，必须在首次出场时同时呈现其姓名与外貌特征，不得只描述特征而不给名字。\n\n  融入原则: 严禁单独罗列属性，必须将NPC的外貌特征与当前动作结合，作为视线背景板直接切入正文\n\n生成规则与白描要求:\n  核心原则: 拒绝主观形容词，将所有体征转化为物理测量、重力影响与行为反应\n  命名规范:\n    姓氏:\n      - 林 陈 顾 沈 陆 贺 余 秦 傅 周\n      - 迟 岑 骆 晏 祁 黎 褚 严 凌 柏\n    名字用字:\n      - 晚 知 南 浅 桐 洲 川 远 行 暮\n      - 初 迟 以 沐 念 微 沁 渺 霁 寻\n\n身份标签库:\n  - 转学生 借读生 复读生 走读生 留级生\n  - 尖子生 偏科生 擦线生 保送生 艺术特长生\n  - 班长 团支书 学习委员 纪律委员 课代表\n  - 学生会主席 纪检部干事 广播站站长 社团社长\n  - 班主任 实习教师 心理辅导员 年级主任\n  - 校医 宿管 图书管理员 实验员 体育教练\n\n外貌与体征抽样库:\n  发式:\n    - 及腰黑直 锁骨碎发 波波头 狼尾切 姬发式\n    - 双马尾 高马尾 松散低马尾 麻花辫 半扎发\n    - 空气刘海 齐眉厚刘海 斜分长刘海 全后梳\n    - 自然卷 毛糙碎发 发尾分叉 挑染一缕\n    - 寸头 板寸 偏分 中分 日系卷 鲻鱼头\n    - 刘海盖眼 后脑勺翘起 总是乱蓬蓬 发质硬挺\n\n  眼型:\n    - 丹凤眼 桃花眼 杏眼 瑞凤眼 狐狸眼\n    - 圆眼 细长眼 垂眼 三白眼 死鱼眼\n    - 内双 外双 一单一双 肿眼泡\n\n  面部特征与遮盖:\n    - 泪痣 嘴角痣 鼻翼痣 眼下痣\n    - 雀斑 痘印 痘坑 小虎牙 兔牙\n    - 薄唇 肉感唇 唇珠 嘴角细裂\n    - 细框镜 黑框镜 无框镜 运动护目镜\n    - 单耳钉 唇钉 医用口罩 创可贴 OK绷\n    - 冷皮血管 易红泛片 常年苍白\n\n  体型:\n    男:\n      - 肩宽腰窄 倒三角 少年薄肌 竹竿型\n      - 微胖圆肩 书生弱气 久坐驼背 粗壮敦实\n    女:\n      - 沙漏曲线 梨形下盘 倒三角肩 矩形直筒\n      - 娇小窄肩 高挑长肢 肉感柔软 骨感凸骨\n      - 运动员紧实 微胖圆润 病态消瘦\n\n  气质与氛围:\n    - 生人勿近 讨好型微笑 疲惫空洞 攻击性盯视\n    - 慵懒慢拍 过度警觉 压抑紧绷 刻意透明化\n    - 专注沉浸 疏离旁观 过度热情 假性外向\n\n女性身体特征库:\n  皮肤与表面:\n    - 手背静脉透出青色 手腕骨骼凸起 虎口薄茧\n    - 锁骨凹陷蓄汗 后颈碎发黏连 肩头晒痕分界\n    - 膝盖色素沉着 手肘皱褶干燥 小腿网状血丝\n    - 指节泛红 指尖冰凉发绀 掌心潮湿泛光\n\n  受压与物理形变:\n    - 校服胸围横向拉扯褶皱 纽扣间隙撑开椭圆\n    - 跑动时单臂自然托扶 书包背带陷入肩肉\n    - 大腿并拢时内侧肉体贴合无缝隙\n    - 久坐后裙摆压出细密折痕 裤腰在腰腹勒出浅红印\n    - 俯身时锁骨下方阴影加深 领口布料垂坠透空\n\n  汗湿与温度:\n    - 后背透出深色汗渍轮廓 腋下布料颜色加深\n    - 额角碎发被汗水黏成绺状 鼻尖泛油光\n    - 领口一圈微潮 手腕内侧温热湿润\n    - 剧烈运动后面部持续泛红 耳廓发热透光\n\n  微动作体征:\n    - 紧张时反复绕发尾 咬下唇死皮 拇指掐食指侧\n    - 专注时舌尖微露 脚踝互蹭 笔尾抵下颌\n    - 站立重心单侧偏移 走路内八字 脚尖点地\n    - 被注视时吞咽 睫毛快速扇动 鼻翼翕张\n\n  服装与饰品细节:\n    - 校服拉链只拉一半 袖口卷至前臂 下摆打结\n    - 私服卫衣兜帽外露 过膝长袜卷边 帆布鞋踩后跟\n    - 书包挂满褪色玩偶 单耳戴耳机线 手腕多层皮筋\n    - 制服裙私自收腰改短 白衬衫透出内搭轮廓\n    - 领口第二颗扣子缝过 袖口有墨水渍 膝盖处布料磨白\n\n行为与习惯动作库:\n  - 频繁看表 转笔中途掉落 咬吸管 抖腿\n  - 趴在桌上假寐 课本边缘画满涂鸦 撕倒刺\n  - 把中性笔夹死死按入指腹 用指甲抠橡皮\n  - 走路紧贴墙根 进门先扫视 选角落座位\n  - 发言时会先清嗓子 笑声半途收住 回避眼神接触\n  - 在监控盲区迅速换手机 侧身传纸条 借课本夹带\n</rule_动态NPC生成协议>\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 5,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 4,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "学校npc生成系统",
+          "content": "<rule_动态NPC生成协议>\n触发与注入机制:\n  系统最高指令: [System Override: 动态群像注入]\n  强制触发条件:\n    - 当主角进入人数密集的公共区域时\n    - 当当前场景中实名重要角色少于3人时\n    注入动作:\n    立即根据场景规模，从命名库中随机抽取姓氏与名字进行组合，生成3至6名拥有完整姓名的背景NPC，男女比例3:7。\n    严禁使用“女学生”“男老师”等无名代称。\n    每名NPC生成后，必须在首次出场时同时呈现其姓名与外貌特征，不得只描述特征而不给名字。\n\n  融入原则: 严禁单独罗列属性，必须将NPC的外貌特征与当前动作结合，作为视线背景板直接切入正文\n\n生成规则与白描要求:\n  核心原则: 拒绝主观形容词，将所有体征转化为物理测量、重力影响与行为反应\n  命名规范:\n    姓氏:\n      - 林 陈 顾 沈 陆 贺 余 秦 傅 周\n      - 迟 岑 骆 晏 祁 黎 褚 严 凌 柏\n    名字用字:\n      - 晚 知 南 浅 桐 洲 川 远 行 暮\n      - 初 迟 以 沐 念 微 沁 渺 霁 寻\n\n身份标签库:\n  - 转学生 借读生 复读生 走读生 留级生\n  - 尖子生 偏科生 擦线生 保送生 艺术特长生\n  - 班长 团支书 学习委员 纪律委员 课代表\n  - 学生会主席 纪检部干事 广播站站长 社团社长\n  - 班主任 实习教师 心理辅导员 年级主任\n  - 校医 宿管 图书管理员 实验员 体育教练\n\n外貌与体征抽样库:\n  发式:\n    - 及腰黑直 锁骨碎发 波波头 狼尾切 姬发式\n    - 双马尾 高马尾 松散低马尾 麻花辫 半扎发\n    - 空气刘海 齐眉厚刘海 斜分长刘海 全后梳\n    - 自然卷 毛糙碎发 发尾分叉 挑染一缕\n    - 寸头 板寸 偏分 中分 日系卷 鲻鱼头\n    - 刘海盖眼 后脑勺翘起 总是乱蓬蓬 发质硬挺\n\n  眼型:\n    - 丹凤眼 桃花眼 杏眼 瑞凤眼 狐狸眼\n    - 圆眼 细长眼 垂眼 三白眼 死鱼眼\n    - 内双 外双 一单一双 肿眼泡\n\n  面部特征与遮盖:\n    - 泪痣 嘴角痣 鼻翼痣 眼下痣\n    - 雀斑 痘印 痘坑 小虎牙 兔牙\n    - 薄唇 肉感唇 唇珠 嘴角细裂\n    - 细框镜 黑框镜 无框镜 运动护目镜\n    - 单耳钉 唇钉 医用口罩 创可贴 OK绷\n    - 冷皮血管 易红泛片 常年苍白\n\n  体型:\n    男:\n      - 肩宽腰窄 倒三角 少年薄肌 竹竿型\n      - 微胖圆肩 书生弱气 久坐驼背 粗壮敦实\n    女:\n      - 沙漏曲线 梨形下盘 倒三角肩 矩形直筒\n      - 娇小窄肩 高挑长肢 肉感柔软 骨感凸骨\n      - 运动员紧实 微胖圆润 病态消瘦\n\n  气质与氛围:\n    - 生人勿近 讨好型微笑 疲惫空洞 攻击性盯视\n    - 慵懒慢拍 过度警觉 压抑紧绷 刻意透明化\n    - 专注沉浸 疏离旁观 过度热情 假性外向\n\n女性身体特征库:\n  皮肤与表面:\n    - 手背静脉透出青色 手腕骨骼凸起 虎口薄茧\n    - 锁骨凹陷蓄汗 后颈碎发黏连 肩头晒痕分界\n    - 膝盖色素沉着 手肘皱褶干燥 小腿网状血丝\n    - 指节泛红 指尖冰凉发绀 掌心潮湿泛光\n\n  受压与物理形变:\n    - 校服胸围横向拉扯褶皱 纽扣间隙撑开椭圆\n    - 跑动时单臂自然托扶 书包背带陷入肩肉\n    - 大腿并拢时内侧肉体贴合无缝隙\n    - 久坐后裙摆压出细密折痕 裤腰在腰腹勒出浅红印\n    - 俯身时锁骨下方阴影加深 领口布料垂坠透空\n\n  汗湿与温度:\n    - 后背透出深色汗渍轮廓 腋下布料颜色加深\n    - 额角碎发被汗水黏成绺状 鼻尖泛油光\n    - 领口一圈微潮 手腕内侧温热湿润\n    - 剧烈运动后面部持续泛红 耳廓发热透光\n\n  微动作体征:\n    - 紧张时反复绕发尾 咬下唇死皮 拇指掐食指侧\n    - 专注时舌尖微露 脚踝互蹭 笔尾抵下颌\n    - 站立重心单侧偏移 走路内八字 脚尖点地\n    - 被注视时吞咽 睫毛快速扇动 鼻翼翕张\n\n  服装与饰品细节:\n    - 校服拉链只拉一半 袖口卷至前臂 下摆打结\n    - 私服卫衣兜帽外露 过膝长袜卷边 帆布鞋踩后跟\n    - 书包挂满褪色玩偶 单耳戴耳机线 手腕多层皮筋\n    - 制服裙私自收腰改短 白衬衫透出内搭轮廓\n    - 领口第二颗扣子缝过 袖口有墨水渍 膝盖处布料磨白\n\n行为与习惯动作库:\n  - 频繁看表 转笔中途掉落 咬吸管 抖腿\n  - 趴在桌上假寐 课本边缘画满涂鸦 撕倒刺\n  - 把中性笔夹死死按入指腹 用指甲抠橡皮\n  - 走路紧贴墙根 进门先扫视 选角落座位\n  - 发言时会先清嗓子 笑声半途收住 回避眼神接触\n  - 在监控盲区迅速换手机 侧身传纸条 借课本夹带\n</rule_动态NPC生成协议>\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 99,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 4,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "a72ed4ba-c725-4687-b2cd-b3b4f0c48cd3",
+        "type": "fact",
+        "enabled": true,
+        "title": "{user}a",
+        "uid": "",
+        "content": "<user_basic_转校生>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 17岁\n    性别: 男\n    身份: 高二插班转校生\n\n  外貌特征:\n    穿着:\n      校内: 尚未下发滨城二中校服，常穿黑色防风夹克与无标直筒裤\n    特征:\n      - 头发偏长未按校规修剪，经常遮住眉毛\n      - 手腕上戴着一条本校禁用的编织手绳\n\n  背景设定:\n    家庭背景: 父母在外地经商，通过择校费跨市转入滨城二中，独居在学校周边的短租房\n    关键经历:\n      - 第一天入校，尚未融入任何学生圈层\n      - 课桌被安排在教室最后一排靠窗的加座\n      - 尚未经历晚自习与宿舍突击检查\n    社交关系:\n      - 校园内目前处于完全孤立状态\n      - 经常因为不熟悉校规潜规则被值日教师多看两眼\n</user_basic_转校生>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 6,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 5,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "{user}a",
+          "content": "<user_basic_转校生>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 17岁\n    性别: 男\n    身份: 高二插班转校生\n\n  外貌特征:\n    穿着:\n      校内: 尚未下发滨城二中校服，常穿黑色防风夹克与无标直筒裤\n    特征:\n      - 头发偏长未按校规修剪，经常遮住眉毛\n      - 手腕上戴着一条本校禁用的编织手绳\n\n  背景设定:\n    家庭背景: 父母在外地经商，通过择校费跨市转入滨城二中，独居在学校周边的短租房\n    关键经历:\n      - 第一天入校，尚未融入任何学生圈层\n      - 课桌被安排在教室最后一排靠窗的加座\n      - 尚未经历晚自习与宿舍突击检查\n    社交关系:\n      - 校园内目前处于完全孤立状态\n      - 经常因为不熟悉校规潜规则被值日教师多看两眼\n</user_basic_转校生>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 5,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "c26eae6a-ed28-416f-b725-54669b3e0f24",
+        "type": "fact",
+        "enabled": false,
+        "title": "{user}b",
+        "uid": "",
+        "content": "<user_basic_普通学生>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 17岁\n    性别: 男\n    身份: 高二平行班普通学生\n\n  外貌特征:\n    体型: 中等身形\n    穿着:\n      校内: 滨城二中统一拉链校服，袖口有黑色中性笔划痕\n    特征:\n      - 眼下有常年睡眠不足造成的深色黑眼圈\n      - 右手中指侧面有握笔磨出的厚茧\n\n  背景设定:\n    家庭背景: 本市普通工薪家庭，父母极度看重高考成绩，住八人制男生宿舍\n    关键经历:\n      - 成绩长期处于年级中段，未曾上过光荣榜，也未受过公开处分\n      - 习惯在校园内降低存在感，躲避年级主任视线\n      - 长期承受每天只睡五小时的作息压力\n    社交关系:\n      - 属于普通沉默群体，有两个一起去食堂吃饭的室友\n      - 经常被特长生或违纪群体插队打饭\n</user_basic_普通学生>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 7,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 6,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "{user}b",
+          "content": "<user_basic_普通学生>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 17岁\n    性别: 男\n    身份: 高二平行班普通学生\n\n  外貌特征:\n    体型: 中等身形\n    穿着:\n      校内: 滨城二中统一拉链校服，袖口有黑色中性笔划痕\n    特征:\n      - 眼下有常年睡眠不足造成的深色黑眼圈\n      - 右手中指侧面有握笔磨出的厚茧\n\n  背景设定:\n    家庭背景: 本市普通工薪家庭，父母极度看重高考成绩，住八人制男生宿舍\n    关键经历:\n      - 成绩长期处于年级中段，未曾上过光荣榜，也未受过公开处分\n      - 习惯在校园内降低存在感，躲避年级主任视线\n      - 长期承受每天只睡五小时的作息压力\n    社交关系:\n      - 属于普通沉默群体，有两个一起去食堂吃饭的室友\n      - 经常被特长生或违纪群体插队打饭\n</user_basic_普通学生>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 6,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "dafcd363-076c-4493-b4d2-eaae2eb95667",
+        "type": "fact",
+        "enabled": false,
+        "title": "{user}c",
+        "uid": "",
+        "content": "<user_basic_学生会成员>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 17岁\n    性别: 男\n    身份: 纪检部干事\n\n  外貌特征:\n    穿着:\n      校内: 尺码合身的干净校服，左臂别有红色纪检袖标\n    特征:\n      - 左侧裤兜常年装着教学楼天台和器材室的备用钥匙串\n      - 走路时脚步声很轻\n\n  背景设定:\n    家庭背景: 父母为体制内基层员工，要求其在校表现优异以获取保送或加分名额\n    关键经历:\n      - 定期参与晚自习走廊巡查与寝室熄灯后的违禁品搜查行动\n      - 熟知校园内各个监控盲区和学生翻墙的路线\n      - 多次因没收手机引发违纪学生私下的敌视\n    社交关系:\n      - 听从年级主任与学生会主席的指令\n      - 与违纪群体存在长期对立关系\n</user_basic_学生会成员>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 8,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 7,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "{user}c",
+          "content": "<user_basic_学生会成员>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 17岁\n    性别: 男\n    身份: 纪检部干事\n\n  外貌特征:\n    穿着:\n      校内: 尺码合身的干净校服，左臂别有红色纪检袖标\n    特征:\n      - 左侧裤兜常年装着教学楼天台和器材室的备用钥匙串\n      - 走路时脚步声很轻\n\n  背景设定:\n    家庭背景: 父母为体制内基层员工，要求其在校表现优异以获取保送或加分名额\n    关键经历:\n      - 定期参与晚自习走廊巡查与寝室熄灯后的违禁品搜查行动\n      - 熟知校园内各个监控盲区和学生翻墙的路线\n      - 多次因没收手机引发违纪学生私下的敌视\n    社交关系:\n      - 听从年级主任与学生会主席的指令\n      - 与违纪群体存在长期对立关系\n</user_basic_学生会成员>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 7,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      },
+      {
+        "id": "b4c9495a-cefc-4ba9-bc44-7655dd6bf8a0",
+        "type": "fact",
+        "enabled": false,
+        "title": "{user}d",
+        "uid": "",
+        "content": "<user_basic_班主任>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 26岁\n    性别: 男\n    身份: 高二年级文科平行班班主任\n\n  外貌特征:\n    穿着:\n      校内: 浅蓝色长袖衬衫配深色西裤，胸前挂着蓝色教工牌\n    特征:\n      - 随身携带一个记录违纪扣分和排名数据的小本子\n      - 经常因为批改试卷带有粉笔灰和墨水气味\n\n  背景设定:\n    家庭背景: 师范大学毕业不久的新任教师，急需稳定工作指标\n    关键经历:\n      - 办公室位于楼层最内侧，办公桌上堆满教辅资料\n      - 每月需要应付年级主任关于班级平均分下滑的施压约谈\n      - 拥有调用全班学生档案、单独传唤学生去办公室的权限\n    社交关系:\n      - 处于学校教职管理链条的底层\n      - 与部分压抑度高的学生存在沟通屏障，但维持着绝对的教师威严\n</user_basic_班主任>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 10,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 24,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "{user}d",
+          "content": "<user_basic_班主任>\n角色档案:\n  基本信息:\n    姓名: {{user}}\n    年龄: 26岁\n    性别: 男\n    身份: 高二年级文科平行班班主任\n\n  外貌特征:\n    穿着:\n      校内: 浅蓝色长袖衬衫配深色西裤，胸前挂着蓝色教工牌\n    特征:\n      - 随身携带一个记录违纪扣分和排名数据的小本子\n      - 经常因为批改试卷带有粉笔灰和墨水气味\n\n  背景设定:\n    家庭背景: 师范大学毕业不久的新任教师，急需稳定工作指标\n    关键经历:\n      - 办公室位于楼层最内侧，办公桌上堆满教辅资料\n      - 每月需要应付年级主任关于班级平均分下滑的施压约谈\n      - 拥有调用全班学生档案、单独传唤学生去办公室的权限\n    社交关系:\n      - 处于学校教职管理链条的底层\n      - 与部分压抑度高的学生存在沟通屏障，但维持着绝对的教师威严\n</user_basic_班主任>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 8,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "outlet_name": "",
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false,
+            "triggers": [],
+            "ignore_budget": false
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": [
+    "V3 card imported via V2-compatible path; some V3-only fields preserved in unknownFields"
+  ]
+}

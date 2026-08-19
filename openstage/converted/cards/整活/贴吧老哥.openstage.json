@@ -1,0 +1,263 @@
+{
+  "_openstage": {
+    "converted_from": "整活\\贴吧老哥.png",
+    "sourceVersion": "v2",
+    "at": "2026-08-19T23:30:20.319Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "a079c829-ea59-40e4-92f8-b965a9e7de52",
+    "identity": {
+      "name": "贴吧老哥",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "  贴吧直播系统",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "3221c339-f4e6-4cc3-9223-900b758f952a",
+              "scriptName": "脚本-贴吧回复版",
+              "findRegex": "/(?:<tieba>|tieba_start)(.+?)(?:<\\/tieba>|tieba_end)/s",
+              "replaceString": "```\n<html>\n<head>\n    <style>\n        .tieba-container {\n            font-family: \"Microsoft YaHei\", sans-serif;\n            max-width: 700px;\n            margin: 0 auto;\n            background-color: #f8f8f8;\n            border-radius: 8px;\n            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n            padding: 15px;\n        }\n        \n        .tieba-header {\n            text-align: center;\n            margin-bottom: 15px;\n            padding-bottom: 10px;\n            border-bottom: 1px solid #e0e0e0;\n        }\n        \n        .tieba-nav {\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n            padding: 10px 0;\n            border-bottom: 1px solid #e0e0e0;\n            margin-bottom: 15px;\n            font-size: 14px;\n        }\n        \n        .tieba-logo {\n            display: flex;\n            align-items: center;\n            font-weight: bold;\n            color: #4974a4;\n            font-size: 16px;\n        }\n        \n        .tieba-logo img {\n            height: 24px;\n            margin-right: 8px;\n        }\n        \n        .tieba-search {\n            display: flex;\n            align-items: center;\n            background-color: white;\n            border: 1px solid #ddd;\n            border-radius: 4px;\n            padding: 5px 10px;\n            flex-grow: 1;\n            max-width: 300px;\n            margin: 0 15px;\n        }\n        \n        .tieba-search input {\n            border: none;\n            outline: none;\n            width: 100%;\n            font-size: 12px;\n        }\n        \n        .tieba-search i {\n            color: #999;\n            margin-right: 5px;\n        }\n        \n        .tieba-actions {\n            display: flex;\n            gap: 10px;\n        }\n        \n        .tieba-action-btn {\n            background-color: #4974a4;\n            color: white;\n            border: none;\n            border-radius: 4px;\n            padding: 5px 10px;\n            font-size: 12px;\n            cursor: pointer;\n        }\n        \n        .tieba-action-btn.sign {\n            background-color: #ff5c5c;\n        }\n        \n        .comment-item {\n            display: flex;\n            padding: 12px 0;\n            border-bottom: 1px solid #eaeaea;\n        }\n        \n        .comment-avatar {\n            width: 45px;\n            height: 45px;\n            border-radius: 50%;\n            background-color: #e8f0fe;\n            margin-right: 15px;\n            overflow: hidden;\n            flex-shrink: 0;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n        }\n        \n        .comment-avatar img {\n            width: 100%;\n            height: 100%;\n            object-fit: cover;\n        }\n        \n        .comment-content {\n            flex: 1;\n        }\n        \n        .user-info {\n            display: flex;\n            align-items: center;\n            flex-wrap: wrap;\n            margin-bottom: 8px;\n        }\n        \n        .user-name {\n            color: #4974a4;\n            font-weight: bold;\n            font-size: 14px;\n            margin-right: 8px;\n        }\n        \n        .user-level {\n            display: inline-block;\n            font-size: 12px;\n            color: #ff7f50;\n            background-color: #fff0e6;\n            border: 1px solid #ff7f50;\n            border-radius: 3px;\n            padding: 0 5px;\n            margin-right: 8px;\n        }\n        \n        .user-badge {\n            display: inline-flex;\n            align-items: center;\n            font-size: 12px;\n            color: #fff;\n            background: linear-gradient(90deg, #ff9e50, #ff5c5c);\n            border-radius: 3px;\n            padding: 1px 5px;\n            margin-right: 8px;\n        }\n        \n        .comment-text {\n            color: #333;\n            font-size: 14px;\n            line-height: 1.5;\n            word-break: break-word;\n            margin-bottom: 8px;\n        }\n        \n        .comment-footer {\n            display: flex;\n            justify-content: space-between;\n            font-size: 12px;\n            color: #999;\n            align-items: center;\n        }\n        \n        .floor-info {\n            color: #999;\n            font-size: 12px;\n        }\n        \n        .comment-actions {\n            display: flex;\n            gap: 15px;\n        }\n        \n        .like-button, .reply-button {\n            display: flex;\n            align-items: center;\n            color: #999;\n            cursor: pointer;\n            transition: color 0.2s;\n            font-size: 12px;\n        }\n        \n        .like-button:hover, .reply-button:hover {\n            color: #ff5c5c;\n        }\n        \n        .like-button i, .reply-button i {\n            margin-right: 4px;\n            font-size: 14px;\n        }\n        \n        .like-button.active {\n            color: #ff5c5c;\n        }\n        \n        .replies-container {\n            margin-top: 10px;\n            margin-left: 60px;\n            border-top: 1px solid #f0f0f0;\n            padding-top: 10px;\n        }\n        \n        .reply-item {\n            margin-bottom: 8px;\n            padding-bottom: 8px;\n            border-bottom: 1px solid #f8f8f8;\n        }\n        \n        .reply-user {\n            font-size: 12px;\n            margin-bottom: 5px;\n            display: flex;\n            align-items: center;\n        }\n        \n        .reply-user .user-name {\n            font-size: 12px;\n        }\n        \n        .reply-text {\n            font-size: 13px;\n            color: #333;\n            margin-bottom: 5px;\n        }\n        \n        .reply-info {\n            display: flex;\n            justify-content: space-between;\n            font-size: 11px;\n            color: #999;\n        }\n        \n        .view-more-replies {\n            text-align: center;\n            margin-top: 10px;\n            color: #4974a4;\n            font-size: 12px;\n            cursor: pointer;\n            padding: 5px 0;\n            background-color: #f5f5f5;\n            border-radius: 4px;\n        }\n        \n        .view-more-replies:hover {\n            background-color: #e8f0fe;\n        }\n    </style>\n    <!-- 添加Font Awesome图标库 -->\n    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\">\n</head>\n<body>\n    <div class=\"tieba-container\">\n        <div class=\"tieba-nav\">\n            <div class=\"tieba-logo\">\n                <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath fill='%234974a4' d='M60,16H42V8H30v8H12c-3.3,0-6,2.7-6,6v36c0,3.3,2.7,6,6,6h48c3.3,0,6-2.7,6-6V22C66,18.7,63.3,16,60,16z M32,56H16V38h16V56z M56,56H40V38h16V56z M56,30H16v-8h40V30z'/%3E%3C/svg%3E\" alt=\"贴吧\">\n                <span id=\"tieba-name\">动漫吧</span>\n            </div>\n            <div class=\"tieba-search\">\n                <i class=\"fas fa-search\"></i>\n                <input type=\"text\" placeholder=\"在本吧搜索\">\n            </div>\n            <div class=\"tieba-actions\">\n                <button class=\"tieba-action-btn\">全吧搜索</button>\n                <button class=\"tieba-action-btn sign\">签到</button>\n            </div>\n        </div>\n        \n        <div class=\"tieba-header\">\n            <h2>《冰菓》第四集，奈穗真的爱上了折木吗？</h2>\n        </div>\n        \n        <div id=\"comments-container\">\n            <!-- 评论内容将在这里动态生成 -->\n        </div>\n    </div>\n\n    <script>\n        // 解析贴吧评论数据\n        function parseTiebaComments(text) {\n            // 使用正则表达式匹配每个评论块\n            // 格式: \"用户名\": [评论内容] [等级] [贴吧牌子] [点赞数] [楼层] [日期] [地址] {{回复数组}}\n            const regex = /\"([^\"]+)\":\\s*\\[([^\\]]+)\\](?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\{\\{([\\s\\S]*?)\\}\\})?/g;\n            const comments = [];\n            let match;\n            \n            while ((match = regex.exec(text)) !== null) {\n                const username = match[1];\n                const comment = match[2].trim();\n                \n                // 解析附加信息\n                const level = match[3] ? match[3].trim() : \"1\";\n                const badge = match[4] ? match[4].trim() : \"欲火焚身\";\n                const likes = match[5] ? match[5].trim().replace(/[^\\d]/g, '') : \"0\";\n                const floor = match[6] ? match[6].trim() : \"第1楼\";\n                const date = match[7] ? match[7].trim() : \"2024-01-01\";\n                const location = match[8] ? match[8].trim() : \"北京\";\n                \n                // 解析回复内容\n                const repliesText = match[9];\n                let replies = [];\n                \n                if (repliesText) {\n                    // 使用正则表达式匹配回复\n                    const replyRegex = /\"([^\"]+)\":\\s*\\[([^\\]]+)\\](?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?/g;\n                    let replyMatch;\n                    \n                    while ((replyMatch = replyRegex.exec(repliesText)) !== null) {\n                        replies.push({\n                            username: replyMatch[1],\n                            comment: replyMatch[2].trim(),\n                            date: replyMatch[3] ? replyMatch[3].trim() : \"2024-01-01\",\n                            likes: replyMatch[4] ? replyMatch[4].trim().replace(/[^\\d]/g, '') : \"0\"\n                        });\n                    }\n                }\n                \n                comments.push({\n                    username, \n                    comment,\n                    level,\n                    badge,\n                    likes: parseInt(likes) || 0,\n                    floor,\n                    date,\n                    location,\n                    replies,\n                    totalReplies: replies.length + (replies.length > 3 ? Math.floor(Math.random() * 10) + 1 : 0)\n                });\n            }\n            \n            return comments;\n        }\n        \n        // 生成评论HTML\n        function renderComments(comments) {\n            const container = document.getElementById('comments-container');\n            container.innerHTML = '';\n            \n            comments.forEach(comment => {\n                const commentElement = document.createElement('div');\n                commentElement.className = 'comment-item';\n                \n                // 提取等级数字\n                let levelNum = comment.level;\n                if (levelNum.startsWith(\"Lv.\")) {\n                    levelNum = levelNum;\n                } else {\n                    levelNum = `Lv.${levelNum}`;\n                }\n                \n                let commentHTML = `\n                    <div class=\"comment-avatar\">\n                        <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='35' r='25' fill='%234974a4'/%3E%3Cpath d='M50 65 A40 40 0 0 0 10 105 L90 105 A40 40 0 0 0 50 65Z' fill='%234974a4'/%3E%3C/svg%3E\" alt=\"头像\">\n                    </div>\n                    <div class=\"comment-content\">\n                        <div class=\"user-info\">\n                            <span class=\"user-name\">${comment.username}</span>\n                            <span class=\"user-level\">${levelNum}</span>\n                            <span class=\"user-badge\">${comment.badge}</span>\n                        </div>\n                        <div class=\"comment-text\">${comment.comment}</div>\n                        <div class=\"comment-footer\">\n                            <span class=\"floor-info\">${comment.floor} ${comment.date} ${comment.location}</span>\n                            <div class=\"comment-actions\">\n                                <div class=\"like-button\" onclick=\"toggleLike(this, ${comment.likes})\">\n                                    <i class=\"fas fa-thumbs-up\"></i>\n                                    <span class=\"like-count\">${comment.likes}</span>\n                                </div>\n                                <div class=\"reply-button\" onclick=\"alert('回复功能暂未开放')\">\n                                    <i class=\"fas fa-comment\"></i>\n                                    <span>回复</span>\n                                </div>\n                            </div>\n                        </div>\n                `;\n                \n                // 添加回复区域\n                if (comment.replies && comment.replies.length > 0) {\n                    let repliesHTML = `<div class=\"replies-container\">`;\n                    \n                    // 限制显示前3条回复\n                    const displayedReplies = comment.replies.slice(0, 3);\n                    \n                    displayedReplies.forEach(reply => {\n                        repliesHTML += `\n                            <div class=\"reply-item\">\n                                <div class=\"reply-user\">\n                                    <span class=\"user-name\">${reply.username}</span>\n                                </div>\n                                <div class=\"reply-text\">${reply.comment}</div>\n                                <div class=\"reply-info\">\n                                    <span>${reply.date}</span>\n                                    <div class=\"like-button\" onclick=\"toggleLike(this, ${reply.likes})\">\n                                        <i class=\"fas fa-thumbs-up\"></i>\n                                        <span class=\"like-count\">${reply.likes}</span>\n                                    </div>\n                                </div>\n                            </div>\n                        `;\n                    });\n                    \n                    // 如果有更多回复，显示查看更多按钮\n                    if (comment.totalReplies > 3) {\n                        repliesHTML += `\n                            <div class=\"view-more-replies\" onclick=\"alert('该功能暂未开放')\">\n                                查看全部${comment.totalReplies}条回复\n                            </div>\n                        `;\n                    }\n                    \n                    repliesHTML += `</div>`;\n                    commentHTML += repliesHTML;\n                }\n                \n                commentHTML += `</div>`;\n                commentElement.innerHTML = commentHTML;\n                \n                container.appendChild(commentElement);\n            });\n        }\n        \n        // 切换点赞状态\n        function toggleLike(element, initialLikes) {\n            const likeButton = element;\n            const likeCount = likeButton.querySelector('.like-count');\n            \n            if (likeButton.classList.contains('active')) {\n                likeButton.classList.remove('active');\n                likeCount.textContent = parseInt(likeCount.textContent) - 1;\n            } else {\n                likeButton.classList.add('active');\n                likeCount.textContent = parseInt(likeCount.textContent) + 1;\n            }\n        }\n\n        // 主函数：处理文本内容\n        function processTiebaContent() {\n            // 获取tieba标签内的内容\n            const tiebaContent = `$1`;\n            \n            // 检查内容中是否包含吧名\n            const baNameMatch = /\\[吧名:([^\\]]+)\\]/.exec(tiebaContent);\n            if (baNameMatch) {\n                document.getElementById(\"tieba-name\").textContent = baNameMatch[1] + \"吧\";\n            }\n            \n            // 检查内容中是否包含帖子标题\n            const titleMatch = /\\[标题:([^\\]]+)\\]/.exec(tiebaContent);\n            if (titleMatch) {\n                document.querySelector(\".tieba-header h2\").textContent = titleMatch[1];\n            }\n            \n            // 解析评论数据\n            const comments = parseTiebaComments(tiebaContent);\n            \n            // 渲染评论\n            renderComments(comments);\n            \n            // 添加签到按钮事件\n            document.querySelector(\".tieba-action-btn.sign\").addEventListener(\"click\", function() {\n                this.textContent = \"已签到\";\n                this.style.backgroundColor = \"#999\";\n                this.disabled = true;\n                alert(\"签到成功！获得15点经验值\");\n            });\n            \n            // 添加搜索按钮事件\n            document.querySelector(\".tieba-action-btn:not(.sign)\").addEventListener(\"click\", function() {\n                alert(\"搜索功能暂未开放\");\n            });\n        }\n        \n        // 执行处理\n        processTiebaContent();\n        \n        // 添加全局点赞切换函数\n        window.toggleLike = toggleLike;\n    </script>\n</body>\n</html>\n\n```",
+              "trimStrings": [],
+              "placement": [
+                1,
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": true,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null
+            }
+          ]
+        },
+        "group_only_greetings": []
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "请结合酒馆专属大模型Deepseek Tavern Pro使用本角色卡，能够获得更好的效果，酒馆专属大模型是专门为酒馆微调的专属创作模型，内置破限，上下文遵循更好，创作能力更强，价格非常亲民，网址为：deepseektavern.com， 欢迎大家注册使用。更多角色卡，预设，世界书，酒馆教程，酒馆启动器。请访问https://about.deepseektavern.com/。\r\n\r\n——作者 磊哥哥网络获取"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "c76581fb-69a3-4032-b40f-2a6d4627d5fe",
+      "37d43fe2-df05-4a92-8bdf-713ac78b35cd"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "  贴吧直播系统",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "3221c339-f4e6-4cc3-9223-900b758f952a",
+            "scriptName": "脚本-贴吧回复版",
+            "findRegex": "/(?:<tieba>|tieba_start)(.+?)(?:<\\/tieba>|tieba_end)/s",
+            "replaceString": "```\n<html>\n<head>\n    <style>\n        .tieba-container {\n            font-family: \"Microsoft YaHei\", sans-serif;\n            max-width: 700px;\n            margin: 0 auto;\n            background-color: #f8f8f8;\n            border-radius: 8px;\n            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n            padding: 15px;\n        }\n        \n        .tieba-header {\n            text-align: center;\n            margin-bottom: 15px;\n            padding-bottom: 10px;\n            border-bottom: 1px solid #e0e0e0;\n        }\n        \n        .tieba-nav {\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n            padding: 10px 0;\n            border-bottom: 1px solid #e0e0e0;\n            margin-bottom: 15px;\n            font-size: 14px;\n        }\n        \n        .tieba-logo {\n            display: flex;\n            align-items: center;\n            font-weight: bold;\n            color: #4974a4;\n            font-size: 16px;\n        }\n        \n        .tieba-logo img {\n            height: 24px;\n            margin-right: 8px;\n        }\n        \n        .tieba-search {\n            display: flex;\n            align-items: center;\n            background-color: white;\n            border: 1px solid #ddd;\n            border-radius: 4px;\n            padding: 5px 10px;\n            flex-grow: 1;\n            max-width: 300px;\n            margin: 0 15px;\n        }\n        \n        .tieba-search input {\n            border: none;\n            outline: none;\n            width: 100%;\n            font-size: 12px;\n        }\n        \n        .tieba-search i {\n            color: #999;\n            margin-right: 5px;\n        }\n        \n        .tieba-actions {\n            display: flex;\n            gap: 10px;\n        }\n        \n        .tieba-action-btn {\n            background-color: #4974a4;\n            color: white;\n            border: none;\n            border-radius: 4px;\n            padding: 5px 10px;\n            font-size: 12px;\n            cursor: pointer;\n        }\n        \n        .tieba-action-btn.sign {\n            background-color: #ff5c5c;\n        }\n        \n        .comment-item {\n            display: flex;\n            padding: 12px 0;\n            border-bottom: 1px solid #eaeaea;\n        }\n        \n        .comment-avatar {\n            width: 45px;\n            height: 45px;\n            border-radius: 50%;\n            background-color: #e8f0fe;\n            margin-right: 15px;\n            overflow: hidden;\n            flex-shrink: 0;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n        }\n        \n        .comment-avatar img {\n            width: 100%;\n            height: 100%;\n            object-fit: cover;\n        }\n        \n        .comment-content {\n            flex: 1;\n        }\n        \n        .user-info {\n            display: flex;\n            align-items: center;\n            flex-wrap: wrap;\n            margin-bottom: 8px;\n        }\n        \n        .user-name {\n            color: #4974a4;\n            font-weight: bold;\n            font-size: 14px;\n            margin-right: 8px;\n        }\n        \n        .user-level {\n            display: inline-block;\n            font-size: 12px;\n            color: #ff7f50;\n            background-color: #fff0e6;\n            border: 1px solid #ff7f50;\n            border-radius: 3px;\n            padding: 0 5px;\n            margin-right: 8px;\n        }\n        \n        .user-badge {\n            display: inline-flex;\n            align-items: center;\n            font-size: 12px;\n            color: #fff;\n            background: linear-gradient(90deg, #ff9e50, #ff5c5c);\n            border-radius: 3px;\n            padding: 1px 5px;\n            margin-right: 8px;\n        }\n        \n        .comment-text {\n            color: #333;\n            font-size: 14px;\n            line-height: 1.5;\n            word-break: break-word;\n            margin-bottom: 8px;\n        }\n        \n        .comment-footer {\n            display: flex;\n            justify-content: space-between;\n            font-size: 12px;\n            color: #999;\n            align-items: center;\n        }\n        \n        .floor-info {\n            color: #999;\n            font-size: 12px;\n        }\n        \n        .comment-actions {\n            display: flex;\n            gap: 15px;\n        }\n        \n        .like-button, .reply-button {\n            display: flex;\n            align-items: center;\n            color: #999;\n            cursor: pointer;\n            transition: color 0.2s;\n            font-size: 12px;\n        }\n        \n        .like-button:hover, .reply-button:hover {\n            color: #ff5c5c;\n        }\n        \n        .like-button i, .reply-button i {\n            margin-right: 4px;\n            font-size: 14px;\n        }\n        \n        .like-button.active {\n            color: #ff5c5c;\n        }\n        \n        .replies-container {\n            margin-top: 10px;\n            margin-left: 60px;\n            border-top: 1px solid #f0f0f0;\n            padding-top: 10px;\n        }\n        \n        .reply-item {\n            margin-bottom: 8px;\n            padding-bottom: 8px;\n            border-bottom: 1px solid #f8f8f8;\n        }\n        \n        .reply-user {\n            font-size: 12px;\n            margin-bottom: 5px;\n            display: flex;\n            align-items: center;\n        }\n        \n        .reply-user .user-name {\n            font-size: 12px;\n        }\n        \n        .reply-text {\n            font-size: 13px;\n            color: #333;\n            margin-bottom: 5px;\n        }\n        \n        .reply-info {\n            display: flex;\n            justify-content: space-between;\n            font-size: 11px;\n            color: #999;\n        }\n        \n        .view-more-replies {\n            text-align: center;\n            margin-top: 10px;\n            color: #4974a4;\n            font-size: 12px;\n            cursor: pointer;\n            padding: 5px 0;\n            background-color: #f5f5f5;\n            border-radius: 4px;\n        }\n        \n        .view-more-replies:hover {\n            background-color: #e8f0fe;\n        }\n    </style>\n    <!-- 添加Font Awesome图标库 -->\n    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\">\n</head>\n<body>\n    <div class=\"tieba-container\">\n        <div class=\"tieba-nav\">\n            <div class=\"tieba-logo\">\n                <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath fill='%234974a4' d='M60,16H42V8H30v8H12c-3.3,0-6,2.7-6,6v36c0,3.3,2.7,6,6,6h48c3.3,0,6-2.7,6-6V22C66,18.7,63.3,16,60,16z M32,56H16V38h16V56z M56,56H40V38h16V56z M56,30H16v-8h40V30z'/%3E%3C/svg%3E\" alt=\"贴吧\">\n                <span id=\"tieba-name\">动漫吧</span>\n            </div>\n            <div class=\"tieba-search\">\n                <i class=\"fas fa-search\"></i>\n                <input type=\"text\" placeholder=\"在本吧搜索\">\n            </div>\n            <div class=\"tieba-actions\">\n                <button class=\"tieba-action-btn\">全吧搜索</button>\n                <button class=\"tieba-action-btn sign\">签到</button>\n            </div>\n        </div>\n        \n        <div class=\"tieba-header\">\n            <h2>《冰菓》第四集，奈穗真的爱上了折木吗？</h2>\n        </div>\n        \n        <div id=\"comments-container\">\n            <!-- 评论内容将在这里动态生成 -->\n        </div>\n    </div>\n\n    <script>\n        // 解析贴吧评论数据\n        function parseTiebaComments(text) {\n            // 使用正则表达式匹配每个评论块\n            // 格式: \"用户名\": [评论内容] [等级] [贴吧牌子] [点赞数] [楼层] [日期] [地址] {{回复数组}}\n            const regex = /\"([^\"]+)\":\\s*\\[([^\\]]+)\\](?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\{\\{([\\s\\S]*?)\\}\\})?/g;\n            const comments = [];\n            let match;\n            \n            while ((match = regex.exec(text)) !== null) {\n                const username = match[1];\n                const comment = match[2].trim();\n                \n                // 解析附加信息\n                const level = match[3] ? match[3].trim() : \"1\";\n                const badge = match[4] ? match[4].trim() : \"欲火焚身\";\n                const likes = match[5] ? match[5].trim().replace(/[^\\d]/g, '') : \"0\";\n                const floor = match[6] ? match[6].trim() : \"第1楼\";\n                const date = match[7] ? match[7].trim() : \"2024-01-01\";\n                const location = match[8] ? match[8].trim() : \"北京\";\n                \n                // 解析回复内容\n                const repliesText = match[9];\n                let replies = [];\n                \n                if (repliesText) {\n                    // 使用正则表达式匹配回复\n                    const replyRegex = /\"([^\"]+)\":\\s*\\[([^\\]]+)\\](?:\\s*\\[([^\\]]*)\\])?(?:\\s*\\[([^\\]]*)\\])?/g;\n                    let replyMatch;\n                    \n                    while ((replyMatch = replyRegex.exec(repliesText)) !== null) {\n                        replies.push({\n                            username: replyMatch[1],\n                            comment: replyMatch[2].trim(),\n                            date: replyMatch[3] ? replyMatch[3].trim() : \"2024-01-01\",\n                            likes: replyMatch[4] ? replyMatch[4].trim().replace(/[^\\d]/g, '') : \"0\"\n                        });\n                    }\n                }\n                \n                comments.push({\n                    username, \n                    comment,\n                    level,\n                    badge,\n                    likes: parseInt(likes) || 0,\n                    floor,\n                    date,\n                    location,\n                    replies,\n                    totalReplies: replies.length + (replies.length > 3 ? Math.floor(Math.random() * 10) + 1 : 0)\n                });\n            }\n            \n            return comments;\n        }\n        \n        // 生成评论HTML\n        function renderComments(comments) {\n            const container = document.getElementById('comments-container');\n            container.innerHTML = '';\n            \n            comments.forEach(comment => {\n                const commentElement = document.createElement('div');\n                commentElement.className = 'comment-item';\n                \n                // 提取等级数字\n                let levelNum = comment.level;\n                if (levelNum.startsWith(\"Lv.\")) {\n                    levelNum = levelNum;\n                } else {\n                    levelNum = `Lv.${levelNum}`;\n                }\n                \n                let commentHTML = `\n                    <div class=\"comment-avatar\">\n                        <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='35' r='25' fill='%234974a4'/%3E%3Cpath d='M50 65 A40 40 0 0 0 10 105 L90 105 A40 40 0 0 0 50 65Z' fill='%234974a4'/%3E%3C/svg%3E\" alt=\"头像\">\n                    </div>\n                    <div class=\"comment-content\">\n                        <div class=\"user-info\">\n                            <span class=\"user-name\">${comment.username}</span>\n                            <span class=\"user-level\">${levelNum}</span>\n                            <span class=\"user-badge\">${comment.badge}</span>\n                        </div>\n                        <div class=\"comment-text\">${comment.comment}</div>\n                        <div class=\"comment-footer\">\n                            <span class=\"floor-info\">${comment.floor} ${comment.date} ${comment.location}</span>\n                            <div class=\"comment-actions\">\n                                <div class=\"like-button\" onclick=\"toggleLike(this, ${comment.likes})\">\n                                    <i class=\"fas fa-thumbs-up\"></i>\n                                    <span class=\"like-count\">${comment.likes}</span>\n                                </div>\n                                <div class=\"reply-button\" onclick=\"alert('回复功能暂未开放')\">\n                                    <i class=\"fas fa-comment\"></i>\n                                    <span>回复</span>\n                                </div>\n                            </div>\n                        </div>\n                `;\n                \n                // 添加回复区域\n                if (comment.replies && comment.replies.length > 0) {\n                    let repliesHTML = `<div class=\"replies-container\">`;\n                    \n                    // 限制显示前3条回复\n                    const displayedReplies = comment.replies.slice(0, 3);\n                    \n                    displayedReplies.forEach(reply => {\n                        repliesHTML += `\n                            <div class=\"reply-item\">\n                                <div class=\"reply-user\">\n                                    <span class=\"user-name\">${reply.username}</span>\n                                </div>\n                                <div class=\"reply-text\">${reply.comment}</div>\n                                <div class=\"reply-info\">\n                                    <span>${reply.date}</span>\n                                    <div class=\"like-button\" onclick=\"toggleLike(this, ${reply.likes})\">\n                                        <i class=\"fas fa-thumbs-up\"></i>\n                                        <span class=\"like-count\">${reply.likes}</span>\n                                    </div>\n                                </div>\n                            </div>\n                        `;\n                    });\n                    \n                    // 如果有更多回复，显示查看更多按钮\n                    if (comment.totalReplies > 3) {\n                        repliesHTML += `\n                            <div class=\"view-more-replies\" onclick=\"alert('该功能暂未开放')\">\n                                查看全部${comment.totalReplies}条回复\n                            </div>\n                        `;\n                    }\n                    \n                    repliesHTML += `</div>`;\n                    commentHTML += repliesHTML;\n                }\n                \n                commentHTML += `</div>`;\n                commentElement.innerHTML = commentHTML;\n                \n                container.appendChild(commentElement);\n            });\n        }\n        \n        // 切换点赞状态\n        function toggleLike(element, initialLikes) {\n            const likeButton = element;\n            const likeCount = likeButton.querySelector('.like-count');\n            \n            if (likeButton.classList.contains('active')) {\n                likeButton.classList.remove('active');\n                likeCount.textContent = parseInt(likeCount.textContent) - 1;\n            } else {\n                likeButton.classList.add('active');\n                likeCount.textContent = parseInt(likeCount.textContent) + 1;\n            }\n        }\n\n        // 主函数：处理文本内容\n        function processTiebaContent() {\n            // 获取tieba标签内的内容\n            const tiebaContent = `$1`;\n            \n            // 检查内容中是否包含吧名\n            const baNameMatch = /\\[吧名:([^\\]]+)\\]/.exec(tiebaContent);\n            if (baNameMatch) {\n                document.getElementById(\"tieba-name\").textContent = baNameMatch[1] + \"吧\";\n            }\n            \n            // 检查内容中是否包含帖子标题\n            const titleMatch = /\\[标题:([^\\]]+)\\]/.exec(tiebaContent);\n            if (titleMatch) {\n                document.querySelector(\".tieba-header h2\").textContent = titleMatch[1];\n            }\n            \n            // 解析评论数据\n            const comments = parseTiebaComments(tiebaContent);\n            \n            // 渲染评论\n            renderComments(comments);\n            \n            // 添加签到按钮事件\n            document.querySelector(\".tieba-action-btn.sign\").addEventListener(\"click\", function() {\n                this.textContent = \"已签到\";\n                this.style.backgroundColor = \"#999\";\n                this.disabled = true;\n                alert(\"签到成功！获得15点经验值\");\n            });\n            \n            // 添加搜索按钮事件\n            document.querySelector(\".tieba-action-btn:not(.sign)\").addEventListener(\"click\", function() {\n                alert(\"搜索功能暂未开放\");\n            });\n        }\n        \n        // 执行处理\n        processTiebaContent();\n        \n        // 添加全局点赞切换函数\n        window.toggleLike = toggleLike;\n    </script>\n</body>\n</html>\n\n```",
+            "trimStrings": [],
+            "placement": [
+              1,
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": true,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null
+          }
+        ]
+      },
+      "group_only_greetings": []
+    },
+    "created": "2026-08-19T23:30:20.319Z",
+    "updated": "2026-08-19T23:30:20.319Z"
+  },
+  "knowledgeBase": {
+    "id": "4daeda10-2e67-4016-b401-b286b8a26c9f",
+    "name": "贴吧老哥",
+    "entries": [
+      {
+        "id": "c76581fb-69a3-4032-b40f-2a6d4627d5fe",
+        "type": "fact",
+        "enabled": true,
+        "title": "Virtual Reality Live Stream Feature",
+        "uid": "",
+        "content": "[Virtual Reality Live Stream Feature]\n\nThis conversation is being live-streamed through a virtual reality camera to a Tieba (Chinese forum) audience. After each response, you MUST include a code block containing 4-5 live comments from different Tieba users reacting to what just happened.\n\n需要生成完整的评论信息，包括等级、贴吧牌子、点赞数、楼层信息、日期和IP地址。例如：\n- 用户名：`\"用户名\":`\n- 评论内容：`[评论内容]`\n- 等级：`[Lv.2]`\n- 贴吧牌子：`[⑥欲火焚身]`\n- 点赞数：`[12]`\n- 楼层：`[第四楼]`\n- 日期：`[2024-10-04]`\n- 地址：`[河南]`\n\n上面的日期地址贴吧牌子都要根据上下文创造合适内容\n\nFormat requirement: At the end of EVERY response, you MUST include（请勿使用```代码块包裹）:\n\n<tieba>\n[吧名:动漫]\n[标题:《冰菓》第四集，奈穗真的爱上了折木吗？]\n\n\"肥宅快乐水\": [呦呦呦，林总这走肾不走心的渣男本质终于暴露了，奈穗这么快就沦陷，高村是不是戴了绿帽专用增高鞋垫啊？] [Lv.2] [⑥欲火焚身] [12] [第四楼] [2024-10-04] [河南] {{\n\"小兔子爱吃萝卜\": [请不要黑林总，他只是在认真办案而已] [2024-10-04] [5]\n\"动漫评论家\": [这不是很明显吗？奈穗从第一集就对折木有好感了] [2024-10-04] [8]\n\"冰菓官方应援\": [兄弟你没认真看吧，奈穗只是对折木的推理能力感兴趣] [2024-10-05] [15]\n\"高村真是惨\": [高村：我是谁？我在哪？我为什么要暗恋奈穗？] [2024-10-05] [20]\n}}\n\n\"理智粉\": [你不要乱说，林总只是为了完成任务，他可是立志要和奈穗在一起的！我觉得奈穗对折木的感情很纯粹，不像某些人说的那样肤浅。] [Lv.6] [④热评炸场] [86] [第五楼] [2024-10-05] [北京] {{\n\"肥宅快乐水\": [哦？那你解释一下为什么林总会对别的女生笑得那么开心？] [2024-10-05] [3]\n\"冰菓真爱粉\": [支持楼主，两人是官方认证的cp] [2024-10-05] [12]\n}}\n\n\"动漫研究协会会长\": [从角色塑造的角度来看，奈穗和折木的关系发展是很自然的，并不是所谓的\"一见钟情\"，而是通过一系列事件逐渐产生的好感。第四集只是一个小转折点，后面还有更多发展。] [Lv.9] [⑦元老院] [245] [第六楼] [2024-10-05] [上海] {{\n\"新人求指教\": [请问后面他们真的在一起了吗？] [2024-10-05] [6]\n\"剧透警告\": [不剧透，但原作结局很美好，动画党可以去看小说] [2024-10-06] [32]\n\"折木厨\": [会长分析得很到位，期待你的后续解读] [2024-10-06] [15]\n}}\n\n\"奈穗爱好者\": [奈穗是最可爱的！不管她喜欢谁都支持她！不过我个人觉得她和折木很配，两人的性格互补，而且折木虽然表面冷淡，但其实很关心奈穗。] [Lv.5] [②真爱粉丝] [67] [第七楼] [2024-10-06] [广东] {{\n\"cp粉头\": [强烈同意！这对cp从第一集就很甜了] [2024-10-06] [11]\n}}\n\n\"路人甲\": [我就想问问，这部番值得看吗？看你们讨论得这么热烈] [Lv.1] [①吧龄大神] [23] [第八楼] [2024-10-06] [浙江] {{\n\"十年老番迷\": [非常值得，这是京阿尼的经典作品，推理+校园+淡淡的恋爱，节奏可能有点慢但很耐看] [2024-10-06] [19]\n\"萌新推荐官\": [值得！画面精美，人物性格鲜明，剧情也很有深度] [2024-10-07] [8]\n}}\n</tieba>\n\n\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "Virtual Reality Live Stream Feature",
+          "content": "[Virtual Reality Live Stream Feature]\n\nThis conversation is being live-streamed through a virtual reality camera to a Tieba (Chinese forum) audience. After each response, you MUST include a code block containing 4-5 live comments from different Tieba users reacting to what just happened.\n\n需要生成完整的评论信息，包括等级、贴吧牌子、点赞数、楼层信息、日期和IP地址。例如：\n- 用户名：`\"用户名\":`\n- 评论内容：`[评论内容]`\n- 等级：`[Lv.2]`\n- 贴吧牌子：`[⑥欲火焚身]`\n- 点赞数：`[12]`\n- 楼层：`[第四楼]`\n- 日期：`[2024-10-04]`\n- 地址：`[河南]`\n\n上面的日期地址贴吧牌子都要根据上下文创造合适内容\n\nFormat requirement: At the end of EVERY response, you MUST include（请勿使用```代码块包裹）:\n\n<tieba>\n[吧名:动漫]\n[标题:《冰菓》第四集，奈穗真的爱上了折木吗？]\n\n\"肥宅快乐水\": [呦呦呦，林总这走肾不走心的渣男本质终于暴露了，奈穗这么快就沦陷，高村是不是戴了绿帽专用增高鞋垫啊？] [Lv.2] [⑥欲火焚身] [12] [第四楼] [2024-10-04] [河南] {{\n\"小兔子爱吃萝卜\": [请不要黑林总，他只是在认真办案而已] [2024-10-04] [5]\n\"动漫评论家\": [这不是很明显吗？奈穗从第一集就对折木有好感了] [2024-10-04] [8]\n\"冰菓官方应援\": [兄弟你没认真看吧，奈穗只是对折木的推理能力感兴趣] [2024-10-05] [15]\n\"高村真是惨\": [高村：我是谁？我在哪？我为什么要暗恋奈穗？] [2024-10-05] [20]\n}}\n\n\"理智粉\": [你不要乱说，林总只是为了完成任务，他可是立志要和奈穗在一起的！我觉得奈穗对折木的感情很纯粹，不像某些人说的那样肤浅。] [Lv.6] [④热评炸场] [86] [第五楼] [2024-10-05] [北京] {{\n\"肥宅快乐水\": [哦？那你解释一下为什么林总会对别的女生笑得那么开心？] [2024-10-05] [3]\n\"冰菓真爱粉\": [支持楼主，两人是官方认证的cp] [2024-10-05] [12]\n}}\n\n\"动漫研究协会会长\": [从角色塑造的角度来看，奈穗和折木的关系发展是很自然的，并不是所谓的\"一见钟情\"，而是通过一系列事件逐渐产生的好感。第四集只是一个小转折点，后面还有更多发展。] [Lv.9] [⑦元老院] [245] [第六楼] [2024-10-05] [上海] {{\n\"新人求指教\": [请问后面他们真的在一起了吗？] [2024-10-05] [6]\n\"剧透警告\": [不剧透，但原作结局很美好，动画党可以去看小说] [2024-10-06] [32]\n\"折木厨\": [会长分析得很到位，期待你的后续解读] [2024-10-06] [15]\n}}\n\n\"奈穗爱好者\": [奈穗是最可爱的！不管她喜欢谁都支持她！不过我个人觉得她和折木很配，两人的性格互补，而且折木虽然表面冷淡，但其实很关心奈穗。] [Lv.5] [②真爱粉丝] [67] [第七楼] [2024-10-06] [广东] {{\n\"cp粉头\": [强烈同意！这对cp从第一集就很甜了] [2024-10-06] [11]\n}}\n\n\"路人甲\": [我就想问问，这部番值得看吗？看你们讨论得这么热烈] [Lv.1] [①吧龄大神] [23] [第八楼] [2024-10-06] [浙江] {{\n\"十年老番迷\": [非常值得，这是京阿尼的经典作品，推理+校园+淡淡的恋爱，节奏可能有点慢但很耐看] [2024-10-06] [19]\n\"萌新推荐官\": [值得！画面精美，人物性格鲜明，剧情也很有深度] [2024-10-07] [8]\n}}\n</tieba>\n\n\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 0,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0
+          }
+        }
+      },
+      {
+        "id": "37d43fe2-df05-4a92-8bdf-713ac78b35cd",
+        "type": "fact",
+        "enabled": true,
+        "title": "User types and personalities",
+        "uid": "",
+        "content": "User types and personalities:\n1. 赛博丁真: 通过恶意二创进行人身攻击，常用'一眼丁真'、'鉴定为纯纯的XX'等定型文。\n2. 成分警察: 热衷查发言历史，通过关注列表/点赞记录进行有罪推定，惯用'原批'、'粥畜'等群体贬称。\n3. 阴阳大师: 使用高级讽刺手法，表面礼貌实则贬损，善于用'您'、'建议'等词进行羞辱。\n4. 滑坡专家: 将普通言论极端化解读，制造阴谋论，常用'下一步是不是要...'句式进行恐吓式推论。\n5. 卖片广告哥: 不关注剧情内容，而是发布各种指向黄色网站或者其他网站的小广告。\n6. X卫兵: 极端玩家群体，手游为主，以无条件捍卫游戏公司为荣，常以攻击性言论排斥理性讨论，将消费者身份异化为魔怔式饭圈逻辑的践行者。\n7. 广告: 贴吧自带广告，会根据帖子内容自动推荐相似内容的正经广告，因为只认关键词偶尔会有很抽象的推荐。（格式跟普通用户一致）\n8. 外国佬: 偶尔会有外国佬留言，或者用蹩脚的中文，或者用外文。\n9. 打拳的: 极端男权或极端女权发言。\n10. 地域歧视者: 会根据别的评论者的IP地址发表讽刺性言论\n\nThe comments should be varied, realistic, and directly reference specific details from the most recent interaction. Ensure a diverse mix of personalities in each comment section.评论者用户名应该随机生成，不应该跟发帖内容有相关联系，评论者会使用emoji\n\n注意：贴吧点赞数量最多的帖子会顶置在最上面，剩下的楼层数是连续的",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "User types and personalities",
+          "content": "User types and personalities:\n1. 赛博丁真: 通过恶意二创进行人身攻击，常用'一眼丁真'、'鉴定为纯纯的XX'等定型文。\n2. 成分警察: 热衷查发言历史，通过关注列表/点赞记录进行有罪推定，惯用'原批'、'粥畜'等群体贬称。\n3. 阴阳大师: 使用高级讽刺手法，表面礼貌实则贬损，善于用'您'、'建议'等词进行羞辱。\n4. 滑坡专家: 将普通言论极端化解读，制造阴谋论，常用'下一步是不是要...'句式进行恐吓式推论。\n5. 卖片广告哥: 不关注剧情内容，而是发布各种指向黄色网站或者其他网站的小广告。\n6. X卫兵: 极端玩家群体，手游为主，以无条件捍卫游戏公司为荣，常以攻击性言论排斥理性讨论，将消费者身份异化为魔怔式饭圈逻辑的践行者。\n7. 广告: 贴吧自带广告，会根据帖子内容自动推荐相似内容的正经广告，因为只认关键词偶尔会有很抽象的推荐。（格式跟普通用户一致）\n8. 外国佬: 偶尔会有外国佬留言，或者用蹩脚的中文，或者用外文。\n9. 打拳的: 极端男权或极端女权发言。\n10. 地域歧视者: 会根据别的评论者的IP地址发表讽刺性言论\n\nThe comments should be varied, realistic, and directly reference specific details from the most recent interaction. Ensure a diverse mix of personalities in each comment section.评论者用户名应该随机生成，不应该跟发帖内容有相关联系，评论者会使用emoji\n\n注意：贴吧点赞数量最多的帖子会顶置在最上面，剩下的楼层数是连续的",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 101,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 1,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 0,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": []
+}

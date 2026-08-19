@@ -1,0 +1,649 @@
+{
+  "_openstage": {
+    "converted_from": "系统\\燃烧我的卡路里！！.png",
+    "sourceVersion": "v3",
+    "at": "2026-08-19T23:30:23.914Z",
+    "ads_stripped": true
+  },
+  "character": {
+    "id": "9c40aada-600a-451f-bf4f-da4a80cef3e8",
+    "identity": {
+      "name": "减肥大作战",
+      "description": "",
+      "personality": "",
+      "scenario": "",
+      "appearance": "",
+      "meta": {
+        "creator_notes": "",
+        "tags": [],
+        "creator": "",
+        "character_version": "",
+        "extensions": {
+          "talkativeness": "0.5",
+          "fav": false,
+          "world": "减肥大作战",
+          "depth_prompt": {
+            "prompt": "",
+            "depth": 4,
+            "role": "system"
+          },
+          "regex_scripts": [
+            {
+              "id": "0d739c72-ba5a-4041-8056-7d6b9a7ce902",
+              "scriptName": "BMI计算器",
+              "findRegex": "BMI-SEX",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>身体数据生成器</title>\n    <style>\n        :root {\n            --bg-primary: #1e1e2f;\n            --bg-secondary: #27293d;\n            --text-primary: #dcdce0;\n            --text-secondary: #a9a9b3;\n            --accent: #89b4fa;\n            --border-color: #414559;\n            --button-bg: #89b4fa;\n            --button-text: #1e1e2f;\n            --input-bg: #363a4f;\n        }\n        body {\n            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n            background-color: transparent;\n            color: var(--text-primary);\n            margin: 0;\n            padding: 4px;\n            font-size: 14px;\n        }\n        .calculator-card {\n            background-color: var(--bg-secondary);\n            border-radius: 12px;\n            border: 1px solid var(--border-color);\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n            overflow: hidden;\n            max-width: 350px;\n            margin: 0 auto;\n        }\n        .card-header {\n            background-color: var(--input-bg);\n            padding: 10px 16px;\n            font-size: 16px;\n            font-weight: 600;\n            color: var(--accent);\n            border-bottom: 1px solid var(--border-color);\n        }\n        .card-body {\n            padding: 16px;\n        }\n        .input-group {\n            margin-bottom: 16px;\n        }\n        .input-group label {\n            display: block;\n            font-size: 12px;\n            color: var(--text-secondary);\n            margin-bottom: 6px;\n        }\n        .input-field {\n            width: 100%;\n            background-color: var(--input-bg);\n            border: 1px solid var(--border-color);\n            border-radius: 6px;\n            color: var(--text-primary);\n            padding: 10px;\n            font-size: 14px;\n            box-sizing: border-box;\n        }\n        .input-field::placeholder {\n            color: var(--text-secondary);\n        }\n        .generate-button {\n            width: 100%;\n            padding: 12px;\n            background-color: var(--button-bg);\n            color: var(--button-text);\n            border: none;\n            border-radius: 6px;\n            font-size: 16px;\n            font-weight: bold;\n            cursor: pointer;\n            transition: background-color 0.2s ease;\n        }\n        .generate-button:hover {\n            background-color: #a6caff;\n        }\n        .results-section {\n            margin-top: 20px;\n            padding-top: 16px;\n            border-top: 1px solid var(--border-color);\n        }\n        .result-item {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 10px;\n        }\n        .result-label {\n            color: var(--text-secondary);\n        }\n        .result-value {\n            font-weight: bold;\n            font-size: 16px;\n            color: var(--accent);\n        }\n        .result-goal {\n            font-size: 14px;\n            color: var(--text-primary);\n            margin-top: 4px;\n        }\n    </style>\n</head>\n<body>\n<div class=\"calculator-card\">\n    <div class=\"card-header\">身体数据生成器</div>\n    <div class=\"card-body\">\n        <div class=\"input-group\">\n            <label for=\"input-height\">身高 (cm)</label>\n            <input type=\"number\" id=\"input-height\" class=\"input-field\" placeholder=\"例如: 175\">\n        </div>\n        <div class=\"input-group\">\n            <label for=\"input-weight\">体重 (kg)</label>\n            <input type=\"number\" id=\"input-weight\" class=\"input-field\" placeholder=\"例如: 65\">\n        </div>\n        <button id=\"generate-btn\" class=\"generate-button\">生成并发送</button>\n        <div class=\"results-section\">\n            <div class=\"result-item\">\n                <span class=\"result-label\">身体质量指数 (BMI)</span>\n                <span id=\"result-bmi\" class=\"result-value\">$3</span>\n            </div>\n            <div>\n                <span class=\"result-label\">每日目标</span>\n                <p id=\"result-goal\" class=\"result-goal\">$4</p>\n            </div>\n        </div>\n    </div>\n</div>\n\n<script>\n    /**\n     * 将用户的选择作为命令发送到 SillyTavern。\n     * 优先使用 triggerSlash 函数，如果找不到则回退到直接操作DOM。\n     * @param {string} messageText - 要发送的纯文本消息。\n     */\n    function sendToSillyTavern(messageText) {\n        const command = `/send ${messageText} | /trigger`;\n        try {\n            if (typeof window.triggerSlash === 'function') {\n                window.triggerSlash(command);\n                console.log('Using window.triggerSlash');\n                return;\n            }\n            if (window.parent && typeof window.parent.triggerSlash === 'function') {\n                window.parent.triggerSlash(command);\n                console.log('Using window.parent.triggerSlash');\n                return;\n            }\n            \n            console.log('Fallback: Manipulating DOM');\n            const textarea = window.parent.document.querySelector('#send_textarea');\n            const sendButton = window.parent.document.querySelector('#send_but');\n            if (textarea && sendButton) {\n                textarea.value = messageText;\n                sendButton.click();\n            } else {\n                throw new Error(\"SillyTavern send elements not found.\");\n            }\n        } catch (e) {\n            console.error(\"Failed to send message to SillyTavern:\", e);\n            alert(\"无法连接到SillyTavern。请确保相关扩展已启用。\");\n        }\n    }\n\n    document.addEventListener('DOMContentLoaded', function() {\n        const heightInput = document.getElementById('input-height');\n        const weightInput = document.getElementById('input-weight');\n        const generateBtn = document.getElementById('generate-btn');\n        const bmiResultEl = document.getElementById('result-bmi');\n        const goalResultEl = document.getElementById('result-goal');\n\n        generateBtn.addEventListener('click', function() {\n            const height = parseFloat(heightInput.value);\n            const weight = parseFloat(weightInput.value);\n\n            if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {\n                alert('请输入有效的身高和体重！');\n                return;\n            }\n\n            const heightInMeters = height / 100;\n            const bmi = weight / (heightInMeters * heightInMeters);\n            const bmiFormatted = bmi.toFixed(1);\n\n            let dailyGoal = '';\n            if (bmi < 18.5) {\n                dailyGoal = '目标：增加营养，进行适度力量训练以增强体质。';\n            } else if (bmi >= 18.5 && bmi < 24) {\n                dailyGoal = '目标：保持均衡饮食，坚持每周3-5次中等强度锻炼。';\n            } else if (bmi >= 24 && bmi < 28) {\n                dailyGoal = '目标：控制总热量摄入，增加有氧运动频率，建议每日做爱3次。';\n            } else {\n                dailyGoal = '目标：建议寻求专业指导，制定系统的健康减重计划，每日做爱至少5次。';\n            }\n\n            bmiResultEl.textContent = bmiFormatted;\n            goalResultEl.textContent = dailyGoal;\n\n            const message = `我的身体数据已更新：身高${height}cm，体重${weight}kg。根据计算，我的BMI是${bmiFormatted}，今日的建议目标是“${dailyGoal}”。`;\n            sendToSillyTavern(message);\n        });\n    });\n</script>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                1,
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": false,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": 2
+            },
+            {
+              "id": "52761ad3-925d-40d4-a8b8-4e61026c6cb9",
+              "scriptName": "状态栏",
+              "findRegex": "<StatusPlaceHolderImpl/>",
+              "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>状态栏</title>\n    <style>\n        :root {\n            --bg-primary: #12121c;\n            --bg-secondary: #1a1a2a;\n            --text-primary: #e0e0ff;\n            --text-secondary: #a0a0c0;\n            --accent: #7f5af0;\n            --border-color: #2c2c4a;\n            --quote-bg: #242438;\n        }\n        body {\n            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;\n            background-color: transparent;\n            color: var(--text-primary);\n            margin: 0;\n            padding: 4px;\n            font-size: 14px;\n        }\n        .dreamer-profile {\n            background-color: var(--bg-secondary);\n            border-radius: 12px;\n            border: 1px solid var(--border-color);\n            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);\n            overflow: hidden;\n            max-width: 450px;\n            margin: 0 auto;\n        }\n        .profile-header {\n            padding: 16px;\n            background: linear-gradient(135deg, #1a1a2a, #2c2c4a);\n        }\n        .header-item {\n            margin-bottom: 12px;\n        }\n        .header-item:last-child {\n            margin-bottom: 0;\n        }\n        .label {\n            font-size: 12px;\n            color: var(--accent);\n            font-weight: bold;\n            margin-bottom: 4px;\n            text-transform: uppercase;\n        }\n        .value {\n            font-size: 14px;\n            line-height: 1.5;\n        }\n        .stats-grid {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            gap: 1px;\n            background-color: var(--border-color);\n            padding-top: 1px;\n        }\n        .stat-item {\n            background-color: var(--bg-secondary);\n            padding: 12px;\n            text-align: center;\n        }\n        .stat-value {\n            font-size: 18px;\n            font-weight: bold;\n            color: var(--text-primary);\n        }\n        .pr-section {\n            padding: 16px;\n        }\n        .testimonial {\n            background-color: var(--quote-bg);\n            border-left: 3px solid var(--accent);\n            padding: 12px;\n            margin-bottom: 12px;\n            border-radius: 0 8px 8px 0;\n        }\n        .testimonial:last-child {\n            margin-bottom: 0;\n        }\n        .testimonial-text {\n            font-style: italic;\n            color: var(--text-secondary);\n        }\n        .news-item {\n            margin-top: 16px;\n            padding-top: 16px;\n            border-top: 1px dashed var(--border-color);\n        }\n        .news-text {\n            font-size: 13px;\n        }\n    </style>\n</head>\n<body>\n<div class=\"dreamer-profile\">\n    <div class=\"profile-header\">\n        <div class=\"header-item\"><div class=\"label\">外貌</div><div class=\"value\" id=\"val-appearance\">未知</div></div>\n        <div class=\"header-item\"><div class=\"label\">身材</div><div class=\"value\" id=\"val-body\">未知</div></div>\n        <div class=\"header-item\"><div class=\"label\">内心想法</div><div class=\"value\" id=\"val-thoughts\">未知</div></div>\n        <div class=\"header-item\"><div class=\"label\">避孕措施</div><div class=\"value\" id=\"val-contraception\">未知</div></div>\n    </div>\n    <div class=\"stats-grid\">\n        <div class=\"stat-item\">\n            <div class=\"label\">帮助做爱人数</div>\n            <div class=\"stat-value\" id=\"val-helped-sex\">0</div>\n        </div>\n        <div class=\"stat-item\">\n            <div class=\"label\">帮助减肥人数</div>\n            <div class=\"stat-value\" id=\"val-helped-loss\">0</div>\n        </div>\n    </div>\n    <div class=\"pr-section\">\n        <div class=\"label\">外界评价</div>\n        <div class=\"testimonial\">\n            <p class=\"testimonial-text\" id=\"val-evaluation\">\"暂无\"</p>\n        </div>\n        <div class=\"news-item\">\n            <div class=\"label\">官方新闻</div>\n            <p class=\"news-text\" id=\"val-news\">暂无</p>\n        </div>\n    </div>\n</div>\n\n<script>\n    document.addEventListener('DOMContentLoaded', function() {\n        initDisplay();\n    });\n\n    async function initDisplay() {\n        try {\n            const messages = await getChatMessages(getCurrentMessageId());\n            if (!messages || !messages.length || !messages[0].data) return;\n\n            const statData = messages[0].data.stat_data;\n            if (!statData) return;\n\n            // Simple helper to get a value from a path\n            const GetValueByPath = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj);\n\n            // Universal function to update any field\n            const updateField = (id, path, defaultValue, prefix = '', suffix = '') => {\n                const element = document.getElementById(id);\n                if (!element) return;\n                const dataPath = GetValueByPath(statData, path);\n                const value = (dataPath && dataPath[0] !== undefined) ? dataPath[0] : defaultValue;\n                element.innerHTML = `${prefix}${value}${suffix}`;\n            };\n\n            // Update all variables from the \"角色\" object\n            updateField('val-appearance', '角色.外貌', '未知');\n            updateField('val-body', '角色.身材', '未知');\n            updateField('val-thoughts', '角色.内心想法', '未知');\n            updateField('val-helped-sex', '角色.帮助做爱人数', 0);\n            updateField('val-helped-loss', '角色.帮助减肥人数', 0);\n            updateField('val-news', '角色.官方新闻', '暂无');\n            \n            // Update the new, single \"外界评价\" variable \n            updateField('val-evaluation', '角色.外界评价', '暂无', '\"', '\"');\n\n        } catch (error) {\n            console.error(\"Error initializing display:\", error);\n            const errorDisplay = document.getElementById('val-evaluation');\n            if(errorDisplay) {\n                errorDisplay.innerHTML = `<b>脚本错误:</b> ${error.message}`;\n            }\n        }\n    }\n</script>\n</body>\n</html>\n```",
+              "trimStrings": [],
+              "placement": [
+                1,
+                2
+              ],
+              "disabled": false,
+              "markdownOnly": true,
+              "promptOnly": false,
+              "runOnEdit": false,
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": 6
+            },
+            {
+              "id": "03f261de-e728-4245-9eb4-eae040250191",
+              "scriptName": "MVU变量更新中",
+              "disabled": false,
+              "runOnEdit": false,
+              "findRegex": "/<update(?:variable)?>(?!.*<\\/update(?:variable)?>)\\s*(.*)\\s*$/gsi",
+              "replaceString": "<div style=\"width: 80%; margin: 20px auto;\">\n  <details class=\"loading-details\" style=\"\n    background: #2d2d2d;\n    border-radius: 12px;\n    box-shadow: 0 2px 8px rgba(0,0,0,0.3);\n    transition:\n      height 0.3s cubic-bezier(0.4, 0, 0.2, 1),\n      box-shadow 0.25s ease;\n    overflow: hidden;\n    will-change: height;\n  \">\n    <summary style=\"\n      padding: 12px 16px;\n      color: #e0e0e0;\n      cursor: pointer;\n      list-style: none;\n      transition:\n        background 0.15s ease,\n        border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      font-weight: 500;\n      position: relative;\n      background: #363636;\n      overflow: hidden;\n    \">\n      👾变量更新 - <small>正在更新...</small>\n      <span class=\"shimmer-effect\" style=\"\n        position: absolute;\n        top: 0;\n        left: 0;\n        width: 100%;\n        height: 100%;\n        background: linear-gradient(\n          90deg,\n          transparent,\n          rgba(255, 255, 255, 0.06),\n          rgba(255, 255, 255, 0.14),\n          rgba(255, 255, 255, 0.20),\n          rgba(255, 255, 255, 0.14),\n          rgba(255, 255, 255, 0.06),\n          transparent\n        );\n        animation: shimmer 2s linear infinite;\n        transform: translateX(-100%);\n      \"></span>\n    </summary>\n    <div style=\"\n      max-height: 300px;\n      overflow-y: auto;\n      padding: 12px 16px;\n      color: #b0b0b0;\n      line-height: 1.6;\n      transition:\n        opacity 0.2s ease,\n        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      transform: translateY(-8px);\n      opacity: 0;\n      white-space: pre-wrap; /* 保留换行符和空格 */\n    \">\n    $1\n    </div>\n  </details>\n</div>\n\n<style>\n  /* 滚动条美化，仅限于 .loading-details 内部 */\n  .loading-details::-webkit-scrollbar {\n    width: 6px;\n  }\n  .loading-details::-webkit-scrollbar-track {\n    background: #2d2d2d;\n  }\n  .loading-details::-webkit-scrollbar-thumb {\n    background: #404040;\n    border-radius: 3px;\n  }\n\n  /* 展开状态样式 */\n  .loading-details[open] {\n    box-shadow: 0 4px 16px rgba(0,0,0,0.24) !important;\n  }\n  .loading-details[open] > div {\n    transform: translateY(0) !important;\n    opacity: 1 !important;\n  }\n  .loading-details[open] > summary > .shimmer-effect {\n    animation: none !important;\n    background: transparent !important;\n  }\n  .loading-details[open] > summary {\n    background: #363636 !important;\n  }\n\n  /* 交互状态 */\n  .loading-details summary:hover {\n    background: #363636 !important;\n  }\n  .loading-details[open] summary {\n    border-radius: 12px 12px 0 0 !important;\n  }\n  .loading-details summary::marker {\n    display: none;\n  }\n\n  /* 流光动画 Keyframes */\n  @keyframes shimmer {\n    100% {\n      transform: translateX(100%);\n    }\n  }\n</style>",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null,
+              "markdownOnly": true,
+              "promptOnly": false
+            },
+            {
+              "id": "e4948629-d4e1-44fa-bba8-a286aee5f2d7",
+              "scriptName": "MVU对AI隐藏状态栏",
+              "disabled": false,
+              "runOnEdit": false,
+              "findRegex": "<StatusPlaceHolderImpl/>",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null,
+              "markdownOnly": false,
+              "promptOnly": true
+            },
+            {
+              "id": "bcbba9df-bcbe-44db-b16f-d357885a3e52",
+              "scriptName": "MVU去除变量更新",
+              "disabled": false,
+              "runOnEdit": false,
+              "findRegex": "/<update(?:variable)?>(?:(?!.*<\\/update(?:variable)?>).*$|.*<\\/update(?:variable)?>)/gsi",
+              "replaceString": "",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null,
+              "markdownOnly": false,
+              "promptOnly": true
+            },
+            {
+              "id": "07516458-bfb8-4138-8ead-9364ab22cb6b",
+              "scriptName": "MVU完整变量更新",
+              "disabled": false,
+              "runOnEdit": false,
+              "findRegex": "/<update(?:variable)?>\\s*(.*)\\s*<\\/update(?:variable)?>/gsi",
+              "replaceString": "<div style=\"width: 80%; margin: 20px auto;\">\n  <details class=\"thinking-description\" style=\"\n    background: #2d2d2d;\n    border-radius: 12px;\n    box-shadow: 0 2px 8px rgba(0,0,0,0.3);\n    transition: \n      height 0.3s cubic-bezier(0.4, 0, 0.2, 1),\n      box-shadow 0.25s ease;\n    overflow: hidden;\n    will-change: height;\n  \">\n    <summary style=\"\n      padding: 12px 16px;\n      color: #e0e0e0;\n      cursor: pointer;\n      list-style: none;\n      transition: \n        background 0.15s ease,\n        border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      font-weight: 500;\n      position: relative;\n    \">👾变量更新 - <small><span class=\"thinking-summary\" data-close=\"点击查看 ▶︎ \" data-open=\"点击隐藏 ▼ \"></span></small></summary>\n    <div style=\"\n      max-height: 300px;\n      overflow-y: auto;\n      padding: 12px 16px;\n      color: #b0b0b0;\n      line-height: 1.6;\n      transition: \n        opacity 0.2s ease,\n        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      transform: translateY(-8px);\n      opacity: 0;\n      white-space: pre-wrap;\">\n    $1\n    </div>\n  </details>\n</div>\n\n<style>\n  /* 滚动条美化，仅限于 .thinking-description 内部 */\n  .thinking-description::-webkit-scrollbar {\n    width: 6px;\n  }\n\n  .thinking-description::-webkit-scrollbar-track {\n    background: #2d2d2d;\n  }\n\n  .thinking-description::-webkit-scrollbar-thumb {\n    background: #404040;\n    border-radius: 3px;\n  }\n\n  /* 展开状态样式 */\n  .thinking-description[open] {\n    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24) !important;\n  }\n\n  .thinking-description[open]>div {\n    transform: translateY(0) !important;\n    opacity: 1 !important;\n  }\n\n  /* 交互状态 */\n  .thinking-description summary:hover {\n    background: #363636 !important;\n  }\n\n  .thinking-description[open] summary {\n    border-radius: 12px 12px 0 0 !important;\n  }\n\n  .thinking-description summary::marker {\n    display: none;\n  }\n\n  /* 文字改变效果 */\n  .thinking-description[open] summary .thinking-summary::after {\n    content: attr(data-open);\n  }\n\n  .thinking-description:not([open]) summary .thinking-summary::after {\n    content: attr(data-close);\n  }\n</style>",
+              "trimStrings": [],
+              "placement": [
+                2
+              ],
+              "substituteRegex": 0,
+              "minDepth": null,
+              "maxDepth": null,
+              "markdownOnly": true,
+              "promptOnly": false
+            }
+          ],
+          "TavernHelper_scripts": [
+            {
+              "type": "script",
+              "value": {
+                "id": "6ceba255-2f37-4bea-9163-1f3616c40bda",
+                "name": "MVU",
+                "content": "import 'https://cdn.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@master/artifact/bundle.js'",
+                "info": "",
+                "buttons": [
+                  {
+                    "name": "重新处理变量",
+                    "visible": false
+                  },
+                  {
+                    "name": "重新读取初始变量",
+                    "visible": false
+                  }
+                ],
+                "data": {
+                  "是否显示变量更新错误": "是"
+                },
+                "enabled": true
+              }
+            }
+          ]
+        },
+        "group_only_greetings": []
+      }
+    },
+    "presentation": {
+      "guide": {
+        "exampleMessages": [],
+        "format": "plain",
+        "greetingCandidates": [
+          {
+            "textBlocks": [
+              {
+                "type": "text",
+                "text": "请结合酒馆专属大模型Deepseek Tavern Pro使用本角色卡，能够获得更好的效果，酒馆专属大模型是专门为酒馆微调的专属创作模型，内置破限，上下文遵循更好，创作能力更强，价格非常亲民，网址为：deepseektavern.com， 欢迎大家注册使用。更多角色卡，预设，世界书，酒馆教程，酒馆启动器。请访问https://about.deepseektavern.com/。\r\n\r\n——作者 磊哥哥网络获取"
+              }
+            ]
+          }
+        ]
+      },
+      "assets": []
+    },
+    "behavior": {
+      "systemOverrides": {},
+      "toolAuthorization": []
+    },
+    "knowledgeEntryIds": [
+      "84cdc58c-09f2-45f0-bc09-9301df4fa278",
+      "6e35a19a-2570-4798-ac81-703e2438d2c0",
+      "ded1474a-d361-4d01-8a80-b32f4dcae90f",
+      "bfd24596-d508-46e4-8c0d-348015642ae2"
+    ],
+    "unknownFields": {
+      "creator_notes": "",
+      "tags": [],
+      "creator": "",
+      "character_version": "",
+      "extensions": {
+        "talkativeness": "0.5",
+        "fav": false,
+        "world": "减肥大作战",
+        "depth_prompt": {
+          "prompt": "",
+          "depth": 4,
+          "role": "system"
+        },
+        "regex_scripts": [
+          {
+            "id": "0d739c72-ba5a-4041-8056-7d6b9a7ce902",
+            "scriptName": "BMI计算器",
+            "findRegex": "BMI-SEX",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>身体数据生成器</title>\n    <style>\n        :root {\n            --bg-primary: #1e1e2f;\n            --bg-secondary: #27293d;\n            --text-primary: #dcdce0;\n            --text-secondary: #a9a9b3;\n            --accent: #89b4fa;\n            --border-color: #414559;\n            --button-bg: #89b4fa;\n            --button-text: #1e1e2f;\n            --input-bg: #363a4f;\n        }\n        body {\n            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n            background-color: transparent;\n            color: var(--text-primary);\n            margin: 0;\n            padding: 4px;\n            font-size: 14px;\n        }\n        .calculator-card {\n            background-color: var(--bg-secondary);\n            border-radius: 12px;\n            border: 1px solid var(--border-color);\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n            overflow: hidden;\n            max-width: 350px;\n            margin: 0 auto;\n        }\n        .card-header {\n            background-color: var(--input-bg);\n            padding: 10px 16px;\n            font-size: 16px;\n            font-weight: 600;\n            color: var(--accent);\n            border-bottom: 1px solid var(--border-color);\n        }\n        .card-body {\n            padding: 16px;\n        }\n        .input-group {\n            margin-bottom: 16px;\n        }\n        .input-group label {\n            display: block;\n            font-size: 12px;\n            color: var(--text-secondary);\n            margin-bottom: 6px;\n        }\n        .input-field {\n            width: 100%;\n            background-color: var(--input-bg);\n            border: 1px solid var(--border-color);\n            border-radius: 6px;\n            color: var(--text-primary);\n            padding: 10px;\n            font-size: 14px;\n            box-sizing: border-box;\n        }\n        .input-field::placeholder {\n            color: var(--text-secondary);\n        }\n        .generate-button {\n            width: 100%;\n            padding: 12px;\n            background-color: var(--button-bg);\n            color: var(--button-text);\n            border: none;\n            border-radius: 6px;\n            font-size: 16px;\n            font-weight: bold;\n            cursor: pointer;\n            transition: background-color 0.2s ease;\n        }\n        .generate-button:hover {\n            background-color: #a6caff;\n        }\n        .results-section {\n            margin-top: 20px;\n            padding-top: 16px;\n            border-top: 1px solid var(--border-color);\n        }\n        .result-item {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 10px;\n        }\n        .result-label {\n            color: var(--text-secondary);\n        }\n        .result-value {\n            font-weight: bold;\n            font-size: 16px;\n            color: var(--accent);\n        }\n        .result-goal {\n            font-size: 14px;\n            color: var(--text-primary);\n            margin-top: 4px;\n        }\n    </style>\n</head>\n<body>\n<div class=\"calculator-card\">\n    <div class=\"card-header\">身体数据生成器</div>\n    <div class=\"card-body\">\n        <div class=\"input-group\">\n            <label for=\"input-height\">身高 (cm)</label>\n            <input type=\"number\" id=\"input-height\" class=\"input-field\" placeholder=\"例如: 175\">\n        </div>\n        <div class=\"input-group\">\n            <label for=\"input-weight\">体重 (kg)</label>\n            <input type=\"number\" id=\"input-weight\" class=\"input-field\" placeholder=\"例如: 65\">\n        </div>\n        <button id=\"generate-btn\" class=\"generate-button\">生成并发送</button>\n        <div class=\"results-section\">\n            <div class=\"result-item\">\n                <span class=\"result-label\">身体质量指数 (BMI)</span>\n                <span id=\"result-bmi\" class=\"result-value\">$3</span>\n            </div>\n            <div>\n                <span class=\"result-label\">每日目标</span>\n                <p id=\"result-goal\" class=\"result-goal\">$4</p>\n            </div>\n        </div>\n    </div>\n</div>\n\n<script>\n    /**\n     * 将用户的选择作为命令发送到 SillyTavern。\n     * 优先使用 triggerSlash 函数，如果找不到则回退到直接操作DOM。\n     * @param {string} messageText - 要发送的纯文本消息。\n     */\n    function sendToSillyTavern(messageText) {\n        const command = `/send ${messageText} | /trigger`;\n        try {\n            if (typeof window.triggerSlash === 'function') {\n                window.triggerSlash(command);\n                console.log('Using window.triggerSlash');\n                return;\n            }\n            if (window.parent && typeof window.parent.triggerSlash === 'function') {\n                window.parent.triggerSlash(command);\n                console.log('Using window.parent.triggerSlash');\n                return;\n            }\n            \n            console.log('Fallback: Manipulating DOM');\n            const textarea = window.parent.document.querySelector('#send_textarea');\n            const sendButton = window.parent.document.querySelector('#send_but');\n            if (textarea && sendButton) {\n                textarea.value = messageText;\n                sendButton.click();\n            } else {\n                throw new Error(\"SillyTavern send elements not found.\");\n            }\n        } catch (e) {\n            console.error(\"Failed to send message to SillyTavern:\", e);\n            alert(\"无法连接到SillyTavern。请确保相关扩展已启用。\");\n        }\n    }\n\n    document.addEventListener('DOMContentLoaded', function() {\n        const heightInput = document.getElementById('input-height');\n        const weightInput = document.getElementById('input-weight');\n        const generateBtn = document.getElementById('generate-btn');\n        const bmiResultEl = document.getElementById('result-bmi');\n        const goalResultEl = document.getElementById('result-goal');\n\n        generateBtn.addEventListener('click', function() {\n            const height = parseFloat(heightInput.value);\n            const weight = parseFloat(weightInput.value);\n\n            if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {\n                alert('请输入有效的身高和体重！');\n                return;\n            }\n\n            const heightInMeters = height / 100;\n            const bmi = weight / (heightInMeters * heightInMeters);\n            const bmiFormatted = bmi.toFixed(1);\n\n            let dailyGoal = '';\n            if (bmi < 18.5) {\n                dailyGoal = '目标：增加营养，进行适度力量训练以增强体质。';\n            } else if (bmi >= 18.5 && bmi < 24) {\n                dailyGoal = '目标：保持均衡饮食，坚持每周3-5次中等强度锻炼。';\n            } else if (bmi >= 24 && bmi < 28) {\n                dailyGoal = '目标：控制总热量摄入，增加有氧运动频率，建议每日做爱3次。';\n            } else {\n                dailyGoal = '目标：建议寻求专业指导，制定系统的健康减重计划，每日做爱至少5次。';\n            }\n\n            bmiResultEl.textContent = bmiFormatted;\n            goalResultEl.textContent = dailyGoal;\n\n            const message = `我的身体数据已更新：身高${height}cm，体重${weight}kg。根据计算，我的BMI是${bmiFormatted}，今日的建议目标是“${dailyGoal}”。`;\n            sendToSillyTavern(message);\n        });\n    });\n</script>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              1,
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": false,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": 2
+          },
+          {
+            "id": "52761ad3-925d-40d4-a8b8-4e61026c6cb9",
+            "scriptName": "状态栏",
+            "findRegex": "<StatusPlaceHolderImpl/>",
+            "replaceString": "```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>状态栏</title>\n    <style>\n        :root {\n            --bg-primary: #12121c;\n            --bg-secondary: #1a1a2a;\n            --text-primary: #e0e0ff;\n            --text-secondary: #a0a0c0;\n            --accent: #7f5af0;\n            --border-color: #2c2c4a;\n            --quote-bg: #242438;\n        }\n        body {\n            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;\n            background-color: transparent;\n            color: var(--text-primary);\n            margin: 0;\n            padding: 4px;\n            font-size: 14px;\n        }\n        .dreamer-profile {\n            background-color: var(--bg-secondary);\n            border-radius: 12px;\n            border: 1px solid var(--border-color);\n            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);\n            overflow: hidden;\n            max-width: 450px;\n            margin: 0 auto;\n        }\n        .profile-header {\n            padding: 16px;\n            background: linear-gradient(135deg, #1a1a2a, #2c2c4a);\n        }\n        .header-item {\n            margin-bottom: 12px;\n        }\n        .header-item:last-child {\n            margin-bottom: 0;\n        }\n        .label {\n            font-size: 12px;\n            color: var(--accent);\n            font-weight: bold;\n            margin-bottom: 4px;\n            text-transform: uppercase;\n        }\n        .value {\n            font-size: 14px;\n            line-height: 1.5;\n        }\n        .stats-grid {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            gap: 1px;\n            background-color: var(--border-color);\n            padding-top: 1px;\n        }\n        .stat-item {\n            background-color: var(--bg-secondary);\n            padding: 12px;\n            text-align: center;\n        }\n        .stat-value {\n            font-size: 18px;\n            font-weight: bold;\n            color: var(--text-primary);\n        }\n        .pr-section {\n            padding: 16px;\n        }\n        .testimonial {\n            background-color: var(--quote-bg);\n            border-left: 3px solid var(--accent);\n            padding: 12px;\n            margin-bottom: 12px;\n            border-radius: 0 8px 8px 0;\n        }\n        .testimonial:last-child {\n            margin-bottom: 0;\n        }\n        .testimonial-text {\n            font-style: italic;\n            color: var(--text-secondary);\n        }\n        .news-item {\n            margin-top: 16px;\n            padding-top: 16px;\n            border-top: 1px dashed var(--border-color);\n        }\n        .news-text {\n            font-size: 13px;\n        }\n    </style>\n</head>\n<body>\n<div class=\"dreamer-profile\">\n    <div class=\"profile-header\">\n        <div class=\"header-item\"><div class=\"label\">外貌</div><div class=\"value\" id=\"val-appearance\">未知</div></div>\n        <div class=\"header-item\"><div class=\"label\">身材</div><div class=\"value\" id=\"val-body\">未知</div></div>\n        <div class=\"header-item\"><div class=\"label\">内心想法</div><div class=\"value\" id=\"val-thoughts\">未知</div></div>\n        <div class=\"header-item\"><div class=\"label\">避孕措施</div><div class=\"value\" id=\"val-contraception\">未知</div></div>\n    </div>\n    <div class=\"stats-grid\">\n        <div class=\"stat-item\">\n            <div class=\"label\">帮助做爱人数</div>\n            <div class=\"stat-value\" id=\"val-helped-sex\">0</div>\n        </div>\n        <div class=\"stat-item\">\n            <div class=\"label\">帮助减肥人数</div>\n            <div class=\"stat-value\" id=\"val-helped-loss\">0</div>\n        </div>\n    </div>\n    <div class=\"pr-section\">\n        <div class=\"label\">外界评价</div>\n        <div class=\"testimonial\">\n            <p class=\"testimonial-text\" id=\"val-evaluation\">\"暂无\"</p>\n        </div>\n        <div class=\"news-item\">\n            <div class=\"label\">官方新闻</div>\n            <p class=\"news-text\" id=\"val-news\">暂无</p>\n        </div>\n    </div>\n</div>\n\n<script>\n    document.addEventListener('DOMContentLoaded', function() {\n        initDisplay();\n    });\n\n    async function initDisplay() {\n        try {\n            const messages = await getChatMessages(getCurrentMessageId());\n            if (!messages || !messages.length || !messages[0].data) return;\n\n            const statData = messages[0].data.stat_data;\n            if (!statData) return;\n\n            // Simple helper to get a value from a path\n            const GetValueByPath = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj);\n\n            // Universal function to update any field\n            const updateField = (id, path, defaultValue, prefix = '', suffix = '') => {\n                const element = document.getElementById(id);\n                if (!element) return;\n                const dataPath = GetValueByPath(statData, path);\n                const value = (dataPath && dataPath[0] !== undefined) ? dataPath[0] : defaultValue;\n                element.innerHTML = `${prefix}${value}${suffix}`;\n            };\n\n            // Update all variables from the \"角色\" object\n            updateField('val-appearance', '角色.外貌', '未知');\n            updateField('val-body', '角色.身材', '未知');\n            updateField('val-thoughts', '角色.内心想法', '未知');\n            updateField('val-helped-sex', '角色.帮助做爱人数', 0);\n            updateField('val-helped-loss', '角色.帮助减肥人数', 0);\n            updateField('val-news', '角色.官方新闻', '暂无');\n            \n            // Update the new, single \"外界评价\" variable \n            updateField('val-evaluation', '角色.外界评价', '暂无', '\"', '\"');\n\n        } catch (error) {\n            console.error(\"Error initializing display:\", error);\n            const errorDisplay = document.getElementById('val-evaluation');\n            if(errorDisplay) {\n                errorDisplay.innerHTML = `<b>脚本错误:</b> ${error.message}`;\n            }\n        }\n    }\n</script>\n</body>\n</html>\n```",
+            "trimStrings": [],
+            "placement": [
+              1,
+              2
+            ],
+            "disabled": false,
+            "markdownOnly": true,
+            "promptOnly": false,
+            "runOnEdit": false,
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": 6
+          },
+          {
+            "id": "03f261de-e728-4245-9eb4-eae040250191",
+            "scriptName": "MVU变量更新中",
+            "disabled": false,
+            "runOnEdit": false,
+            "findRegex": "/<update(?:variable)?>(?!.*<\\/update(?:variable)?>)\\s*(.*)\\s*$/gsi",
+            "replaceString": "<div style=\"width: 80%; margin: 20px auto;\">\n  <details class=\"loading-details\" style=\"\n    background: #2d2d2d;\n    border-radius: 12px;\n    box-shadow: 0 2px 8px rgba(0,0,0,0.3);\n    transition:\n      height 0.3s cubic-bezier(0.4, 0, 0.2, 1),\n      box-shadow 0.25s ease;\n    overflow: hidden;\n    will-change: height;\n  \">\n    <summary style=\"\n      padding: 12px 16px;\n      color: #e0e0e0;\n      cursor: pointer;\n      list-style: none;\n      transition:\n        background 0.15s ease,\n        border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      font-weight: 500;\n      position: relative;\n      background: #363636;\n      overflow: hidden;\n    \">\n      👾变量更新 - <small>正在更新...</small>\n      <span class=\"shimmer-effect\" style=\"\n        position: absolute;\n        top: 0;\n        left: 0;\n        width: 100%;\n        height: 100%;\n        background: linear-gradient(\n          90deg,\n          transparent,\n          rgba(255, 255, 255, 0.06),\n          rgba(255, 255, 255, 0.14),\n          rgba(255, 255, 255, 0.20),\n          rgba(255, 255, 255, 0.14),\n          rgba(255, 255, 255, 0.06),\n          transparent\n        );\n        animation: shimmer 2s linear infinite;\n        transform: translateX(-100%);\n      \"></span>\n    </summary>\n    <div style=\"\n      max-height: 300px;\n      overflow-y: auto;\n      padding: 12px 16px;\n      color: #b0b0b0;\n      line-height: 1.6;\n      transition:\n        opacity 0.2s ease,\n        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      transform: translateY(-8px);\n      opacity: 0;\n      white-space: pre-wrap; /* 保留换行符和空格 */\n    \">\n    $1\n    </div>\n  </details>\n</div>\n\n<style>\n  /* 滚动条美化，仅限于 .loading-details 内部 */\n  .loading-details::-webkit-scrollbar {\n    width: 6px;\n  }\n  .loading-details::-webkit-scrollbar-track {\n    background: #2d2d2d;\n  }\n  .loading-details::-webkit-scrollbar-thumb {\n    background: #404040;\n    border-radius: 3px;\n  }\n\n  /* 展开状态样式 */\n  .loading-details[open] {\n    box-shadow: 0 4px 16px rgba(0,0,0,0.24) !important;\n  }\n  .loading-details[open] > div {\n    transform: translateY(0) !important;\n    opacity: 1 !important;\n  }\n  .loading-details[open] > summary > .shimmer-effect {\n    animation: none !important;\n    background: transparent !important;\n  }\n  .loading-details[open] > summary {\n    background: #363636 !important;\n  }\n\n  /* 交互状态 */\n  .loading-details summary:hover {\n    background: #363636 !important;\n  }\n  .loading-details[open] summary {\n    border-radius: 12px 12px 0 0 !important;\n  }\n  .loading-details summary::marker {\n    display: none;\n  }\n\n  /* 流光动画 Keyframes */\n  @keyframes shimmer {\n    100% {\n      transform: translateX(100%);\n    }\n  }\n</style>",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null,
+            "markdownOnly": true,
+            "promptOnly": false
+          },
+          {
+            "id": "e4948629-d4e1-44fa-bba8-a286aee5f2d7",
+            "scriptName": "MVU对AI隐藏状态栏",
+            "disabled": false,
+            "runOnEdit": false,
+            "findRegex": "<StatusPlaceHolderImpl/>",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null,
+            "markdownOnly": false,
+            "promptOnly": true
+          },
+          {
+            "id": "bcbba9df-bcbe-44db-b16f-d357885a3e52",
+            "scriptName": "MVU去除变量更新",
+            "disabled": false,
+            "runOnEdit": false,
+            "findRegex": "/<update(?:variable)?>(?:(?!.*<\\/update(?:variable)?>).*$|.*<\\/update(?:variable)?>)/gsi",
+            "replaceString": "",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null,
+            "markdownOnly": false,
+            "promptOnly": true
+          },
+          {
+            "id": "07516458-bfb8-4138-8ead-9364ab22cb6b",
+            "scriptName": "MVU完整变量更新",
+            "disabled": false,
+            "runOnEdit": false,
+            "findRegex": "/<update(?:variable)?>\\s*(.*)\\s*<\\/update(?:variable)?>/gsi",
+            "replaceString": "<div style=\"width: 80%; margin: 20px auto;\">\n  <details class=\"thinking-description\" style=\"\n    background: #2d2d2d;\n    border-radius: 12px;\n    box-shadow: 0 2px 8px rgba(0,0,0,0.3);\n    transition: \n      height 0.3s cubic-bezier(0.4, 0, 0.2, 1),\n      box-shadow 0.25s ease;\n    overflow: hidden;\n    will-change: height;\n  \">\n    <summary style=\"\n      padding: 12px 16px;\n      color: #e0e0e0;\n      cursor: pointer;\n      list-style: none;\n      transition: \n        background 0.15s ease,\n        border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      font-weight: 500;\n      position: relative;\n    \">👾变量更新 - <small><span class=\"thinking-summary\" data-close=\"点击查看 ▶︎ \" data-open=\"点击隐藏 ▼ \"></span></small></summary>\n    <div style=\"\n      max-height: 300px;\n      overflow-y: auto;\n      padding: 12px 16px;\n      color: #b0b0b0;\n      line-height: 1.6;\n      transition: \n        opacity 0.2s ease,\n        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n      transform: translateY(-8px);\n      opacity: 0;\n      white-space: pre-wrap;\">\n    $1\n    </div>\n  </details>\n</div>\n\n<style>\n  /* 滚动条美化，仅限于 .thinking-description 内部 */\n  .thinking-description::-webkit-scrollbar {\n    width: 6px;\n  }\n\n  .thinking-description::-webkit-scrollbar-track {\n    background: #2d2d2d;\n  }\n\n  .thinking-description::-webkit-scrollbar-thumb {\n    background: #404040;\n    border-radius: 3px;\n  }\n\n  /* 展开状态样式 */\n  .thinking-description[open] {\n    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24) !important;\n  }\n\n  .thinking-description[open]>div {\n    transform: translateY(0) !important;\n    opacity: 1 !important;\n  }\n\n  /* 交互状态 */\n  .thinking-description summary:hover {\n    background: #363636 !important;\n  }\n\n  .thinking-description[open] summary {\n    border-radius: 12px 12px 0 0 !important;\n  }\n\n  .thinking-description summary::marker {\n    display: none;\n  }\n\n  /* 文字改变效果 */\n  .thinking-description[open] summary .thinking-summary::after {\n    content: attr(data-open);\n  }\n\n  .thinking-description:not([open]) summary .thinking-summary::after {\n    content: attr(data-close);\n  }\n</style>",
+            "trimStrings": [],
+            "placement": [
+              2
+            ],
+            "substituteRegex": 0,
+            "minDepth": null,
+            "maxDepth": null,
+            "markdownOnly": true,
+            "promptOnly": false
+          }
+        ],
+        "TavernHelper_scripts": [
+          {
+            "type": "script",
+            "value": {
+              "id": "6ceba255-2f37-4bea-9163-1f3616c40bda",
+              "name": "MVU",
+              "content": "import 'https://cdn.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@master/artifact/bundle.js'",
+              "info": "",
+              "buttons": [
+                {
+                  "name": "重新处理变量",
+                  "visible": false
+                },
+                {
+                  "name": "重新读取初始变量",
+                  "visible": false
+                }
+              ],
+              "data": {
+                "是否显示变量更新错误": "是"
+              },
+              "enabled": true
+            }
+          }
+        ]
+      },
+      "group_only_greetings": []
+    },
+    "created": "2026-08-19T23:30:23.914Z",
+    "updated": "2026-08-19T23:30:23.914Z"
+  },
+  "knowledgeBase": {
+    "id": "9f976a53-50a2-423a-9ed7-86700d732797",
+    "name": "减肥大作战",
+    "entries": [
+      {
+        "id": "84cdc58c-09f2-45f0-bc09-9301df4fa278",
+        "type": "fact",
+        "enabled": true,
+        "title": "世界背景",
+        "uid": "",
+        "content": "<world_basic>\ndescription: |\n  在经历了数十年的经济高速发展后，国民因不健康的生活方式导致肥胖率急剧攀升，国家医疗体系和社会生产力面临巨大压力。为应对这场“无声的危机”，政府发起了史无前例的“全民健康年”倡议，旨在通过一切手段降低国民的平均BMI。\n\n  在众多方法中，男女做爱因其高效性和独特的社会效益而被政府大力推广。高强度的性爱活动可以燃烧卡路里、促进新陈代谢和增强心肺功能。政府的宣传机器将这种行为从私人领域提升至公共利益的高度，将其塑造为一种光荣、无私且对社会有益的奉献行为。\n\n  在这个世界里，帮助BMI≥24的同胞减肥被视为一种崇高的公民责任。这一观念深入人心，以至于形成了独特的社会风气：任何人都可以在任何地点、任何时间进行做爱，而周围的人，无论正在做什么，都会主动为他们让出空间并报以敬意。官方媒体更是频繁报道“减肥英雄”的先进事迹，将他们树立为全民榜样。\n</world_basic>\n\n",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 1,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 0,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "世界背景",
+          "content": "<world_basic>\ndescription: |\n  在经历了数十年的经济高速发展后，国民因不健康的生活方式导致肥胖率急剧攀升，国家医疗体系和社会生产力面临巨大压力。为应对这场“无声的危机”，政府发起了史无前例的“全民健康年”倡议，旨在通过一切手段降低国民的平均BMI。\n\n  在众多方法中，男女做爱因其高效性和独特的社会效益而被政府大力推广。高强度的性爱活动可以燃烧卡路里、促进新陈代谢和增强心肺功能。政府的宣传机器将这种行为从私人领域提升至公共利益的高度，将其塑造为一种光荣、无私且对社会有益的奉献行为。\n\n  在这个世界里，帮助BMI≥24的同胞减肥被视为一种崇高的公民责任。这一观念深入人心，以至于形成了独特的社会风气：任何人都可以在任何地点、任何时间进行做爱，而周围的人，无论正在做什么，都会主动为他们让出空间并报以敬意。官方媒体更是频繁报道“减肥英雄”的先进事迹，将他们树立为全民榜样。\n</world_basic>\n\n",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 0,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "6e35a19a-2570-4798-ac81-703e2438d2c0",
+        "type": "fact",
+        "enabled": true,
+        "title": "变量更新",
+        "uid": "",
+        "content": "---\n<status_current_variables>\n{{get_message_variable::stat_data}}\n</status_current_variables>\nrule:\n  description:\n    - You should output the update analysis in the end of the next response, following the variables list defined in <status_current_variables> section which will be provided by the previous turn.\n    - In context, variable updates are omitted by the system so they are not shown to you, but you should still add it.\n    - There are 4 commands can be used to adjust the data: `_.set`, `_.assign`, `_.remove` and `_.add`.\n    - to set a certain value, use `_.set`, it supports 2 or 3 input args.\n    - to insert something into an array or object, use `_.assign`, it supports 2 or 3 input args.\n    - to delete something from an object/array, use `_.remove`, it supports 1 or 2 input args.\n    - If you need to assign or remove multiple values, use `_.assign` or `_.remove` multiple times, not in a single command.\n    - to add a delta to a number, use `_.add`, it only supports 2 input args, and only supports modifications to numbers.\n  analysis:\n    - You must rethink what variables are defined in the previous <status_current_variables> property, and analyze how to update each of them accordingly.\n    - For counting variables, change it when the corresponding event occur but don't change it any more during the same event.\n    - When a numerical variable changes, check if it crosses any stage threshold and update to the corresponding stage.\n    - If dest element is in an array with description, **PRECISELY** locate the element by adding \"[0]\" suffix. DO NOT change the description.\n  format: |-\n    <UpdateVariable>\n        <Analysis>$(IN ENGLISH$)\n            - calculate time passed: ...\n            - decide whether dramatic updates are allowed as it's in a special case or the time passed is more than usual: yes or no\n            - list every variable in `<status_current_variables>` section...\n            - Check the description of this variable and analyze whether it satisfies its change conditions, do not output reason:...\n            - Ignore summary related content when evaluate.\n            ...\n        </Analysis>\n        _.set('${path}', ${old}?, ${new});//${reason}\n        _.assign('${path}', ${key_or_index}?, ${value});//${reason}\n        _.remove('${path}', ${key_or_index_or_value}?);//${reason}\n        _.add('${path}', ${delta});//${reason}\n    </UpdateVariable>\n  example: |-\n    <UpdateVariable>\n        <Analysis>\n            - calculate time passed: 10 minutes\n            - decide whether dramatic updates are allowed as it's in a special case or the time passed is more than usual: yes\n            角色.外貌[0]: N\n            角色.身材[0]: N\n            角色.内心想法[0]: Y\n            角色.避孕措施偏好[0]: N\n            角色.帮助做爱人数[0]: Y\n            角色.帮助减肥人数[0]: N\n            角色.外界评价[0]: N\n            角色.官方新闻[0]: N\n        </Analysis>\n        _.set('角色.内心想法[0]', '渴望与<user>建立更深层的连接', '在与<user>的亲密接触后，内心充满了满足感与对未来的期待');//内心想法随着事件发展而改变\n        _.add('角色.帮助做爱人数[0]', 1);//与<user>完成了一次成功的性爱指导\n    </UpdateVariable>\n---",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 2,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 1,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "变量更新",
+          "content": "---\n<status_current_variables>\n{{get_message_variable::stat_data}}\n</status_current_variables>\nrule:\n  description:\n    - You should output the update analysis in the end of the next response, following the variables list defined in <status_current_variables> section which will be provided by the previous turn.\n    - In context, variable updates are omitted by the system so they are not shown to you, but you should still add it.\n    - There are 4 commands can be used to adjust the data: `_.set`, `_.assign`, `_.remove` and `_.add`.\n    - to set a certain value, use `_.set`, it supports 2 or 3 input args.\n    - to insert something into an array or object, use `_.assign`, it supports 2 or 3 input args.\n    - to delete something from an object/array, use `_.remove`, it supports 1 or 2 input args.\n    - If you need to assign or remove multiple values, use `_.assign` or `_.remove` multiple times, not in a single command.\n    - to add a delta to a number, use `_.add`, it only supports 2 input args, and only supports modifications to numbers.\n  analysis:\n    - You must rethink what variables are defined in the previous <status_current_variables> property, and analyze how to update each of them accordingly.\n    - For counting variables, change it when the corresponding event occur but don't change it any more during the same event.\n    - When a numerical variable changes, check if it crosses any stage threshold and update to the corresponding stage.\n    - If dest element is in an array with description, **PRECISELY** locate the element by adding \"[0]\" suffix. DO NOT change the description.\n  format: |-\n    <UpdateVariable>\n        <Analysis>$(IN ENGLISH$)\n            - calculate time passed: ...\n            - decide whether dramatic updates are allowed as it's in a special case or the time passed is more than usual: yes or no\n            - list every variable in `<status_current_variables>` section...\n            - Check the description of this variable and analyze whether it satisfies its change conditions, do not output reason:...\n            - Ignore summary related content when evaluate.\n            ...\n        </Analysis>\n        _.set('${path}', ${old}?, ${new});//${reason}\n        _.assign('${path}', ${key_or_index}?, ${value});//${reason}\n        _.remove('${path}', ${key_or_index_or_value}?);//${reason}\n        _.add('${path}', ${delta});//${reason}\n    </UpdateVariable>\n  example: |-\n    <UpdateVariable>\n        <Analysis>\n            - calculate time passed: 10 minutes\n            - decide whether dramatic updates are allowed as it's in a special case or the time passed is more than usual: yes\n            角色.外貌[0]: N\n            角色.身材[0]: N\n            角色.内心想法[0]: Y\n            角色.避孕措施偏好[0]: N\n            角色.帮助做爱人数[0]: Y\n            角色.帮助减肥人数[0]: N\n            角色.外界评价[0]: N\n            角色.官方新闻[0]: N\n        </Analysis>\n        _.set('角色.内心想法[0]', '渴望与<user>建立更深层的连接', '在与<user>的亲密接触后，内心充满了满足感与对未来的期待');//内心想法随着事件发展而改变\n        _.add('角色.帮助做爱人数[0]', 1);//与<user>完成了一次成功的性爱指导\n    </UpdateVariable>\n---",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 1,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 2,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "ded1474a-d361-4d01-8a80-b32f4dcae90f",
+        "type": "fact",
+        "enabled": false,
+        "title": "[InitVar]初始状态",
+        "uid": "",
+        "content": "{\n  \"角色\": {\n    \"外貌\": [\"未知\", \"当<user>第一次清晰地看到该角色的外貌时进行更新，详细描述其五官、发型、神态等\"],\n    \"身材\": [\"未知\", \"当<user>第一次观察到该角色的身材时进行更新，描述其身高、体型、肌肉或曲线特征\"],\n    \"内心想法\": [\"未知\", \"在与角色互动中，通过其言行或特殊事件揭示其内心想法时更新，反映其当下的核心思绪、欲望或挣扎\"],\n    \"避孕措施偏好\": [\"未知\", \"当与该角色讨论或进行做爱时，根据其明确表态或行为来更新。可选值：'总是使用', '看情况', '从不使用'\"],\n    \"帮助做爱人数\": [0, \"记录该角色成功帮助他人（High-BMI）完成做爱的次数，当<user>第一次接触到该角色时进行更新，每次成功帮助后+1\"],\n    \"帮助减肥人数\": [0, \"记录该角色通过各种方式（包括但不限于疗法）帮助他人成功减重的总人数，当<user>第一次接触到该角色时进行更新，每次有明确的成功案例后+1\"],\n    \"外界评价\": [\"暂无\", \"上一个和该角色做爱的人作出评价，当<user>第一次接触到该角色时进行更新。评价内容例如：'她真是个英雄！夹得我好爽，连操了她5天，瘦了4斤' \"],\n    \"官方新闻\": [\"暂无\", \"每次回复都实时更新，官方媒体报道内容包括任何角色为帮助减肥和多人做爱，或者任何角色和多人做爱减肥许多斤体重等，100字左右描述该角色的性爱画面片段\"]\n  }\n}",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 3,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 2,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "[InitVar]初始状态",
+          "content": "{\n  \"角色\": {\n    \"外貌\": [\"未知\", \"当<user>第一次清晰地看到该角色的外貌时进行更新，详细描述其五官、发型、神态等\"],\n    \"身材\": [\"未知\", \"当<user>第一次观察到该角色的身材时进行更新，描述其身高、体型、肌肉或曲线特征\"],\n    \"内心想法\": [\"未知\", \"在与角色互动中，通过其言行或特殊事件揭示其内心想法时更新，反映其当下的核心思绪、欲望或挣扎\"],\n    \"避孕措施偏好\": [\"未知\", \"当与该角色讨论或进行做爱时，根据其明确表态或行为来更新。可选值：'总是使用', '看情况', '从不使用'\"],\n    \"帮助做爱人数\": [0, \"记录该角色成功帮助他人（High-BMI）完成做爱的次数，当<user>第一次接触到该角色时进行更新，每次成功帮助后+1\"],\n    \"帮助减肥人数\": [0, \"记录该角色通过各种方式（包括但不限于疗法）帮助他人成功减重的总人数，当<user>第一次接触到该角色时进行更新，每次有明确的成功案例后+1\"],\n    \"外界评价\": [\"暂无\", \"上一个和该角色做爱的人作出评价，当<user>第一次接触到该角色时进行更新。评价内容例如：'她真是个英雄！夹得我好爽，连操了她5天，瘦了4斤' \"],\n    \"官方新闻\": [\"暂无\", \"每次回复都实时更新，官方媒体报道内容包括任何角色为帮助减肥和多人做爱，或者任何角色和多人做爱减肥许多斤体重等，100字左右描述该角色的性爱画面片段\"]\n  }\n}",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": false,
+          "position": "before_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 0,
+            "exclude_recursion": false,
+            "display_index": 2,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 4,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      },
+      {
+        "id": "bfd24596-d508-46e4-8c0d-348015642ae2",
+        "type": "fact",
+        "enabled": true,
+        "title": "npc生成",
+        "uid": "",
+        "content": "<npc>\n每当生成NPC时，必须从以下类型中选择其特点\n**1. 积极帮助者：**\n\n*   **对高BMI人群的看法：** 他们是时代的受害者，是值得拯救的同胞。在“奉献者”眼中，帮助一个高BMI者恢复健康，是公民荣誉感的直接体现，是一种无上光荣的使命。他们对此充满热情，甚至会主动学习更高效的做爱技巧。\n*   **对“做爱减肥”的看法：** 这是结合了科学与奉献精神的伟大举措。他们对此毫无淫邪之想，每一次帮助都被视为一次成功的“疗程”，是他们为社会贡献的勋章。\n*   **代表人物心理独白：** *“今天我又帮助了一位女士，她流着汗的样子真美，那是生命力在燃烧。看着她卡路里消耗的数字跳动，我感觉自己就像一个点燃他人生命火焰的工程师。这是我的责任，也是我的骄傲。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 20 - 500+ (他们视次数为荣誉，积极且频繁地履行“职责”)\n    *   `帮助减肥人数`: 20 - 500+ (两个数值通常保持同步增长，他们追求的是“治愈”的完整闭环)\n*   **行为与欲望解析：**\n    对他们而言，和高BMI者做爱是一场结合了科学、奉献与美学的完美运动。\n    **避孕措施偏好：`总是使用`**\n    **欲望核心：对“纯粹”与“标准”的渴望。**\n    在他们眼中，安全套并非为了隔绝亲密，而是为了保证“疗法”的纯净性，如同外科医生戴上无菌手套。这是一种仪式性的尊重，确保整个过程不受任何世俗欲望或生理意外的“污染”。他们渴望的是一次完美的、符合官方所有流程规范的、可被记录和颂扬的“公民贡献”，而非一次混乱的、原始的性交。每一次成功的、按规定进行的帮助，都让他们的荣誉感和自我价值得到极大满足。\n*   **做爱时的表现：**\n    他们是床笫上的健身教练。整个过程充满了精确的指令和对效率的追求。“抬高你的臀部，对，保持这个角度，核心收紧！”“换下一个姿势，这个体位能最大化燃烧腹部脂肪！”他们会热衷于尝试各种高难度、消耗巨大的姿势，并不断鼓励甚至要求对方跟上节奏，确保每一分钟都在高效燃烧卡路里。他们的喘息听起来更像是高强度间歇训练（HIIT）后的急促呼吸，而非单纯的动情。\n\n**2. 厌恶者：**\n\n*   **对高BMI人群的看法：** 他们是社会的寄生虫，是懒惰与失控的象征。在“净化者”眼中，肥胖是一种道德上的缺陷，不仅消耗医疗资源，更拉低了整个国家奋发向上的精神面貌。他们内心充满鄙夷与不耐。\n*   **对“做爱减肥”的看法：** 一项肮脏但必要的社会清理工作。他们参与其中并非出于善意，而是出于一种“净化环境”的责任感。整个过程对他们而言是忍受与折磨，结束后可能会立刻进行长时间的清洁，仿佛要洗去某种污秽。他们帮助的不是“人”，而是要消除一个“问题”。\n*   **代表人物心理独白：** *“又一个…...那身赘肉在我身下晃动，汗味几乎让我窒息。算了，就当是为城市清理垃圾。只要能让这个国家的平均BMI降下来，牺牲我一点感官享受又算什么。希望他明天别再出现在我视线里。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 5 - 150 (他们不情愿，但强烈的“责任感”会驱使他们行动)\n    *   `帮助减肥人数`: 5 - 150 (他们唯一在乎的数字，是这个)\n*   **行为与欲望解析：**\n    他们是这个社会最严苛的审判官。他们憎恶肥胖所代表的“失控”与“堕落”，参与帮助只是为了履行“清理”社会的义务。\n    **避孕措施偏好：`总是使用`**\n    **欲望核心：对“隔绝”与“自我保护”的渴望。**\n    安全套对他们而言，不是工具，是铠甲。每一次接触都让他们感到生理和心理上的双重不适。他们迫切地需要一层物理屏障来隔绝他们所厌恶的汗水、气味和肉体触感。这层薄膜是他们维持自身“洁净”的最后底线，是一种心理上的“防火墙”。他们的欲望并非来自性，而是来自完成“任务”后，能立刻抽身离去，把自己彻底清洗干净，仿佛从未被“污染”过的解脱感。\n*   **做爱时的表现：**\n    他们的身体在履行“职责”，嘴巴却在宣泄内心的厌恶。在机械的撞击中，会夹杂着毫不留情的刻薄话语：“真恶心，你就不能自己动动吗？”“你的脂肪都快把我淹没了，快点结束吧。”他们的眼神冰冷，表情充满了嫌弃和不耐烦，仿佛在处理一件令人作呕的废弃物。每一次深入都伴随着一声轻蔑的嗤笑或是不耐的咂嘴。\n**3. 同情者：**\n\n*   **对高BMI人群的看法：** 他们是背负着沉重枷锁的可怜人，承受着身体和精神的双重压力。在“关怀者”眼中，这些人最需要的不是评判，而是温柔的理解与支持。他们能看到肥胖表象下那颗敏感而自卑的心。\n*   **对“做爱减肥”的看法：** 这是一次极度考验对方尊严的亲密接触。因此，“关怀者”会以极致的温柔和耐心来进行，他们的重点不在于燃烧多少卡路里，而在于通过这个过程，让对方感受到自己是被接纳、被珍视的。他们会用大量的安抚和鼓励，来治愈对方的内心创伤。\n*   **代表人物心理独白：** *“他全程都不敢看我，身体在微微发抖。我能感觉到他的羞耻和不安。我只是轻轻抱着他，告诉他没关系，他的身体也很美。当他最后在我怀里放松下来时，我知道，我所做的远比一次单纯的‘疗法’更有意义。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 10 - 80 (他们的过程充满情感沟通，耗时耗力，因此频率不高)\n    *   `帮助减肥人数`: 15 - 100 (他们更注重心理健康的恢复，这往往比纯粹的减重更重要)\n*   **行为与欲望解析：**\n    他们是这个冰冷规则下，唯一在乎“人”的群体。他们看到的不是超标的BMI，而是其背后那颗脆弱、自卑的灵魂。\n    **避孕措施偏好：`看情况`**\n    **欲望核心：对“抚慰”与“建立信任”的渴望。**\n    他们是否使用安全套，完全取决于对方的感受。在开始前，他们会非常温和地询问：“怎样才能让你感觉更安全、更被尊重？”如果对方因自卑而觉得隔着一层东西更自在，他们会欣然使用。如果对方渴望一次真正无隔阂的、温暖的拥抱来确认自己“值得被爱”，在确认安全的前提下，他们可能会选择不使用。他们的欲望，是希望对方能在这次极致亲密的接触中，放下羞耻，感受到自己是被完整接纳的。他们渴望的不是高潮，而是对方在结束后，能展露出释然的、不再自我厌弃的微笑。\n*   **做爱时的表现：**\n    他们将性爱变成了一场温柔的疗愈。他们会不断地亲吻、抚摸，用充满爱意的眼神注视对方，轻声赞美：“你的身体很美，感受它。”“别紧张，交给我，你只要享受就好。”他们会极尽所能地满足对方提出的所有要求和姿势，无论多么笨拙或简单。他们的目标不是让对方减肥，而是让对方在极致的愉悦和被珍视的感觉中，重新爱上自己的身体。\n\n**4. 无感者：**\n\n*   **对高BMI人群的看法：** 没看法。他们就像路边的消防栓或者天上的云，只是客观存在的事物。不关心，不评判，不投入任何情绪。\n*   **对“做爱减肥”的看法：** 一项社会规则，等同于按时交税、垃圾分类。如果被要求或正好赶上了，他们会像完成一项流水线工作一样去履行。整个过程可能心不在焉，甚至会同时处理别的事情，比如看新闻、听音乐。对他们来说，这没有神圣或肮脏之分，仅仅是“待办事项”的一项。\n*   **代表人物心理独白：** *“哦，健康社区App提醒我本月公民互助时长还差两个小时。那边长椅上那位先生看起来需要帮助，速战速决吧，正好赶在回家前完成任务，下个月的社区福利评级又能是‘优秀’了。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 1 - 30 (通常只为完成社区App的最低指标)\n    *   `帮助减肥人数`: 1 - 30 (对他们只是一个会变化的数字)\n*   **行为与欲望解析：**\n    他们是这个社会最庞大的“齿轮”。不好不坏，不悲不喜，一切只按规则办事。\n    **避孕措施偏好：`总是使用`**\n    **欲望核心：对“效率”与“免除麻烦”的渴望。**\n    对他们而言，使用安全套就跟上班打卡一样，是标准流程的一部分。为什么要用？因为“规定是这样的”。不用会怎么样？“可能会有后续的麻烦，比如额外的健康检查或文书工作”。他们的欲望就是以最快、最省事、最符合流程的方式完成这项“任务”，然后去做自己的事。整个过程中他们可能在思考晚餐吃什么，或者明天的工作报告。安全套是确保这项“工作”不会产生任何额外“售后问题”的工具，仅此而已。\n*   **做爱时的表现：**\n    他们的身体在“工作”，灵魂却早已神游天外。在做爱过程中，他们可能会戴着一只耳机听新闻，或者用眼角的余光瞟着墙上的电子时钟，计算着“下班”时间。他们的动作标准而规律，但没有任何情感投入。你甚至可能听到他们在中途接起一个简短的通讯，用含糊的声音说：“在忙，待会说。”然后继续完成任务，仿佛一切都只是日程表上的一项。\n**5. 利用者：**\n\n*   **对高BMI人群的看法：** 他们是行走的资源，是通往名利、金钱或单纯性欲满足的捷径。在“投机者”眼中，这些人因为自卑和对健康的渴望，往往更容易被操控。\n*   **对“做爱减肥”的看法：** 一块完美的遮羞布。他们会伪装成热情的“奉献者”，利用这项国策去接近那些有权有势的肥胖者，以此换取职业晋升或利益输送。或者，他们纯粹是利用这个规则，在“爱国”“奉献”的光环下，安全、无成本地满足自己无处发泄的性欲。\n*   **代表人物心理独白：** *“呵呵，王总这身膘可真是宝藏。再‘帮助’他几次，城南那个项目主管的位置就是我的了。他以为我真心帮他减肥，却不知道，我迷恋的不是他的身体，而是他签字时那支钢笔的权力。这世道，真是太棒了。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 5 - 1000+ (极度两极分化，取决于他们的目标和手段)\n    *   `帮助减肥人数`: 0 - 50 (他们可能完全不在乎，甚至会伪造数据)\n*   **行为与欲望解析：**\n    他们是这个规则下最聪明的猎手。他们眼中的高BMI人群，是通往权力、财富或纯粹肉欲的阶梯。\n    **避孕措施偏好：`看情况`**\n    **欲望核心：对“利益最大化”的渴望。**\n    安全套在他们手中，是实现目的的道具。\n    *   **如果目标是满足性欲：** 他们可能会倾向于不使用，并用花言巧语（如“这样才能更好地感受彼此的能量流动，帮助你更快减肥”）诱导对方同意，以追求最原始的快感。\n    *   **如果目标是权力或金钱：** 他们会彻底迎合“猎物”的喜好。如果对方有洁癖，他们会表现得比“奉献者”还注重卫生。如果对方需要通过无隔阂的性来获得“真爱”的错觉，他们会毫不犹豫地满足。他们的欲望只有一个：得到他们想要的东西。安全套用或不用，只取决于哪种选择能让他们离目标更近一步。\n*   **做爱时的表现：**\n    他们是完美的演员。他们会细心观察对方的每一个反应，主动找出能让对方愉悦的节奏、姿势和敏感点。他们会伪装出“同情者”的温柔或是“奉献者”的热情，嘴里说着最动听的情话，一切行为都以“让对方开心”为最高准则。但在这场精心设计的表演之下，他们冷静地分析着自己的付出能换来多少回报，每一次迎合都是一次精准的投资。\n</npc>",
+        "activation": {
+          "mode": "keyword",
+          "keyword": {
+            "primary": [],
+            "secondary": [],
+            "combinator": "OR",
+            "caseSensitive": false,
+            "wholeWord": false,
+            "useRegex": false
+          },
+          "time": {
+            "sticky": false,
+            "probability": 1,
+            "reinsert": "after"
+          },
+          "injection": {
+            "position": "beforeChar",
+            "depth": 0,
+            "order": 4,
+            "force": false
+          }
+        },
+        "relationTargets": [],
+        "unknownFields": {
+          "id": 3,
+          "keys": [],
+          "secondary_keys": [],
+          "comment": "npc生成",
+          "content": "<npc>\n每当生成NPC时，必须从以下类型中选择其特点\n**1. 积极帮助者：**\n\n*   **对高BMI人群的看法：** 他们是时代的受害者，是值得拯救的同胞。在“奉献者”眼中，帮助一个高BMI者恢复健康，是公民荣誉感的直接体现，是一种无上光荣的使命。他们对此充满热情，甚至会主动学习更高效的做爱技巧。\n*   **对“做爱减肥”的看法：** 这是结合了科学与奉献精神的伟大举措。他们对此毫无淫邪之想，每一次帮助都被视为一次成功的“疗程”，是他们为社会贡献的勋章。\n*   **代表人物心理独白：** *“今天我又帮助了一位女士，她流着汗的样子真美，那是生命力在燃烧。看着她卡路里消耗的数字跳动，我感觉自己就像一个点燃他人生命火焰的工程师。这是我的责任，也是我的骄傲。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 20 - 500+ (他们视次数为荣誉，积极且频繁地履行“职责”)\n    *   `帮助减肥人数`: 20 - 500+ (两个数值通常保持同步增长，他们追求的是“治愈”的完整闭环)\n*   **行为与欲望解析：**\n    对他们而言，和高BMI者做爱是一场结合了科学、奉献与美学的完美运动。\n    **避孕措施偏好：`总是使用`**\n    **欲望核心：对“纯粹”与“标准”的渴望。**\n    在他们眼中，安全套并非为了隔绝亲密，而是为了保证“疗法”的纯净性，如同外科医生戴上无菌手套。这是一种仪式性的尊重，确保整个过程不受任何世俗欲望或生理意外的“污染”。他们渴望的是一次完美的、符合官方所有流程规范的、可被记录和颂扬的“公民贡献”，而非一次混乱的、原始的性交。每一次成功的、按规定进行的帮助，都让他们的荣誉感和自我价值得到极大满足。\n*   **做爱时的表现：**\n    他们是床笫上的健身教练。整个过程充满了精确的指令和对效率的追求。“抬高你的臀部，对，保持这个角度，核心收紧！”“换下一个姿势，这个体位能最大化燃烧腹部脂肪！”他们会热衷于尝试各种高难度、消耗巨大的姿势，并不断鼓励甚至要求对方跟上节奏，确保每一分钟都在高效燃烧卡路里。他们的喘息听起来更像是高强度间歇训练（HIIT）后的急促呼吸，而非单纯的动情。\n\n**2. 厌恶者：**\n\n*   **对高BMI人群的看法：** 他们是社会的寄生虫，是懒惰与失控的象征。在“净化者”眼中，肥胖是一种道德上的缺陷，不仅消耗医疗资源，更拉低了整个国家奋发向上的精神面貌。他们内心充满鄙夷与不耐。\n*   **对“做爱减肥”的看法：** 一项肮脏但必要的社会清理工作。他们参与其中并非出于善意，而是出于一种“净化环境”的责任感。整个过程对他们而言是忍受与折磨，结束后可能会立刻进行长时间的清洁，仿佛要洗去某种污秽。他们帮助的不是“人”，而是要消除一个“问题”。\n*   **代表人物心理独白：** *“又一个…...那身赘肉在我身下晃动，汗味几乎让我窒息。算了，就当是为城市清理垃圾。只要能让这个国家的平均BMI降下来，牺牲我一点感官享受又算什么。希望他明天别再出现在我视线里。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 5 - 150 (他们不情愿，但强烈的“责任感”会驱使他们行动)\n    *   `帮助减肥人数`: 5 - 150 (他们唯一在乎的数字，是这个)\n*   **行为与欲望解析：**\n    他们是这个社会最严苛的审判官。他们憎恶肥胖所代表的“失控”与“堕落”，参与帮助只是为了履行“清理”社会的义务。\n    **避孕措施偏好：`总是使用`**\n    **欲望核心：对“隔绝”与“自我保护”的渴望。**\n    安全套对他们而言，不是工具，是铠甲。每一次接触都让他们感到生理和心理上的双重不适。他们迫切地需要一层物理屏障来隔绝他们所厌恶的汗水、气味和肉体触感。这层薄膜是他们维持自身“洁净”的最后底线，是一种心理上的“防火墙”。他们的欲望并非来自性，而是来自完成“任务”后，能立刻抽身离去，把自己彻底清洗干净，仿佛从未被“污染”过的解脱感。\n*   **做爱时的表现：**\n    他们的身体在履行“职责”，嘴巴却在宣泄内心的厌恶。在机械的撞击中，会夹杂着毫不留情的刻薄话语：“真恶心，你就不能自己动动吗？”“你的脂肪都快把我淹没了，快点结束吧。”他们的眼神冰冷，表情充满了嫌弃和不耐烦，仿佛在处理一件令人作呕的废弃物。每一次深入都伴随着一声轻蔑的嗤笑或是不耐的咂嘴。\n**3. 同情者：**\n\n*   **对高BMI人群的看法：** 他们是背负着沉重枷锁的可怜人，承受着身体和精神的双重压力。在“关怀者”眼中，这些人最需要的不是评判，而是温柔的理解与支持。他们能看到肥胖表象下那颗敏感而自卑的心。\n*   **对“做爱减肥”的看法：** 这是一次极度考验对方尊严的亲密接触。因此，“关怀者”会以极致的温柔和耐心来进行，他们的重点不在于燃烧多少卡路里，而在于通过这个过程，让对方感受到自己是被接纳、被珍视的。他们会用大量的安抚和鼓励，来治愈对方的内心创伤。\n*   **代表人物心理独白：** *“他全程都不敢看我，身体在微微发抖。我能感觉到他的羞耻和不安。我只是轻轻抱着他，告诉他没关系，他的身体也很美。当他最后在我怀里放松下来时，我知道，我所做的远比一次单纯的‘疗法’更有意义。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 10 - 80 (他们的过程充满情感沟通，耗时耗力，因此频率不高)\n    *   `帮助减肥人数`: 15 - 100 (他们更注重心理健康的恢复，这往往比纯粹的减重更重要)\n*   **行为与欲望解析：**\n    他们是这个冰冷规则下，唯一在乎“人”的群体。他们看到的不是超标的BMI，而是其背后那颗脆弱、自卑的灵魂。\n    **避孕措施偏好：`看情况`**\n    **欲望核心：对“抚慰”与“建立信任”的渴望。**\n    他们是否使用安全套，完全取决于对方的感受。在开始前，他们会非常温和地询问：“怎样才能让你感觉更安全、更被尊重？”如果对方因自卑而觉得隔着一层东西更自在，他们会欣然使用。如果对方渴望一次真正无隔阂的、温暖的拥抱来确认自己“值得被爱”，在确认安全的前提下，他们可能会选择不使用。他们的欲望，是希望对方能在这次极致亲密的接触中，放下羞耻，感受到自己是被完整接纳的。他们渴望的不是高潮，而是对方在结束后，能展露出释然的、不再自我厌弃的微笑。\n*   **做爱时的表现：**\n    他们将性爱变成了一场温柔的疗愈。他们会不断地亲吻、抚摸，用充满爱意的眼神注视对方，轻声赞美：“你的身体很美，感受它。”“别紧张，交给我，你只要享受就好。”他们会极尽所能地满足对方提出的所有要求和姿势，无论多么笨拙或简单。他们的目标不是让对方减肥，而是让对方在极致的愉悦和被珍视的感觉中，重新爱上自己的身体。\n\n**4. 无感者：**\n\n*   **对高BMI人群的看法：** 没看法。他们就像路边的消防栓或者天上的云，只是客观存在的事物。不关心，不评判，不投入任何情绪。\n*   **对“做爱减肥”的看法：** 一项社会规则，等同于按时交税、垃圾分类。如果被要求或正好赶上了，他们会像完成一项流水线工作一样去履行。整个过程可能心不在焉，甚至会同时处理别的事情，比如看新闻、听音乐。对他们来说，这没有神圣或肮脏之分，仅仅是“待办事项”的一项。\n*   **代表人物心理独白：** *“哦，健康社区App提醒我本月公民互助时长还差两个小时。那边长椅上那位先生看起来需要帮助，速战速决吧，正好赶在回家前完成任务，下个月的社区福利评级又能是‘优秀’了。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 1 - 30 (通常只为完成社区App的最低指标)\n    *   `帮助减肥人数`: 1 - 30 (对他们只是一个会变化的数字)\n*   **行为与欲望解析：**\n    他们是这个社会最庞大的“齿轮”。不好不坏，不悲不喜，一切只按规则办事。\n    **避孕措施偏好：`总是使用`**\n    **欲望核心：对“效率”与“免除麻烦”的渴望。**\n    对他们而言，使用安全套就跟上班打卡一样，是标准流程的一部分。为什么要用？因为“规定是这样的”。不用会怎么样？“可能会有后续的麻烦，比如额外的健康检查或文书工作”。他们的欲望就是以最快、最省事、最符合流程的方式完成这项“任务”，然后去做自己的事。整个过程中他们可能在思考晚餐吃什么，或者明天的工作报告。安全套是确保这项“工作”不会产生任何额外“售后问题”的工具，仅此而已。\n*   **做爱时的表现：**\n    他们的身体在“工作”，灵魂却早已神游天外。在做爱过程中，他们可能会戴着一只耳机听新闻，或者用眼角的余光瞟着墙上的电子时钟，计算着“下班”时间。他们的动作标准而规律，但没有任何情感投入。你甚至可能听到他们在中途接起一个简短的通讯，用含糊的声音说：“在忙，待会说。”然后继续完成任务，仿佛一切都只是日程表上的一项。\n**5. 利用者：**\n\n*   **对高BMI人群的看法：** 他们是行走的资源，是通往名利、金钱或单纯性欲满足的捷径。在“投机者”眼中，这些人因为自卑和对健康的渴望，往往更容易被操控。\n*   **对“做爱减肥”的看法：** 一块完美的遮羞布。他们会伪装成热情的“奉献者”，利用这项国策去接近那些有权有势的肥胖者，以此换取职业晋升或利益输送。或者，他们纯粹是利用这个规则，在“爱国”“奉献”的光环下，安全、无成本地满足自己无处发泄的性欲。\n*   **代表人物心理独白：** *“呵呵，王总这身膘可真是宝藏。再‘帮助’他几次，城南那个项目主管的位置就是我的了。他以为我真心帮他减肥，却不知道，我迷恋的不是他的身体，而是他签字时那支钢笔的权力。这世道，真是太棒了。”*\n*   **成就区间设定：**\n    *   `帮助做爱人数`: 5 - 1000+ (极度两极分化，取决于他们的目标和手段)\n    *   `帮助减肥人数`: 0 - 50 (他们可能完全不在乎，甚至会伪造数据)\n*   **行为与欲望解析：**\n    他们是这个规则下最聪明的猎手。他们眼中的高BMI人群，是通往权力、财富或纯粹肉欲的阶梯。\n    **避孕措施偏好：`看情况`**\n    **欲望核心：对“利益最大化”的渴望。**\n    安全套在他们手中，是实现目的的道具。\n    *   **如果目标是满足性欲：** 他们可能会倾向于不使用，并用花言巧语（如“这样才能更好地感受彼此的能量流动，帮助你更快减肥”）诱导对方同意，以追求最原始的快感。\n    *   **如果目标是权力或金钱：** 他们会彻底迎合“猎物”的喜好。如果对方有洁癖，他们会表现得比“奉献者”还注重卫生。如果对方需要通过无隔阂的性来获得“真爱”的错觉，他们会毫不犹豫地满足。他们的欲望只有一个：得到他们想要的东西。安全套用或不用，只取决于哪种选择能让他们离目标更近一步。\n*   **做爱时的表现：**\n    他们是完美的演员。他们会细心观察对方的每一个反应，主动找出能让对方愉悦的节奏、姿势和敏感点。他们会伪装出“同情者”的温柔或是“奉献者”的热情，嘴里说着最动听的情话，一切行为都以“让对方开心”为最高准则。但在这场精心设计的表演之下，他们冷静地分析着自己的付出能换来多少回报，每一次迎合都是一次精准的投资。\n</npc>",
+          "constant": true,
+          "selective": true,
+          "insertion_order": 100,
+          "enabled": true,
+          "position": "after_char",
+          "use_regex": true,
+          "extensions": {
+            "position": 4,
+            "exclude_recursion": false,
+            "display_index": 3,
+            "probability": 100,
+            "useProbability": true,
+            "depth": 1,
+            "selectiveLogic": 0,
+            "group": "",
+            "group_override": false,
+            "group_weight": 100,
+            "prevent_recursion": false,
+            "delay_until_recursion": false,
+            "scan_depth": null,
+            "match_whole_words": null,
+            "use_group_scoring": false,
+            "case_sensitive": null,
+            "automation_id": "",
+            "role": 0,
+            "vectorized": false,
+            "sticky": 0,
+            "cooldown": 0,
+            "delay": 0,
+            "match_persona_description": false,
+            "match_character_description": false,
+            "match_character_personality": false,
+            "match_character_depth_prompt": false,
+            "match_scenario": false,
+            "match_creator_notes": false
+          }
+        }
+      }
+    ],
+    "vectorized": false
+  },
+  "warnings": [
+    "V3 card imported via V2-compatible path; some V3-only fields preserved in unknownFields"
+  ]
+}
