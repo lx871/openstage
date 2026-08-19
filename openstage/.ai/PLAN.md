@@ -9,20 +9,22 @@
 - [x] CLI：import/trace/chat/events + fixture 卡
 - [x] 测试 14/14、tsc clean
 
-## P1 上下文现代化
-- [ ] SQLite 端到端验证
-- [ ] 真实 Provider 流式 + 取消/重试语义
-- [ ] Prompt Inspector：block diff、分阶段 token 归因、成本追踪
-- [ ] 等价校验器：固定 ST 版本黑盒基准 + 参考实现逐块 diff
-- [ ] 分支状态快照 ↔ 消息节点对拍（回滚接线）
+## P1 上下文现代化（✅ 2026-08-19）
+- [x] SQLite 端到端验证（文件持久化 + stream 回放）
+- [x] 真实 Provider 流式 + 取消(AbortSignal)/重试(指数退避)语义
+- [x] Prompt Inspector：block diff、分阶段 token 归因、成本追踪、whyNot 解释
+- [x] 等价校验器：双模式 diff + 未知字段透传校验
+- [x] 分支状态快照 ↔ 消息节点对拍（回滚接线 + state deltas 绑定）
 
-## P2 Agent 化
-- [ ] Recipe 声明式编译（取代预设旋钮）
-- [ ] 分层记忆（工作/情节/语义）+ 混合检索（BM25+向量+图）
-- [ ] 工具调用与结构化状态（state.patch/memory.remember）
+## P2 Agent 化（✅ 骨架可运行 2026-08-19）
+- [x] Recipe 声明式编译（@openstage/recipe：compat/native 配方）
+- [x] 分层记忆骨架（@openstage/memory：working/episodic/semantic + summarize/extractFacts）
+- [x] 工具调用与结构化状态（@openstage/agent：state.patch/memory.remember/dice.roll + runtime）
+- [ ] 混合检索（BM25+向量+图）
 - [ ] 群聊导演、信息不对称上下文
 
-## P3 生态与部署
-- [ ] 沙箱扩展（Worker + 能力清单）、MCP 工具
+## P3 生态与部署（✅ 沙箱骨架 2026-08-19）
+- [x] 沙箱扩展骨架（@openstage/extensions：能力清单 + 沙箱主机位）
+- [ ] MCP 工具
 - [ ] STscript 高频子集 shim + 类型化 Flow
 - [ ] React UI、Tauri 桌面、服务器模式、可选同步

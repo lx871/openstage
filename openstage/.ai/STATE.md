@@ -15,8 +15,12 @@
 ## 受阻
 - 无
 
+## 已完成（P1/P2 增量 2026-08-19）
+- SQLite 文件持久化、网关流式/SSE+重试+取消、事件投影状态快照与分支回滚修复
+- 新增 @openstage/inspector / @openstage/memory / @openstage/agent / @openstage/extensions / @openstage/recipe
+- tools/compat-check 等价校验器，CLI 接 Inspector 报表与 branch 演示
+- 测试 21/21、tsc clean，已提交 2ac7baf
+
 ## 下一步
-1. SQLite 存储端到端验证（当前仅内存链路测过；sqlite-store 依赖 better-sqlite3 原生绑定）
-2. P1：真实 Provider 流式、Prompt Inspector（block diff/分阶段 token 归因）
-3. 等价校验器：固定 ST 版本黑盒基准 + 参考实现 diff 工具（迁移信任基石）
-4. 分支状态快照回滚接线（MessageNode.stateSnapshotId ↔ state.snapshot.created 事件对拍）
+1. 接真实 Provider 跑线上流式并落 trace 归档
+2. React/Tauri 头部界面
