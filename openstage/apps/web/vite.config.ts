@@ -21,5 +21,5 @@ export default defineConfig({
       '@openstage/card-converter': pkg('card-converter'),
     },
   },
-  server: { port: 5173, host: true },
+  server: { port: 4173, host: '127.0.0.1', strictPort: true },
 })
